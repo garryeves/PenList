@@ -55,7 +55,7 @@ class manufacturers: NSObject {
 
 class manufacturer: NSObject, Identifiable, ObservableObject {
     var manID = UUID()
-    var name = ""
+    @Published var name = ""
     var notes = ""
     var country = ""
     var isNew = true
@@ -64,30 +64,16 @@ class manufacturer: NSObject, Identifiable, ObservableObject {
         super.init()
     }
     
-    var displayMessage: String {
-        var returnString = name
-        
-        let tempArray = penList.pens.filter { $0.manID == manID.uuidString}
-        
-        if tempArray.count > 0 {
-            if tempArray.count == 1 {
-                returnString += " - \(tempArray.count) pen"
-            } else {
-                returnString += " - \(tempArray.count) pens"
-            }
+    var penItems: [pen] {
+        get {
+            return penList.pens.filter { $0.manID == manID.uuidString}
         }
-        
-        let tempArray2 = inkList.inks.filter { $0.manID == manID.uuidString}
-        
-        if tempArray2.count > 0 {
-            if tempArray2.count == 1 {
-                returnString += " - \(tempArray2.count) ink"
-            } else {
-                returnString += " - \(tempArray2.count) inks"
-            }
+    }
+    
+    var inkItems: [ink] {
+        get {
+            return inkList.inks.filter { $0.manID == manID.uuidString}
         }
-        
-        return returnString
     }
     
     init(passedmanID: String,

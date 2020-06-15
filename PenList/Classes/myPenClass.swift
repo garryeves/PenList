@@ -135,6 +135,17 @@ class myPen: NSObject, Identifiable, ObservableObject {
             
             return ""
         }
+        set {
+            for item in manufacturerList.manufacturers {
+                if item.name == newValue {
+                    for workingPen in penList.pens {
+                        if workingPen.penID.uuidString == penID {
+                            workingPen.manID = item.manID.uuidString
+                        }
+                    }
+                }
+            }
+        }
     }
     
     var penName: String {
@@ -206,6 +217,21 @@ class myPen: NSObject, Identifiable, ObservableObject {
         myPenID = UUID(uuidString: passedmyPenID)!
         
         isNew = false
+    }
+    
+    init(passedpenID: String,
+         passedname: String,
+         passednotes: String) {
+        super.init()
+        
+        penID = passedpenID
+        datePurchased = Date()
+        name = passedname
+        notes = passednotes
+
+        isNew = false
+        
+        save()
     }
 
     func save()

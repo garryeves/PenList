@@ -18,10 +18,11 @@ struct manufacturerView: View {
         
         UITableView.appearance().separatorStyle = .none
         
+        
         let manufacturersPens = penList.pens.filter { $0.manID == workingVariables.selectedManufacturer.manID.uuidString }
         
         let manufacturersInks = inkList.inks.filter { $0.manID == workingVariables.selectedManufacturer.manID.uuidString }
-        
+
         return VStack {
             HStack {
                 Spacer()
@@ -35,89 +36,119 @@ struct manufacturerView: View {
             }
             .padding()
             
-            HStack {
-                Text("Manufacturer")
-                    .padding(.trailing, 10)
-                TextField("Manufacturer", text: $workingVariables.selectedManufacturer.name)
-            }
-            .padding(.leading, 10)
-            .padding(.trailing, 10)
-            .padding(.bottom, 5)
-            
-            HStack {
-                Text("Country of Origin")
-                    .padding(.trailing, 10)
-                TextField("Country", text: $workingVariables.selectedManufacturer.country)
-            }
-            .padding(.leading, 10)
-            .padding(.trailing, 10)
-            .padding(.bottom, 5)
-            
-            Button("Save") {
-                if self.workingVariables.selectedManufacturer.isNew {
-                    manufacturerList.append(self.workingVariables.selectedManufacturer)
-                    self.workingVariables.selectedManufacturer.isNew = false
-                }
-                self.workingVariables.selectedManufacturer.save()
-            }
-            
-            if workingVariables.selectedManufacturer.name != "" && !workingVariables.selectedManufacturer.isNew {
+            if workingVariables.selectedManufacturer.name == "" {
                 HStack {
-                    VStack {
-                        Text("Pens")
-                            .font(.headline)
-                        if manufacturersPens.count > 0 {
-                            List {
-                                ForEach (manufacturersPens) {item in
-                                    Text(item.name)
-                                    .onTapGesture {
-                                        self.workingVariables.selectedPen = item
-                                        self.showPen = true
-                                    }
-                                }
-                            }
-                        }
+                    Text("Manufacturer")
+                        .padding(.trailing, 10)
+                    TextField("Manufacturer", text: $workingVariables.selectedManufacturer.name)
+                    Button("Add") {
+                        self.workingVariables.selectedManufacturer.isNew = false
+                        self.workingVariables.selectedManufacturer.save()
+                        self.workingVariables.reloadManufacturer.toggle()
+                    }
+                }
+                .padding(.leading, 10)
+                .padding(.trailing, 10)
+                .padding(.bottom, 5)
+            } else {
+                Form {
+                    TextField("Manufacturer", text: $workingVariables.selectedManufacturer.name)
                     
-                        Button("Add Pen") {
-                            self.workingVariables.addPen()
+                    if workingVariables.selectedManufacturer.name != "" && !workingVariables.selectedManufacturer.isNew {
+                        TextField("Country", text: $workingVariables.selectedManufacturer.country)
+                    }
+                }
+                .frame(height: 120)
+                .padding(.leading, 10)
+                .padding(.trailing, 10)
+                .padding(.bottom, 20)
 
-                            self.showPen = true
+                if workingVariables.selectedManufacturer.name != "" && !workingVariables.selectedManufacturer.isNew {
+                    Button("Save") {
+                        if self.workingVariables.selectedManufacturer.isNew {
+                            manufacturerList.append(self.workingVariables.selectedManufacturer)
+                            self.workingVariables.selectedManufacturer.isNew = false
                         }
-                        .padding()
-                        .sheet(isPresented: self.$showPen, onDismiss: { self.showPen = false }) {
-                            penDetails(workingVariables: self.workingVariables, showChild: self.$showPen)
-                            }
+                        self.workingVariables.selectedManufacturer.save()
                     }
-                    
-                    VStack {
-                        Text("Inks")
-                            .font(.headline)
-                        if manufacturersInks.count > 0 {
-                            List {
-                                ForEach (manufacturersInks) {item in
-                                    Text(item.name)
-                                    .onTapGesture {
-                                        self.workingVariables.selectedInk = item
-                                        self.showInk = true
+                    .padding(.bottom, 20)
+                
+                    HStack {
+                        VStack {
+                            HStack {
+                                Spacer()
+                                Text("Pens")
+                                    .font(.headline)
+                                Spacer()
+                            }
+                            if manufacturersPens.count > 0 {
+                                List {
+                                    ForEach (manufacturersPens) {item in
+                                        Text(item.name)
+                                        .onTapGesture {
+                                            self.workingVariables.selectedPen = item
+                                            self.showPen = true
+                                        }
                                     }
                                 }
+                                .border(Color.gray)
+                                .padding(.leading, 20)
+                                .padding(.trailing, 20)
                             }
-                        }
-                    
-                        Button("Add Ink") {
-                            self.workingVariables.addInk()
+                            Spacer()
                             
-                            self.showInk = true
-                        }
-                        .sheet(isPresented: self.$showInk, onDismiss: { self.showInk = false }) {
-                            inkDetails(workingVariables: self.workingVariables, showChild: self.$showInk)
+                            Button("Add Pen") {
+                                self.workingVariables.addPen()
+
+                                self.showPen = true
                             }
+                            .padding(.bottom, 10)
+                            .sheet(isPresented: self.$showPen, onDismiss: { self.showPen = false }) {
+                                penDetails(workingVariables: self.workingVariables, showChild: self.$showPen)
+                                }
+                        }
+                        .padding(.bottom, 10)
+                        
+                        VStack {
+                            HStack {
+                                Spacer()
+                                Text("Inks")
+                                    .font(.headline)
+                                Spacer()
+                            }
+                            if manufacturersInks.count > 0 {
+                                List {
+                                    ForEach (manufacturersInks) {item in
+                                        Text(item.name)
+                                        .onTapGesture {
+                                            self.workingVariables.selectedInk = item
+                                            self.showInk = true
+                                        }
+                                    }
+                                }
+                                .border(Color.gray)
+                                .padding(.leading, 20)
+                                .padding(.trailing, 20)
+                            }
+                        
+                            Spacer()
+                            
+                            Button("Add Ink") {
+                                self.workingVariables.addInk()
+                                
+                                self.showInk = true
+                            }
+                                .padding(.bottom, 10)
+                            .sheet(isPresented: self.$showInk, onDismiss: { self.showInk = false }) {
+                                inkDetails(workingVariables: self.workingVariables, showChild: self.$showInk)
+                                }
+                        }
+                        .padding(.bottom, 10)
                     }
-                    .padding()
+                    .padding(.bottom, 10)
                 }
             }
-            
-            Spacer()
+          //  Spacer()
         }
     }
 }

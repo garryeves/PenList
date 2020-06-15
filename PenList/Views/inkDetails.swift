@@ -20,10 +20,11 @@ struct inkDetails: View {
     
     @ObservedObject var tempVariables = inkDetailsWorkingVariables()
     
+    @State var showMyInk = false
+    
     var body: some View {
         
         UITableView.appearance().separatorStyle = .none
-        
         
         if tempVariables.rememberedIntInkType > -1 {
             workingVariables.selectedInk.inkType = inkTypes[tempVariables.rememberedIntInkType]
@@ -49,66 +50,83 @@ struct inkDetails: View {
             }
             .padding()
             
-            HStack {
-                Text("Name")
-                    .padding(.trailing, 10)
-                
-                TextField("Name", text: $workingVariables.selectedInk.name)
-                
-                Spacer()
-            }
-            .padding()
-            
-            HStack {
-                Text("Ink Family")
-                    .padding(.trailing, 10)
-                
-                TextField("Ink Family", text: $workingVariables.selectedInk.inkFamily)
-                
-                Spacer()
-            }
-            .padding()
-            
-            HStack {
-                Text("Type")
-                    .padding(.trailing, 10)
-                
-                Button(inkTypeText) {
-                    self.tempVariables.rememberedIntInkType = -1
-                    self.tempVariables.showModalInkType.displayList.removeAll()
+            if workingVariables.selectedInk.name == "" {
+                HStack {
+                    TextField("Name", text: $workingVariables.selectedInk.name)
+                    Button("Add") {
+                        self.workingVariables.selectedInk.isNew = false
+                        self.workingVariables.selectedInk.save()
+                        self.workingVariables.reloadInk.toggle()
+                    }
+                }
+                .padding(.leading, 10)
+                .padding(.trailing, 10)
+                .padding(.bottom, 5)
+            } else {
+                Form {
+                    TextField("Name", text: $workingVariables.selectedInk.name)
                     
-                    for item in inkTypes {
-                        self.tempVariables.showModalInkType.displayList.append(displayEntry(entryText: item))
+                    TextField("Ink Family", text: $workingVariables.selectedInk.inkFamily)
+                    
+                    Button(inkTypeText) {
+                        self.tempVariables.rememberedIntInkType = -1
+                        self.tempVariables.showModalInkType.displayList.removeAll()
+                        
+                        for item in inkTypes {
+                            self.tempVariables.showModalInkType.displayList.append(displayEntry(entryText: item))
+                        }
+                        
+                        self.tempVariables.showInkTypePicker = true
+                    }
+                    .sheet(isPresented: self.$tempVariables.showInkTypePicker, onDismiss: { self.tempVariables.showInkTypePicker = false }) {
+                        pickerView(displayTitle: "Select Filling System", rememberedInt: self.$tempVariables.rememberedIntInkType, showPicker: self.$tempVariables.showInkTypePicker, showModal: self.$tempVariables.showModalInkType)
+                                }
+                    
+                    TextField("Colour", text: $workingVariables.selectedInk.colour)
+                }
+                .frame(height: 220)
+                .padding(.leading, 10)
+                .padding(.trailing, 10)
+                .padding(.bottom, 10)
+            }
+            
+            HStack {
+                VStack {
+                    Text("Notes")
+                        .font(.subheadline)
+                    
+                    TextView(text: $workingVariables.selectedInk.notes)
+                    .padding()
+                }
+                .padding(.trailing, 10)
+                
+                VStack {
+                    Text("Current Inks")
+                        .font(.subheadline)
+                    
+                    List {
+                        ForEach (workingVariables.selectedInk.inkItems) { item in
+                            Text(item.name)
+                            .onTapGesture {
+                                self.workingVariables.selectedMyInk = item
+                                
+                                self.showMyInk = true
+                            }
+                        }
                     }
                     
-                    self.tempVariables.showInkTypePicker = true
+                    Button("Add Ink Stock") {
+                        self.workingVariables.selectedMyInk = myInk()
+                        self.workingVariables.selectedMyInk.manufacturer = self.workingVariables.selectedInk.manufacturer
+                        self.workingVariables.selectedMyInk.inkID = self.workingVariables.selectedInk.inkID.uuidString
+                        
+                        self.showMyInk = true
+                    }
+                    .sheet(isPresented: self.$showMyInk, onDismiss: { self.showMyInk = false
+                    }) {
+                        myInkView(workingVariables: self.workingVariables, showChild: self.$showMyInk)
+                        }
                 }
-                .sheet(isPresented: self.$tempVariables.showInkTypePicker, onDismiss: { self.tempVariables.showInkTypePicker = false }) {
-                    pickerView(displayTitle: "Select Filling System", rememberedInt: self.$tempVariables.rememberedIntInkType, showPicker: self.$tempVariables.showInkTypePicker, showModal: self.$tempVariables.showModalInkType)
-                            }
-                
-                Spacer()
-            }
-            .padding()
-            
-            HStack {
-                Text("Colour")
-                    .padding(.trailing, 10)
-                
-                TextField("Colour", text: $workingVariables.selectedInk.colour)
-                
-                Spacer()
-            }
-            .padding()
-            
-            HStack {
-                Text("Notes")
-                    .padding(.trailing, 10)
-                
-                TextView(text: $workingVariables.selectedInk.notes)
-                .padding()
-                
-                Spacer()
             }
             .padding()
             

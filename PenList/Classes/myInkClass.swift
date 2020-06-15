@@ -83,6 +83,16 @@ class myInk: NSObject, Identifiable, ObservableObject {
         }
     }
     
+//    var manufacturer: String {
+//        get {
+//            for item in inkList.inks {
+//                if item.inkID.uuidString == inkID {
+//                    return item.manufacturer
+//                }
+//            }
+//            return "Unknown"
+//        }
+//    }
     var manufacturer: String {
         get {
             for item in inkList.inks {
@@ -90,7 +100,19 @@ class myInk: NSObject, Identifiable, ObservableObject {
                     return item.manufacturer
                 }
             }
-            return "Unknown"
+            
+            return ""
+        }
+        set {
+            for item in manufacturerList.manufacturers {
+                if item.name == newValue {
+                    for workingInk in inkList.inks {
+                        if workingInk.inkID.uuidString == inkID {
+                            workingInk.manID = item.manID.uuidString
+                        }
+                    }
+                }
+            }
         }
     }
     
@@ -134,6 +156,17 @@ class myInk: NSObject, Identifiable, ObservableObject {
         notes = passednotes
         isNew = false
         myInkID = UUID(uuidString: passedmyInkID)!
+    }
+    
+    init(passedinkID: String,
+         passednotes: String) {
+        super.init()
+        dateBought = Date()
+        inkID = passedinkID
+        notes = passednotes
+        isNew = false
+
+        save()
     }
 
     func save()

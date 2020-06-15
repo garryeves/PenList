@@ -51,7 +51,7 @@ struct myPenView: View {
             tempVars.rememberedIntNib = -1
         }
         
-        var nibText = "Select"
+        var nibText = "Select Nib"
         
         if workingVariables.selectedMyPen.nib != "" {
             nibText = workingVariables.selectedMyPen.nib
@@ -62,7 +62,7 @@ struct myPenView: View {
             tempVars.rememberedIntNibMaterial = -1
         }
         
-        var nibMaterialText = "Select"
+        var nibMaterialText = "Select Nib Meterial"
         
         if workingVariables.selectedMyPen.nibMaterial != "" {
             nibMaterialText = workingVariables.selectedMyPen.nibMaterial
@@ -88,109 +88,60 @@ struct myPenView: View {
             .padding(.leading, 20)
             .padding(.trailing, 20)
             .padding(.top, 15)
-                
-            HStack {
-                Text("Name")
-                    .padding(.trailing, 10)
-
-                TextField("Name", text: $workingVariables.selectedMyPen.name)
-                    .frame(width: 250)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-
-                Text("Colour")
-                    .padding(.trailing, 10)
-                    .padding(.leading, 20)
-
-                TextField("colour", text: $workingVariables.selectedMyPen.colour)
-                    .frame(width: 150)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                
-                Spacer()
-            }
-            .padding(.bottom, 5)
-            .padding(.leading, 20)
-            .padding(.trailing, 20)
             
-            HStack {
-                Text("Nib")
-                    .padding(.trailing, 10)
-
-                Button(nibText) {
-                    self.tempVars.rememberedIntNib = -1
-                    self.tempVars.showModalNib.displayList.removeAll()
+            Form {
+                Section(header: Text("Details").font(.headline)) {
+                    TextField("Name", text: $workingVariables.selectedMyPen.name)
                     
-                    for item in nibTypes {
-                        self.tempVars.showModalNib.displayList.append(displayEntry(entryText: item))
+                    TextField("colour", text: $workingVariables.selectedMyPen.colour)
+                    
+                    Button(nibText) {
+                        self.tempVars.rememberedIntNib = -1
+                        self.tempVars.showModalNib.displayList.removeAll()
+                        
+                        for item in nibTypes {
+                            self.tempVars.showModalNib.displayList.append(displayEntry(entryText: item))
+                        }
+                        
+                        self.tempVars.showNibPicker = true
                     }
+                    .sheet(isPresented: self.$tempVars.showNibPicker, onDismiss: { self.tempVars.showNibPicker = false }) {
+                        pickerView(displayTitle: "Select Filling System", rememberedInt: self.$tempVars.rememberedIntNib, showPicker: self.$tempVars.showNibPicker, showModal: self.$tempVars.showModalNib)
+                                }
                     
-                    self.tempVars.showNibPicker = true
-                }
-                .sheet(isPresented: self.$tempVars.showNibPicker, onDismiss: { self.tempVars.showNibPicker = false }) {
-                    pickerView(displayTitle: "Select Filling System", rememberedInt: self.$tempVars.rememberedIntNib, showPicker: self.$tempVars.showNibPicker, showModal: self.$tempVars.showModalNib)
-                            }
-
-                Text("Nib Material")
-                    .padding(.trailing, 10)
-                    .padding(.leading,20)
-
-                Button(nibMaterialText) {
-                    self.tempVars.rememberedIntNibMaterial = -1
-                    self.tempVars.showModalNibMaterial.displayList.removeAll()
-                    
-                    for item in nibMaterialTypes {
-                        self.tempVars.showModalNibMaterial.displayList.append(displayEntry(entryText: item))
+                    Button(nibMaterialText) {
+                        self.tempVars.rememberedIntNibMaterial = -1
+                        self.tempVars.showModalNibMaterial.displayList.removeAll()
+                        
+                        for item in nibMaterialTypes {
+                            self.tempVars.showModalNibMaterial.displayList.append(displayEntry(entryText: item))
+                        }
+                        
+                        self.tempVars.showNibMaterialPicker = true
                     }
-                    
-                    self.tempVars.showNibMaterialPicker = true
+                    .sheet(isPresented: self.$tempVars.showNibMaterialPicker, onDismiss: { self.tempVars.showNibMaterialPicker = false }) {
+                        pickerView(displayTitle: "Select Filling System", rememberedInt: self.$tempVars.rememberedIntNibMaterial, showPicker: self.$tempVars.showNibMaterialPicker, showModal: self.$tempVars.showModalNibMaterial)
+                                }
                 }
-                .sheet(isPresented: self.$tempVars.showNibMaterialPicker, onDismiss: { self.tempVars.showNibMaterialPicker = false }) {
-                    pickerView(displayTitle: "Select Filling System", rememberedInt: self.$tempVars.rememberedIntNibMaterial, showPicker: self.$tempVars.showNibMaterialPicker, showModal: self.$tempVars.showModalNibMaterial)
-                            }
-   
-                Spacer()
-            }
-            .padding(.bottom, 30)
-            .padding(.leading, 20)
-            .padding(.trailing, 20)
-    
-            Text("Purchased")
-                .font(.headline)
-            .padding(.bottom, 5)
-            
-            HStack {
-                TextField("Purchased From", text: $workingVariables.selectedMyPen.purchasedFrom)
-                .frame(width: 250)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-
-                TextField("Price", text: $workingVariables.selectedMyPen.cost)
-                    .frame(width: 100)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                .padding(.trailing, 10)
-                .padding(.leading, 20)
                 
-                Spacer()
+                Section(header: Text("Purchased").font(.headline)) {
+                    TextField("Purchased From", text: $workingVariables.selectedMyPen.purchasedFrom)
+                    
+                    TextField("Price", text: $workingVariables.selectedMyPen.cost)
+                    
+                    if !kbDetails.readyToAppear {
+                            DatePicker(selection: $workingVariables.selectedMyPen.datePurchased, displayedComponents: .date) {
+                                Text("Purchase Date")
+                            }
+                            .labelsHidden()
+                    }
+                }
             }
+            .frame(height: 400)
             .padding(.bottom, 10)
             .padding(.leading, 20)
             .padding(.trailing, 20)
-            
-            if !kbDetails.readyToAppear {
-                HStack {
-                    Text("Purchase Date")
-                        .padding()
-                    
-                    DatePicker(selection: $workingVariables.selectedMyPen.datePurchased, displayedComponents: .date) {
-                        Text("Purchase Date")
-                    }
-                    .labelsHidden()
-                        
-                    Spacer()
-                }
-                .padding(.bottom, 30)
-                .padding(.leading, 20)
-                .padding(.trailing, 20)
-            }
-            
+ 
             HStack {
                 Spacer()
                 
@@ -216,6 +167,9 @@ struct myPenView: View {
             
             Button("Save") {
                 self.workingVariables.selectedMyPen.save()
+                sleep(2)
+                currentPenList = myPens()
+                self.workingVariables.reloadPen.toggle()
             }
             .padding(.bottom, 15)
         }
@@ -371,6 +325,9 @@ struct myPenViewPhone: View {
 
             Button("Save") {
                 self.workingVariables.selectedMyPen.save()
+                sleep(2)
+                currentPenList = myPens()
+                self.workingVariables.reloadPen.toggle()
             }
             .padding(.bottom, 5)
         }

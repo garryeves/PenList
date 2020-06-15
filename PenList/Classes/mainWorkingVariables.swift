@@ -48,4 +48,13 @@ class mainWorkingVariables: ObservableObject {
     }
     
     @Published var reload = false
+    
+    @Published var reloadManufacturer = false
+    @Published var reloadPen = false
+    @Published var reloadInk = false
+    
+    func reloadData() {
+        myPenList = myPens()
+        myInkList = myInks()
+    }
 }

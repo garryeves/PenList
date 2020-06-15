@@ -65,30 +65,20 @@ struct myInkView: View {
             .padding(.trailing, 20)
             .padding(.top, 15)
 
-            Text("Purchased")
-            .font(.headline)
-            .padding(.bottom, 5)
-            
-            HStack {
-                TextField("Purchased From", text: $workingVariables.selectedMyInk.boughtFrom)
-                .frame(width: 250)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
-                
-                TextField("Price", text: $workingVariables.selectedMyInk.cost)
-                    .frame(width: 100)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
+            Form {
+                Section(header: Text("Purchased").font(.headline)) {
+                    TextField("Purchased From", text: $workingVariables.selectedMyInk.boughtFrom)
+                    
+                    TextField("Price", text: $workingVariables.selectedMyInk.cost)
+                    
+                    DatePicker(selection: $workingVariables.selectedMyInk.dateBought, displayedComponents: .date) {
+                        Text("Purchase Date")
+                    }
+                    .labelsHidden()
+                }
             }
-            .padding(.bottom, 30)
-            .padding(.leading, 20)
-            .padding(.trailing, 20)
-            
-            Text("Purchase Date")
-                .padding(.trailing, 10)
-            DatePicker(selection: $workingVariables.selectedMyInk.dateBought, displayedComponents: .date) {
-                Text("Purchase Date")
-            }
-            .labelsHidden()
-            .padding(.bottom, 30)
+            .frame(height: 200)
+            .padding(.bottom, 10)
             .padding(.leading, 20)
             .padding(.trailing, 20)
 
@@ -117,6 +107,9 @@ struct myInkView: View {
             
             Button("Save") {
                 self.workingVariables.selectedMyInk.save()
+                sleep(2)
+                currentInkList = myInks()
+                self.workingVariables.reloadPen.toggle()
             }
             .padding(.bottom, 15)
         }

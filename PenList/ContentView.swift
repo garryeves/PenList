@@ -39,7 +39,9 @@ struct ContentView: View {
     var body: some View {
         let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String
         let build = Bundle.main.infoDictionary?["CFBundleVersion"] as! String
-
+        
+        self.workingVariables.reloadData()
+    
         return VStack {
             HStack {
                 Spacer()
@@ -82,7 +84,8 @@ struct ContentView: View {
                                                 }
                                             }
                                             .padding(.leading, 10)
-                                            .sheet(isPresented: self.$showMyPen, onDismiss: { self.showMyPen = false }) {
+                                            .sheet(isPresented: self.$showMyPen, onDismiss: { self.showMyPen = false
+                                            }) {
                                                 myPenView(workingVariables: self.workingVariables, showChild: self.$showMyPen)
                                                 }
                                         }
@@ -158,7 +161,9 @@ struct ContentView: View {
                             self.showToBuy = true
                         }
                         .padding()
-                        .sheet(isPresented: self.$showToBuy, onDismiss: { self.showToBuy = false }) {
+                        .sheet(isPresented: self.$showToBuy, onDismiss: {
+                            self.showToBuy = false
+                                          }) {
                             toBuyView(showChild: self.$showToBuy)
                             }
 

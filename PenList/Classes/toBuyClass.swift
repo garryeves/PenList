@@ -9,8 +9,23 @@
 import Foundation
 import CloudKit
 
+struct groupedToBuys: Identifiable {
+    let id = UUID()
+    
+    var type = ""
+    var toBuys: [manuFacturerToBuys] = Array()
+}
+
+struct manuFacturerToBuys: Identifiable {
+    let id = UUID()
+    
+    var manufacturer = ""
+    var toBuys: [toBuy] = Array()
+}
+
 class toBuys: NSObject {
     fileprivate var myToBuys: [toBuy] = Array()
+    fileprivate var myGroupedToBuys: [groupedToBuys] = Array()
     
     override init() {
         super.init()
@@ -33,22 +48,78 @@ class toBuys: NSObject {
             myToBuys.append(object)
         }
         
-        sortArrayByName()
+        sortArrayByType()
     }
     
     func append(_ newItem: toBuy){
         myToBuys.append(newItem)
     }
 
-    func sortArrayByName() {
+    func sortArrayByType() {
         if myToBuys.count > 1 {
             myToBuys.sort {
                 if $0.type == $1.type {
-                    return $0.name < $1.name
+                    if $0.manufacturer == $1.manufacturer {
+                        return $0.name < $1.name
+                    } else {
+                        return $0.manufacturer < $1.manufacturer
+                    }
                 } else {
                     return $0.type < $1.type
                 }
             }
+        }
+        
+        // Now we have the data sorted we need to do the grouping
+        
+        var workingType = ""
+        var workingManufacturer = ""
+        
+        myGroupedToBuys.removeAll()
+        
+        var workingGroup: [toBuy] = Array()
+        var workingMans: [manuFacturerToBuys] = Array()
+        
+        for item in myToBuys {
+            if item.manufacturer != workingManufacturer {
+                if workingGroup.count > 0 {
+                    let tempMan = manuFacturerToBuys(manufacturer: workingManufacturer, toBuys: workingGroup)
+                    workingMans.append(tempMan)
+                    workingGroup.removeAll()
+                }
+                workingManufacturer = item.manufacturer
+            }
+            
+            if item.type != workingType {
+                if workingMans.count > 0 {
+                    if workingGroup.count > 0 {
+                        let tempMan = manuFacturerToBuys(manufacturer: workingManufacturer, toBuys: workingGroup)
+                        workingMans.append(tempMan)
+                        workingGroup.removeAll()
+                    }
+                }
+                let tempitem = groupedToBuys(type: workingType, toBuys: workingMans)
+                myGroupedToBuys.append(tempitem)
+                
+                workingGroup.removeAll()
+                workingType = item.type
+                workingMans.removeAll()
+                workingManufacturer = item.manufacturer
+            }
+            workingGroup.append(item)
+        }
+        
+        if workingGroup.count > 0 {
+            let tempMan = manuFacturerToBuys(manufacturer: workingManufacturer, toBuys: workingGroup)
+            workingMans.append(tempMan)
+            let tempitem = groupedToBuys(type: workingType, toBuys: workingMans)
+            myGroupedToBuys.append(tempitem)
+        }
+    }
+    
+    var toBuyGroup: [groupedToBuys] {
+        get {
+            return myGroupedToBuys
         }
     }
     
@@ -61,10 +132,33 @@ class toBuys: NSObject {
 
 class toBuy: NSObject, Identifiable, ObservableObject {
     var buyID = UUID()
-    var cost = ""
+    
+    fileprivate var price = 0.0
+    
+    var cost: String {
+        get {
+            if price == 0.0 {
+                return("")
+            }
+            
+            return price.formatCurrency
+        }
+        set {
+            
+            if newValue.isDouble() {
+                price = Double(newValue)!
+            } else {
+                let working = newValue.formatCurrencyNoSign
+                if working != -1.0 {
+                    price = working
+                }
+            }
+        }
+    }
+    
     var linkID = ""
     var manID = ""
-    var name = ""
+    @Published var name = ""
     var notes = ""
     @Published var status = toBuyStatusPlanned
     var type = ""
@@ -80,9 +174,17 @@ class toBuy: NSObject, Identifiable, ObservableObject {
                 }
             }
             
-            return ""
+            return "No Manufacturer"
+        }
+        set {
+            for item in manufacturerList.manufacturers {
+                if item.name == newValue {
+                    manID = item.manID.uuidString
+                }
+            }
         }
     }
+    
     override init() {
         super.init()
     }
@@ -123,6 +225,11 @@ class toBuy: NSObject, Identifiable, ObservableObject {
                          whereFrom: whereFrom)
             
         myCloudDB.saveToBuy(temp)
+    }
+    
+    func delete() {
+        // delete the item
+        myCloudDB.delete(buyID.uuidString)
     }
 }
 
@@ -171,6 +278,20 @@ extension CloudKitInteraction {
         return populateToBuy(returnArray)
     }
 
+    func delete(_ buyID: String) {
+        let sem = DispatchSemaphore(value: 0)
+        let predicate = NSPredicate(format: "buyID == \"\(buyID)\"") // better be accurate to get only the record you need
+        let query = CKQuery(recordType: "toBuy", predicate: predicate)
+        
+        privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
+            
+            self.performPrivateDelete(records!)
+            
+            sem.signal()
+        })
+        sem.wait()
+    }
+    
     func saveToBuy(_ sourceRecord: ToBuy) {
         let sem = DispatchSemaphore(value: 0)
         let predicate = NSPredicate(format: "buyID == \"\(sourceRecord.buyID)\"") // better be accurate to get only the record you need

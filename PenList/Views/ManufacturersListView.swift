@@ -28,16 +28,16 @@ struct ManufacturersListView: View {
             }
             .padding()
             
-            HStack {
-                List {
-                    ForEach (manufacturerList.manufacturers) {item in
-                        HStack {
-                            Text(item.displayMessage)
-                        }
-                        .onTapGesture {
-                            self.workingVariables.selectedManufacturer = item
-                            self.showManufacturer = true
-                        }
+            List {
+                ForEach (manufacturerList.manufacturers) {item in
+                    Section(header: HStack {Spacer()
+                                            Text(item.name).font(.title)
+                                            Spacer() }) {
+                        manufacturerItemsView(item: item)
+                    }
+                    .onTapGesture {
+                        self.workingVariables.selectedManufacturer = item
+                        self.showManufacturer = true
                     }
                 }
             }
@@ -61,3 +61,26 @@ struct ManufacturersListView: View {
     }
 }
 
+struct manufacturerItemsView: View {
+    var item: manufacturer
+    
+    var body: some View {
+        return HStack {
+            if item.penItems.count > 0 {
+                if item.penItems.count == 1 {
+                    Text("1 pen       ")
+                } else {
+                    Text("\(item.penItems.count) pens      ")
+                }
+            }
+            if item.inkItems.count > 0 {
+                if item.inkItems.count == 0 {
+                    Text("1 ink")
+                }
+                else {
+                    Text("\(item.inkItems.count) inks")
+                }
+            }
+        }
+    }
+}

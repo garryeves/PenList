@@ -17,7 +17,7 @@ struct toBuyEditView: View {
     var body: some View {
         var typeText = "Select type"
         var typeStatus = "Select Status"
-        var manufacturerText = "Select"
+        var manufacturerText = "Select Manufacturer"
         
         if tempVars.rememberedIntType > -1 {
             tempVars.workingItem.type = toBuyType[tempVars.rememberedIntType]
@@ -39,14 +39,14 @@ struct toBuyEditView: View {
         
         if tempVars.rememberedIntManufacturer > -1 {
             tempVars.manID = manufacturerList.manufacturers[tempVars.rememberedIntManufacturer].manID.uuidString
-            tempVars.manufacturerName = manufacturerList.manufacturers[tempVars.rememberedIntManufacturer].name
+            tempVars.workingItem.manufacturer = manufacturerList.manufacturers[tempVars.rememberedIntManufacturer].name
             tempVars.rememberedIntManufacturer = -1
         }
-        
-        if tempVars.manufacturerName != "" {
-            manufacturerText = tempVars.manufacturerName
-        }
 
+        if tempVars.workingItem.manufacturer != "" {
+            manufacturerText = tempVars.workingItem.manufacturer
+        }
+        
         return VStack {
             HStack {
                 Spacer()
@@ -63,113 +63,94 @@ struct toBuyEditView: View {
             .padding(.trailing, 20)
             .padding(.top, 15)
                     
-            HStack {
+            Form {
                 Button(typeText) {
-                    self.tempVars.rememberedIntType = -1
-                    self.tempVars.showModalType.displayList.removeAll()
+                   self.tempVars.rememberedIntType = -1
+                   self.tempVars.showModalType.displayList.removeAll()
+                   
+                   for item in toBuyType {
+                       self.tempVars.showModalType.displayList.append(displayEntry(entryText: item))
+                   }
+                   
+                   self.tempVars.showTypePicker = true
+               }
+               .padding(.trailing, 30)
+               .sheet(isPresented: self.$tempVars.showTypePicker, onDismiss: { self.tempVars.showTypePicker = false }) {
+                   pickerView(displayTitle: "Select Purchase Type", rememberedInt: self.$tempVars.rememberedIntType, showPicker: self.$tempVars.showTypePicker, showModal: self.$tempVars.showModalType)
+                           }
+                
+                if tempVars.workingItem.type != "" {
+                    Button(manufacturerText) {
+                        self.tempVars.rememberedIntManufacturer = -1
+                        self.tempVars.showModalManufacturer.displayList.removeAll()
+                        
+                        for item in manufacturerList.manufacturers {
+                            self.tempVars.showModalManufacturer.displayList.append(displayEntry(entryText: item.name))
+                        }
+                        
+                        self.tempVars.showManufacturerPicker = true
+                    }
+                    .sheet(isPresented: self.$tempVars.showManufacturerPicker, onDismiss: { self.tempVars.showManufacturerPicker = false }) {
+                        pickerView(displayTitle: "Select Manufacturer", rememberedInt: self.$tempVars.rememberedIntManufacturer, showPicker: self.$tempVars.showManufacturerPicker, showModal: self.$tempVars.showModalManufacturer)
+                                }
                     
-                    for item in toBuyType {
-                        self.tempVars.showModalType.displayList.append(displayEntry(entryText: item))
+                    if tempVars.workingItem.manufacturer != "" && tempVars.workingItem.manufacturer != "No Manufacturer" {
+                        
+                        TextField("Name", text: $tempVars.workingItem.name, onEditingChanged: { _ in self.reload.toggle()})
+                            
+                        TextField("Where From", text: $tempVars.workingItem.whereFrom)
+                          
+                        TextField("Cost", text: $tempVars.workingItem.cost)
+                        
+                        Button(typeStatus) {
+                           self.tempVars.rememberedIntStatus = -1
+                           self.tempVars.showModalStatus.displayList.removeAll()
+                           
+                           for item in toBuyStatus {
+                               self.tempVars.showModalStatus.displayList.append(displayEntry(entryText: item))
+                           }
+                           
+                           self.tempVars.showStatusPicker = true
+                       }
+                       .sheet(isPresented: self.$tempVars.showStatusPicker, onDismiss: { self.tempVars.showStatusPicker = false }) {
+                           pickerView(displayTitle: "Select Status", rememberedInt: self.$tempVars.rememberedIntStatus, showPicker: self.$tempVars.showStatusPicker, showModal: self.$tempVars.showModalStatus)
+                                   }
+                        
+                    }
+                }
+            }
+            .frame(height: 300)
+            
+            if tempVars.workingItem.manufacturer != "" && tempVars.workingItem.manufacturer != "No Manufacturer" {
+                Text("Notes")
+                    .font(.headline)
+                    .padding(.bottom, 5)
+                    .padding(.leading, 20)
+                    .padding(.trailing, 20)
+
+                TextView(text: $tempVars.workingItem.notes)
+                    .padding(.bottom, 10)
+                    .padding(.leading, 20)
+                    .padding(.trailing, 20)
+                
+//                HStack {
+                    Button("Save") {
+                        self.tempVars.save()
+                        self.tempVars.tobuyList = toBuys()
                     }
                     
-                    self.tempVars.showTypePicker = true
-                }
-                .padding(.trailing, 30)
-                .sheet(isPresented: self.$tempVars.showTypePicker, onDismiss: { self.tempVars.showTypePicker = false }) {
-                    pickerView(displayTitle: "Select Purchase Type", rememberedInt: self.$tempVars.rememberedIntType, showPicker: self.$tempVars.showTypePicker, showModal: self.$tempVars.showModalType)
-                            }
-                
-                Text("Status")
-                .padding(.trailing, 10)
-                
-                Button(typeStatus) {
-                    self.tempVars.rememberedIntStatus = -1
-                    self.tempVars.showModalStatus.displayList.removeAll()
-                    
-                    for item in toBuyStatus {
-                        self.tempVars.showModalStatus.displayList.append(displayEntry(entryText: item))
-                    }
-                    
-                    self.tempVars.showStatusPicker = true
-                }
-                .sheet(isPresented: self.$tempVars.showStatusPicker, onDismiss: { self.tempVars.showStatusPicker = false }) {
-                    pickerView(displayTitle: "Select Status", rememberedInt: self.$tempVars.rememberedIntStatus, showPicker: self.$tempVars.showStatusPicker, showModal: self.$tempVars.showModalStatus)
-                            }
-                
-                Spacer()
-            }
-            .padding(.bottom, 10)
-            .padding(.leading, 20)
-            .padding(.trailing, 20)
-            
-            HStack {
-                Text("Manufacturer")
-                    .padding(.trailing, 10)
-                Button(manufacturerText) {
-                    self.tempVars.rememberedIntManufacturer = -1
-                    self.tempVars.showModalManufacturer.displayList.removeAll()
-                    
-                    for item in manufacturerList.manufacturers {
-                        self.tempVars.showModalManufacturer.displayList.append(displayEntry(entryText: item.name))
-                    }
-                    
-                    self.tempVars.showManufacturerPicker = true
-                }
-                .sheet(isPresented: self.$tempVars.showManufacturerPicker, onDismiss: { self.tempVars.showManufacturerPicker = false }) {
-                    pickerView(displayTitle: "Select Manufacturer", rememberedInt: self.$tempVars.rememberedIntManufacturer, showPicker: self.$tempVars.showManufacturerPicker, showModal: self.$tempVars.showModalManufacturer)
-                            }
-                Spacer()
-            }
-            .padding(.bottom, 10)
-            .padding(.leading, 20)
-            .padding(.trailing, 20)
-            
-            HStack {
-                Text("Name")
-                TextField("Name", text: $tempVars.workingItem.name)
-            }
-            .padding(.bottom, 10)
-            .padding(.leading, 20)
-            .padding(.trailing, 20)
-            
-            HStack {
-                Text("Where From")
-                TextField("Where From", text: $tempVars.workingItem.whereFrom)
-                  
-                Text("Cost")
-                TextField("Cost", text: $tempVars.workingItem.cost)
-            }
-            .padding(.bottom, 10)
-            .padding(.leading, 20)
-            .padding(.trailing, 20)
-                    
-            Text("Notes")
-                .font(.headline)
-                .padding(.bottom, 5)
-                .padding(.leading, 20)
-                .padding(.trailing, 20)
-                    
-            TextView(text: $tempVars.workingItem.notes)
+//                    Spacer()
+//
+//                    Button("Mark as Bought") {
+//                        self.tempVars.workingItem.status = toBuyStatusBought
+//                        self.tempVars.save()
+//                        self.tempVars.reload.toggle()
+//                    }
+//                }
                 .padding(.bottom, 10)
-                .padding(.leading, 20)
-                .padding(.trailing, 20)
-            
-            HStack {
-                Button("Save") {
-                    self.tempVars.save()
-                }
-                
-                Spacer()
-                
-                Button("Mark as Bought") {
-                    self.tempVars.workingItem.status = toBuyStatusBought
-                    self.tempVars.save()
-                    self.tempVars.reload.toggle()
-                }
+ //               .padding(.leading, 20)
+ //               .padding(.trailing, 20)
             }
-            .padding(.bottom, 10)
-            .padding(.leading, 20)
-            .padding(.trailing, 20)
                     
             Spacer()
         }

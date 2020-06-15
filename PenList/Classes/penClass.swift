@@ -41,6 +41,35 @@ class pens: NSObject {
         sortArrayByName()
     }
     
+    init(manID: String) {
+        super.init()
+        
+        if myCloudDB == nil {
+            myCloudDB = CloudKitInteraction()
+        }
+        
+        for item in myCloudDB.getPens(manID: manID) {
+            let object = pen(passedPenID: item.penID,
+                             passedfilingSystem: item.filingSystem,
+                             passedname: item.name,
+                             passedmanID: item.manID,
+                             passednotes: item.notes,
+                             passeddiameterBody: item.diameterBody,
+                             passeddiameterGrip: item.diameterGrip,
+                             passeddiameterCap: item.diameterCap,
+                             passedlengthBody: item.lengthBody,
+                             passedlengthCap: item.lengthCap,
+                             passedlengthClosed: item.lengthClosed,
+                             passedweightBody: item.weightBody,
+                             passedweightCap: item.weightCap,
+                             passedweightTotal: item.weightTotal)
+            
+            myPenList.append(object)
+        }
+        
+        sortArrayByName()
+    }
+    
     func append(_ newItem: pen){
         myPenList.append(newItem)
     }
@@ -94,6 +123,12 @@ class pen: NSObject, Identifiable, ObservableObject {
         }
     }
     
+    var penItems : [myPen] {
+        get {
+            return currentPenList.pens.filter { $0.penID == penID.uuidString }
+        }
+    }
+    
     override init() {
         super.init()
     }
@@ -130,6 +165,22 @@ class pen: NSObject, Identifiable, ObservableObject {
         
         isNew = false
     }
+    
+    func newPen(passedname: String,
+                passedmanID: String,
+                passednotes: String) {
+
+        manID = passedmanID
+        name = passedname
+        notes = passednotes
+        
+        save()
+        
+        isNew = false
+        
+        let _ = myPen(passedpenID: penID.uuidString, passedname: name, passednotes: notes)
+    }
+
 
     func save()
     {
@@ -198,6 +249,17 @@ extension CloudKitInteraction {
     func getPens()->[Pen] {
         let predicate = NSPredicate(format: "TRUEPREDICATE")
 
+        let query = CKQuery(recordType: "pen", predicate: predicate)
+        let sem = DispatchSemaphore(value: 0)
+        fetchPrivateServices(query: query, sem: sem, completion: nil)
+        
+        sem.wait()
+        
+        return populatePen(returnArray)
+    }
+    
+    func getPens(manID: String)->[Pen] {
+        let predicate = NSPredicate(format: "manID == \"\(manID)\"") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "pen", predicate: predicate)
         let sem = DispatchSemaphore(value: 0)
         fetchPrivateServices(query: query, sem: sem, completion: nil)

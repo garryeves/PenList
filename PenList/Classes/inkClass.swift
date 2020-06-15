@@ -33,6 +33,27 @@ class inks: NSObject {
         sortArrayByName()
     }
     
+    init(manID: String) {
+        super.init()
+        
+        if myCloudDB == nil {
+            myCloudDB = CloudKitInteraction()
+        }
+        
+        for item in myCloudDB.getInks(manID: manID) {
+            let object = ink(passedinkID: item.inkID,
+                             passedcolour: item.colour,
+                             passedinkFamily: item.inkFamily,
+                             passedinkType: item.inkType,
+                             passedmanID: item.manID,
+                             passedname: item.name,
+                             passednotes: item.notes)
+            myInks.append(object)
+        }
+        
+        sortArrayByName()
+    }
+    
     func append(_ newItem: ink){
         myInks.append(newItem)
     }
@@ -77,6 +98,12 @@ class ink: NSObject, Identifiable, ObservableObject {
             return ""
         }
     }
+    
+    var inkItems : [myInk] {
+        get {
+            return currentInkList.inks.filter { $0.inkID == inkID.uuidString }
+        }
+    }
 
     override init() {
         super.init()
@@ -99,6 +126,20 @@ class ink: NSObject, Identifiable, ObservableObject {
         name = passedname
         notes = passednotes
         isNew = false
+    }
+    
+    func newInk(passedmanID: String,
+                passedname: String,
+                passednotes: String)
+    {
+        manID = passedmanID
+        name = passedname
+        notes = passednotes
+        isNew = false
+
+        save()
+        
+        let _ = myInk(passedinkID: inkID.uuidString, passednotes: notes)
     }
 
     func save()
@@ -146,6 +187,18 @@ extension CloudKitInteraction {
     
     func getInks()->[Ink] {
         let predicate = NSPredicate(format: "TRUEPREDICATE")
+
+        let query = CKQuery(recordType: "ink", predicate: predicate)
+        let sem = DispatchSemaphore(value: 0)
+        fetchPrivateServices(query: query, sem: sem, completion: nil)
+        
+        sem.wait()
+        
+        return populateInk(returnArray)
+    }
+    
+    func getInks(manID: String)->[Ink] {
+        let predicate = NSPredicate(format: "manID == \"\(manID)\"") // better be accurate to get only the record you need
 
         let query = CKQuery(recordType: "ink", predicate: predicate)
         let sem = DispatchSemaphore(value: 0)
