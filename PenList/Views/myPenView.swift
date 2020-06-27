@@ -40,6 +40,7 @@ struct myPenView: View {
     @ObservedObject var tempVars = myPenDetailsWorkingVariables()
     @ObservedObject var tempPhoto = selectedImageClass()
     @State var showPhotoPicker = false
+    @State var showDatePicker = false
     
     var body: some View {
         if workingVariables.selectedMyPen.penID == "" && !tempVars.showManufacturer {
@@ -129,12 +130,20 @@ struct myPenView: View {
                     
                     TextField("Price", text: $workingVariables.selectedMyPen.cost)
                     
-                    if !kbDetails.readyToAppear {
-                            DatePicker(selection: $workingVariables.selectedMyPen.datePurchased, displayedComponents: .date) {
-                                Text("Purchase Date")
+                    #if targetEnvironment(macCatalyst)
+                        DatePicker(selection: $workingVariables.selectedMyPen.datePurchased, displayedComponents: .date) {
+                            Text("Purchase Date")
+                        }
+                        .labelsHidden()
+                    #else
+                         Text(workingVariables.selectedMyPen.datePurchased.formatDateToString)
+                            .onTapGesture {
+                                self.showDatePicker = true
                             }
-                            .labelsHidden()
-                    }
+                            .sheet(isPresented: self.$showDatePicker, onDismiss: { self.showDatePicker = false }) {
+                                pickerDateView(displayTitle: "Purchase Date", showPicker: self.$showDatePicker, selectedDate: self.$workingVariables.selectedMyPen.datePurchased)
+                                }
+                    #endif
                 }
             }
             .frame(height: 400)
@@ -182,6 +191,7 @@ struct myPenView: View {
                                .filter({$0.isKeyWindow}).first
             keyWindow!.endEditing(true)
         }
+        .padding(.bottom, kbDetails.currentHeight)
     }
 }
 
@@ -191,6 +201,7 @@ struct myPenViewPhone: View {
     
     @ObservedObject var kbDetails = KeyboardResponder()
     @ObservedObject var tempVars = myPenDetailsWorkingVariables()
+    @State var showDatePicker = false
     
     var body: some View {
         if workingVariables.selectedMyPen.penID == "" && !tempVars.showManufacturer {
@@ -303,12 +314,13 @@ struct myPenViewPhone: View {
                 .padding(.leading, 20)
                 .padding(.bottom, 5)
 
-                if !kbDetails.readyToAppear {
-                    DatePicker(selection: $workingVariables.selectedMyPen.datePurchased, displayedComponents: .date) {
-                        Text("Purchase Date")
+                 Text(workingVariables.selectedMyPen.datePurchased.formatDateToString)
+                    .onTapGesture {
+                        self.showDatePicker = true
                     }
-                    .labelsHidden()
-                }
+                    .sheet(isPresented: self.$showDatePicker, onDismiss: { self.showDatePicker = false }) {
+                        pickerDateView(displayTitle: "Purchase Date", showPicker: self.$showDatePicker, selectedDate: self.$workingVariables.selectedMyPen.datePurchased)
+                        }
             }
             .padding(.bottom, 5)
             .padding(.leading, 20)
@@ -340,5 +352,6 @@ struct myPenViewPhone: View {
                                .filter({$0.isKeyWindow}).first
             keyWindow!.endEditing(true)
         }
+        .padding(.bottom, kbDetails.currentHeight)
     }
 }

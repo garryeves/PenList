@@ -10,10 +10,9 @@ import SwiftUI
 
 struct EDCReviewView: View {
     @ObservedObject var tempVars: contentViewWorkingVariables
-    
+    @ObservedObject var kbDetails = KeyboardResponder()
     @Binding var showChild: Bool
     
-    @ObservedObject var kbDetails = KeyboardResponder()
     
     var body: some View {
         return VStack {
@@ -72,6 +71,7 @@ struct EDCReviewView: View {
                                .filter({$0.isKeyWindow}).first
             keyWindow!.endEditing(true)
         }
+        .padding(.bottom, kbDetails.currentHeight)
     }
 }
 

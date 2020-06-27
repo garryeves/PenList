@@ -10,6 +10,7 @@ import SwiftUI
 
 struct penDimensionView: View {
     @ObservedObject var workingVariables: mainWorkingVariables
+    @ObservedObject var kbDetails = KeyboardResponder()
     @Binding var showChild: Bool
     
     var body: some View {
@@ -95,5 +96,6 @@ struct penDimensionView: View {
             
             Spacer()
         }
+        .padding(.bottom, kbDetails.currentHeight)
     }
 }

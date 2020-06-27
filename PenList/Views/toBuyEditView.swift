@@ -10,6 +10,7 @@ import SwiftUI
 
 struct toBuyEditView: View {
     @ObservedObject var tempVars: myToBuyWorkingVariables
+    @ObservedObject var kbDetails = KeyboardResponder()
     @Binding var showChild: Bool
     
     @State var reload = false
@@ -154,6 +155,7 @@ struct toBuyEditView: View {
                     
             Spacer()
         }
+        .padding(.bottom, kbDetails.currentHeight)
     }
 }
 

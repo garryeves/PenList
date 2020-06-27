@@ -19,6 +19,7 @@ struct penDetails: View {
     @Binding var showChild: Bool
     
     @ObservedObject var tempVariables = penDetailsWorkingVariables()
+    @ObservedObject var kbDetails = KeyboardResponder()
     
     @State var showDimensions = false
     @State var showMyPen = false
@@ -80,6 +81,9 @@ struct penDetails: View {
                     Button("Add") {
                         self.workingVariables.selectedPen.isNew = false
                         self.workingVariables.selectedPen.save()
+                        sleep(2)
+                        penList = pens()
+                        
                         self.workingVariables.reloadPen.toggle()
                     }
                 }
@@ -187,5 +191,6 @@ struct penDetails: View {
             
             Spacer()
         }
+        .padding(.bottom, kbDetails.currentHeight)
     }
 }

@@ -35,7 +35,9 @@ struct myInkView: View {
     
     @ObservedObject var tempVars = myInkDetailsWorkingVariables()
     @ObservedObject var tempPhoto = selectedImageClass()
+    @ObservedObject var kbDetails = KeyboardResponder()
     @State var showPhotoPicker = false
+    @State var showDatePicker = false
     
     var body: some View {
         UITableView.appearance().separatorStyle = .none
@@ -71,10 +73,20 @@ struct myInkView: View {
                     
                     TextField("Price", text: $workingVariables.selectedMyInk.cost)
                     
-                    DatePicker(selection: $workingVariables.selectedMyInk.dateBought, displayedComponents: .date) {
-                        Text("Purchase Date")
-                    }
-                    .labelsHidden()
+                    #if targetEnvironment(macCatalyst)
+                        DatePicker(selection: $workingVariables.selectedMyInk.dateBought, displayedComponents: .date) {
+                            Text("Purchase Date")
+                        }
+                        .labelsHidden()
+                    #else
+                         Text(workingVariables.selectedMyInk.dateBought.formatDateToString)
+                            .onTapGesture {
+                                self.showDatePicker = true
+                            }
+                            .sheet(isPresented: self.$showDatePicker, onDismiss: { self.showDatePicker = false }) {
+                                pickerDateView(displayTitle: "Purchase Date", showPicker: self.$showDatePicker, selectedDate: self.$workingVariables.selectedMyInk.dateBought)
+                                }
+                    #endif
                 }
             }
             .frame(height: 200)
@@ -113,5 +125,6 @@ struct myInkView: View {
             }
             .padding(.bottom, 15)
         }
+        .padding(.bottom, kbDetails.currentHeight)
     }
 }

@@ -19,6 +19,7 @@ struct inkDetails: View {
     @Binding var showChild: Bool
     
     @ObservedObject var tempVariables = inkDetailsWorkingVariables()
+    @ObservedObject var kbDetails = KeyboardResponder()
     
     @State var showMyInk = false
     
@@ -56,6 +57,9 @@ struct inkDetails: View {
                     Button("Add") {
                         self.workingVariables.selectedInk.isNew = false
                         self.workingVariables.selectedInk.save()
+                        sleep(2)
+                        inkList = inks()
+                        
                         self.workingVariables.reloadInk.toggle()
                     }
                 }
@@ -141,5 +145,6 @@ struct inkDetails: View {
             
             Spacer()
         }
+        .padding(.bottom, kbDetails.currentHeight)
     }
 }

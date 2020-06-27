@@ -77,6 +77,7 @@ struct toBuyView: View {
     @Binding var showChild: Bool
     
     @ObservedObject var tempVars = myToBuyWorkingVariables()
+    @ObservedObject var kbDetails = KeyboardResponder()
     
     @State var showEdit = false
     
@@ -224,5 +225,6 @@ struct toBuyView: View {
 
             Spacer()
         }
+        .padding(.bottom, kbDetails.currentHeight)
     }
 }

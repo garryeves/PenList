@@ -16,6 +16,7 @@
 		346E12822424A8D00077B04A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 346E12812424A8D00077B04A /* Assets.xcassets */; };
 		346E12852424A8D00077B04A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 346E12842424A8D00077B04A /* Preview Assets.xcassets */; };
 		346E12882424A8D00077B04A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 346E12862424A8D00077B04A /* LaunchScreen.storyboard */; };
+		346E3C0A24A6B33700034B2B /* PickerDateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346E3C0924A6B33700034B2B /* PickerDateView.swift */; };
 		3482AB90244BEA7D00815EAE /* toBuyEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3482AB8F244BEA7D00815EAE /* toBuyEditView.swift */; };
 		34872BD22424ADBD004270DD /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34872BD12424ADBD004270DD /* CloudKit.framework */; };
 		349848E0244A9807004FC850 /* penDimensionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349848DF244A9807004FC850 /* penDimensionView.swift */; };
@@ -66,6 +67,7 @@
 		346E12872424A8D00077B04A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		346E12892424A8D00077B04A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		346E128F2424A8DF0077B04A /* PenList.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PenList.entitlements; sourceTree = "<group>"; };
+		346E3C0924A6B33700034B2B /* PickerDateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerDateView.swift; sourceTree = "<group>"; };
 		3482AB8F244BEA7D00815EAE /* toBuyEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = toBuyEditView.swift; sourceTree = "<group>"; };
 		34872BD12424ADBD004270DD /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		349848DF244A9807004FC850 /* penDimensionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = penDimensionView.swift; sourceTree = "<group>"; };
@@ -220,6 +222,7 @@
 				34A47FEC2427264D008D5C98 /* selectPenView.swift */,
 				349848E1244BE7A2004FC850 /* toBuyView.swift */,
 				3482AB8F244BEA7D00815EAE /* toBuyEditView.swift */,
+				346E3C0924A6B33700034B2B /* PickerDateView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -298,6 +301,7 @@
 				34EDAEB12441487900234C64 /* KeyboardHeightPublisher.swift in Sources */,
 				34EDAEB72442BDED00234C64 /* myPenImagesView.swift in Sources */,
 				349848E2244BE7A2004FC850 /* toBuyView.swift in Sources */,
+				346E3C0A24A6B33700034B2B /* PickerDateView.swift in Sources */,
 				34EDAEB52442AE5F00234C64 /* penImageClass.swift in Sources */,
 				346E12792424A8CF0077B04A /* AppDelegate.swift in Sources */,
 				34A47FE12426FBE1008D5C98 /* inkDetails.swift in Sources */,
@@ -472,7 +476,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = PenList/PenList.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_ASSET_PATHS = "\"PenList/Preview Content\"";
 				DEVELOPMENT_TEAM = 76YDDNPU7W;
 				ENABLE_PREVIEWS = YES;
@@ -496,7 +500,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = PenList/PenList.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 6;
 				DEVELOPMENT_ASSET_PATHS = "\"PenList/Preview Content\"";
 				DEVELOPMENT_TEAM = 76YDDNPU7W;
 				ENABLE_PREVIEWS = YES;

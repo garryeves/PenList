@@ -79,6 +79,7 @@ import SwiftUI
 final class KeyboardResponder: ObservableObject {
     private var notificationCenter: NotificationCenter
     @Published var readyToAppear = false
+    var currentHeight: CGFloat = 0
 
     init(center: NotificationCenter = .default) {
         notificationCenter = center
@@ -91,10 +92,14 @@ final class KeyboardResponder: ObservableObject {
     }
 
     @objc func keyBoardWillShow(notification: Notification) {
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
+            currentHeight = keyboardSize.height
+        }
         readyToAppear = true
     }
 
     @objc func keyBoardWillHide(notification: Notification) {
+        currentHeight = 0
         readyToAppear = false
     }
 
