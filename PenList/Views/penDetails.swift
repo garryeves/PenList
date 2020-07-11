@@ -75,120 +75,122 @@ struct penDetails: View {
             }
             .padding()
             
-            if workingVariables.selectedPen.name == "" {
-                HStack {
-                    TextField("Name", text: $workingVariables.selectedPen.name)
-                    Button("Add") {
-                        self.workingVariables.selectedPen.isNew = false
-                        self.workingVariables.selectedPen.save()
-                        sleep(2)
-                        penList = pens()
-                        
-                        self.workingVariables.reloadPen.toggle()
-                    }
-                }
-                .padding(.leading, 10)
-                .padding(.trailing, 10)
-                .padding(.bottom, 5)
-            } else {
-                Form {
-                    TextField("Name", text: $workingVariables.selectedPen.name)
-                    
-                    Button(fillingSystemText) {
-                        self.tempVariables.rememberedIntFilingSystem = -1
-                        self.tempVariables.showModalFilling.displayList.removeAll()
-                        
-                        for item in fillerSystems {
-                            self.tempVariables.showModalFilling.displayList.append(displayEntry(entryText: item))
+            Form {
+                TextField("Name", text: $workingVariables.selectedPen.name)
+                if workingVariables.selectedPen.name != "" {
+                    Text(fillingSystemText)
+                        .foregroundColor(.blue)
+                        .onTapGesture {
+                            self.tempVariables.rememberedIntFilingSystem = -1
+                            self.tempVariables.showModalFilling.displayList.removeAll()
+                            
+                            for item in fillerSystems {
+                                self.tempVariables.showModalFilling.displayList.append(displayEntry(entryText: item))
+                            }
+                            
+                            self.tempVariables.showFilingPicker = true
                         }
-                        
-                        self.tempVariables.showFilingPicker = true
-                    }
                     .sheet(isPresented: self.$tempVariables.showFilingPicker, onDismiss: { self.tempVariables.showFilingPicker = false }) {
                         pickerView(displayTitle: "Select Filling System", rememberedInt: self.$tempVariables.rememberedIntFilingSystem, showPicker: self.$tempVariables.showFilingPicker, showModal: self.$tempVariables.showModalFilling)
                                 }
-                    Button(dimensionsCap) {
-                        self.showDimensions = true
-                    }
+                    Text(dimensionsCap)
+                        .foregroundColor(.blue)
+                        .onTapGesture {
+                            self.showDimensions = true
+                        }
                     
-                    Button(dimensionsBody) {
-                        self.showDimensions = true
-                    }
+                    Text(dimensionsBody)
+                        .foregroundColor(.blue)
+                        .onTapGesture {
+                            self.showDimensions = true
+                        }
                     
-                    Button(dimensionsGrip) {
-                        self.showDimensions = true
-                    }
+                    Text(dimensionsGrip)
+                        .foregroundColor(.blue)
+                        .onTapGesture {
+                            self.showDimensions = true
+                        }
                     .sheet(isPresented: self.$showDimensions, onDismiss: { self.showDimensions = false }) {
                         penDimensionView(workingVariables: self.workingVariables,
                                              showChild: self.$showDimensions)
                         }
                 }
-                .frame(height: 250)
-                .padding(.leading, 10)
-                .padding(.trailing, 10)
-                .padding(.bottom, 10)
             }
+            .frame(height: 250)
+            .padding(.leading, 10)
+            .padding(.trailing, 10)
+            .padding(.bottom, 10)
             
-            HStack {
-                VStack {
-                    Text("Notes")
-                        .font(.subheadline)
-                
-                    TextView(text: $workingVariables.selectedPen.notes)
-                        .padding()
-                }
-                .padding(.trailing, 10)
-                
-                VStack {
-                    Text("Current Pens")
-                        .font(.subheadline)
-                    .sheet(isPresented: self.$showMyPenPhone, onDismiss: { self.showMyPenPhone = false }) {
-                        myPenViewPhone(workingVariables: self.workingVariables, showChild: self.$showMyPenPhone)
-                        }
+            if workingVariables.selectedPen.name == "" {
+                Button("Add") {
+                    self.workingVariables.selectedPen.isNew = false
+                    self.workingVariables.selectedPen.save()
+                    sleep(2)
+                    penList = pens()
                     
-                    List {
-                        ForEach (workingVariables.selectedPen.penItems) { item in
-                            Text(item.name)
-                            .onTapGesture {
-                                self.workingVariables.selectedMyPen = item
-                                
-                                if UIDevice.current.userInterfaceIdiom == .phone {
-                                    self.showMyPenPhone = true
-                                } else {
-                                    self.showMyPen = true
+                    self.workingVariables.reloadPen.toggle()
+                }
+            } else {
+                HStack {
+                    VStack {
+                        Text("Notes")
+                            .font(.subheadline)
+                    
+                        TextView(text: $workingVariables.selectedPen.notes)
+                            .padding()
+                    }
+                    .padding(.trailing, 10)
+                    
+                    VStack {
+                        Text("Current Pens")
+                            .font(.subheadline)
+                        .sheet(isPresented: self.$showMyPenPhone, onDismiss: { self.showMyPenPhone = false }) {
+                            myPenViewPhone(workingVariables: self.workingVariables, showChild: self.$showMyPenPhone)
+                            }
+                        
+                        List {
+                            ForEach (workingVariables.selectedPen.penItems) { item in
+                                Text(item.name)
+                                .onTapGesture {
+                                    self.workingVariables.selectedMyPen = item
+                                    
+                                    if UIDevice.current.userInterfaceIdiom == .phone {
+                                        self.showMyPenPhone = true
+                                    } else {
+                                        self.showMyPen = true
+                                    }
                                 }
                             }
                         }
-                    }
-                    
-                    Button("Add Pen") {
-                        self.workingVariables.selectedMyPen = myPen()
-                        self.workingVariables.selectedMyPen.manufacturer = self.workingVariables.selectedPen.manufacturer
-                        self.workingVariables.selectedMyPen.penID = self.workingVariables.selectedPen.penID.uuidString
                         
-                        if UIDevice.current.userInterfaceIdiom == .phone {
-                            self.showMyPenPhone = true
-                        } else {
-                            self.showMyPen = true
+                        Button("Add Pen") {
+                            self.workingVariables.selectedMyPen = myPen()
+                            self.workingVariables.selectedMyPen.manufacturer = self.workingVariables.selectedPen.manufacturer
+                            self.workingVariables.selectedMyPen.penID = self.workingVariables.selectedPen.penID.uuidString
+                            
+                            if UIDevice.current.userInterfaceIdiom == .phone {
+                                self.showMyPenPhone = true
+                            } else {
+                                self.showMyPen = true
+                            }
                         }
+                        .sheet(isPresented: self.$showMyPen, onDismiss: { self.showMyPen = false
+                        }) {
+                            myPenView(workingVariables: self.workingVariables, showChild: self.$showMyPen)
+                            }
                     }
-                    .sheet(isPresented: self.$showMyPen, onDismiss: { self.showMyPen = false
-                    }) {
-                        myPenView(workingVariables: self.workingVariables, showChild: self.$showMyPen)
-                        }
                 }
-            }
-            .padding()
+                .padding()
 
-            Button("Save") {
-                if self.workingVariables.selectedPen.isNew {
-                    penList.append(self.workingVariables.selectedPen)
-                    self.workingVariables.selectedPen.isNew = false
-                    self.workingVariables.reload.toggle()
+                Button("Save") {
+                    if self.workingVariables.selectedPen.isNew {
+                        penList.append(self.workingVariables.selectedPen)
+                        self.workingVariables.selectedPen.isNew = false
+                        self.workingVariables.reload.toggle()
+                    }
+                    self.workingVariables.selectedPen.save()
                 }
-                self.workingVariables.selectedPen.save()
             }
-            
             Spacer()
         }
         .padding(.bottom, kbDetails.currentHeight)

@@ -15,7 +15,6 @@ class myPenDetailsWorkingVariables: ObservableObject {
 
     var showModalNibMaterial = pickerComms()
     var rememberedIntNibMaterial = -1
-    @Published var showNibMaterialPicker = false
     
     @Published var showManufacturer = false
     
@@ -41,6 +40,8 @@ struct myPenView: View {
     @ObservedObject var tempPhoto = selectedImageClass()
     @State var showPhotoPicker = false
     @State var showDatePicker = false
+    @State var showNibPicker = false
+    @State var showNibMaterialPicker = false
     
     var body: some View {
         if workingVariables.selectedMyPen.penID == "" && !tempVars.showManufacturer {
@@ -68,7 +69,8 @@ struct myPenView: View {
         if workingVariables.selectedMyPen.nibMaterial != "" {
             nibMaterialText = workingVariables.selectedMyPen.nibMaterial
         }
-        
+
+print("Garry - Reload")
         return VStack {
             HStack {
                 Spacer()
@@ -96,21 +98,25 @@ struct myPenView: View {
                     
                     TextField("colour", text: $workingVariables.selectedMyPen.colour)
                     
-                    Button(nibText) {
-                        self.tempVars.rememberedIntNib = -1
-                        self.tempVars.showModalNib.displayList.removeAll()
+                    Text(nibText)
+                        .foregroundColor(.blue)
+                        .onTapGesture {
+                            self.tempVars.rememberedIntNib = -1
+                            self.tempVars.showModalNib.displayList.removeAll()
+                            
+                            for item in nibTypes {
+                                self.tempVars.showModalNib.displayList.append(displayEntry(entryText: item))
+                            }
                         
-                        for item in nibTypes {
-                            self.tempVars.showModalNib.displayList.append(displayEntry(entryText: item))
-                        }
-                        
-                        self.tempVars.showNibPicker = true
+                        self.showNibPicker = true
                     }
-                    .sheet(isPresented: self.$tempVars.showNibPicker, onDismiss: { self.tempVars.showNibPicker = false }) {
-                        pickerView(displayTitle: "Select Filling System", rememberedInt: self.$tempVars.rememberedIntNib, showPicker: self.$tempVars.showNibPicker, showModal: self.$tempVars.showModalNib)
+                    .sheet(isPresented: self.$showNibPicker, onDismiss: { self.showNibPicker = false }) {
+                        pickerView(displayTitle: "Select Filling System", rememberedInt: self.$tempVars.rememberedIntNib, showPicker: self.$showNibPicker, showModal: self.$tempVars.showModalNib)
                                 }
                     
-                    Button(nibMaterialText) {
+                    Text(nibMaterialText)
+                    .foregroundColor(.blue)
+                    .onTapGesture {
                         self.tempVars.rememberedIntNibMaterial = -1
                         self.tempVars.showModalNibMaterial.displayList.removeAll()
                         
@@ -118,10 +124,10 @@ struct myPenView: View {
                             self.tempVars.showModalNibMaterial.displayList.append(displayEntry(entryText: item))
                         }
                         
-                        self.tempVars.showNibMaterialPicker = true
+                        self.showNibMaterialPicker = true
                     }
-                    .sheet(isPresented: self.$tempVars.showNibMaterialPicker, onDismiss: { self.tempVars.showNibMaterialPicker = false }) {
-                        pickerView(displayTitle: "Select Filling System", rememberedInt: self.$tempVars.rememberedIntNibMaterial, showPicker: self.$tempVars.showNibMaterialPicker, showModal: self.$tempVars.showModalNibMaterial)
+                    .sheet(isPresented: self.$showNibMaterialPicker, onDismiss: { self.showNibMaterialPicker = false }) {
+                        pickerView(displayTitle: "Select Filling System", rememberedInt: self.$tempVars.rememberedIntNibMaterial, showPicker: self.$showNibMaterialPicker, showModal: self.$tempVars.showModalNibMaterial)
                                 }
                 }
                 
@@ -201,7 +207,12 @@ struct myPenViewPhone: View {
     
     @ObservedObject var kbDetails = KeyboardResponder()
     @ObservedObject var tempVars = myPenDetailsWorkingVariables()
+    @ObservedObject var tempPhoto = selectedImageClass()
+    @State var showPhotoPicker = false
+    
     @State var showDatePicker = false
+    @State var showNibPicker = false
+    @State var showNibMaterialPicker = false
     
     var body: some View {
         if workingVariables.selectedMyPen.penID == "" && !tempVars.showManufacturer {
@@ -267,32 +278,36 @@ struct myPenViewPhone: View {
                 Text("Nib")
                     .padding(.trailing, 5)
 
-                Button(nibText) {
-                    self.tempVars.rememberedIntNib = -1
-                    self.tempVars.showModalNib.displayList.removeAll()
-                    
-                    for item in nibTypes {
-                        self.tempVars.showModalNib.displayList.append(displayEntry(entryText: item))
+                Text(nibText)
+                    .foregroundColor(.blue)
+                    .onTapGesture {
+                        self.tempVars.rememberedIntNib = -1
+                        self.tempVars.showModalNib.displayList.removeAll()
+                        
+                        for item in nibTypes {
+                            self.tempVars.showModalNib.displayList.append(displayEntry(entryText: item))
+                        }
+                        
+                        self.showNibPicker = true
                     }
-                    
-                    self.tempVars.showNibPicker = true
-                }
-                .sheet(isPresented: self.$tempVars.showNibPicker, onDismiss: { self.tempVars.showNibPicker = false }) {
-                    pickerView(displayTitle: "Select Filling System", rememberedInt: self.$tempVars.rememberedIntNib, showPicker: self.$tempVars.showNibPicker, showModal: self.$tempVars.showModalNib)
+                .sheet(isPresented: self.$showNibPicker, onDismiss: { self.showNibPicker = false }) {
+                    pickerView(displayTitle: "Select Filling System", rememberedInt: self.$tempVars.rememberedIntNib, showPicker: self.$showNibPicker, showModal: self.$tempVars.showModalNib)
                             }
                 
-                 Button(nibMaterialText) {
-                     self.tempVars.rememberedIntNibMaterial = -1
-                     self.tempVars.showModalNibMaterial.displayList.removeAll()
-                     
-                     for item in nibMaterialTypes {
-                         self.tempVars.showModalNibMaterial.displayList.append(displayEntry(entryText: item))
+                 Text(nibMaterialText)
+                    .foregroundColor(.blue)
+                     .onTapGesture {
+                         self.tempVars.rememberedIntNibMaterial = -1
+                         self.tempVars.showModalNibMaterial.displayList.removeAll()
+                         
+                         for item in nibMaterialTypes {
+                             self.tempVars.showModalNibMaterial.displayList.append(displayEntry(entryText: item))
+                         }
+                         
+                         self.showNibMaterialPicker = true
                      }
-                     
-                     self.tempVars.showNibMaterialPicker = true
-                 }
-                 .sheet(isPresented: self.$tempVars.showNibMaterialPicker, onDismiss: { self.tempVars.showNibMaterialPicker = false }) {
-                     pickerView(displayTitle: "Select Filling System", rememberedInt: self.$tempVars.rememberedIntNibMaterial, showPicker: self.$tempVars.showNibMaterialPicker, showModal: self.$tempVars.showModalNibMaterial)
+                 .sheet(isPresented: self.$showNibMaterialPicker, onDismiss: { self.showNibMaterialPicker = false }) {
+                     pickerView(displayTitle: "Select Filling System", rememberedInt: self.$tempVars.rememberedIntNibMaterial, showPicker: self.$showNibMaterialPicker, showModal: self.$tempVars.showModalNibMaterial)
                 }
             }
             .padding(.bottom, 5)
@@ -326,8 +341,22 @@ struct myPenViewPhone: View {
             .padding(.leading, 20)
             .padding(.trailing, 20)
             
-            Text("Notes")
-                .font(.headline)
+            HStack {
+                Spacer()
+                
+                Text("Notes")
+                    .font(.headline)
+                
+                Spacer()
+                
+                Button("Photos") {
+                    self.showPhotoPicker = true
+                }
+                    .padding(.trailing, 20)
+                    .sheet(isPresented: self.$showPhotoPicker, onDismiss: { self.showPhotoPicker = false }) {
+                        myPenImagesView(showChild: self.$showPhotoPicker, workingVariables: self.workingVariables)
+                    }
+            }
                 .padding(.bottom, 5)
 
             TextView(text: $workingVariables.selectedMyPen.notes)

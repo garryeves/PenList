@@ -145,7 +145,7 @@ struct toBuyView: View {
                                             Spacer() }) {
                         ForEach (topLevel.toBuys) { manuf in
                             Section(header: HStack {Spacer()
-                                                    Text(manuf.manufacturer).font(.headline)
+                                Text(manuf.manufacturer).font(.headline)
                                                     Spacer() }) {
                                 ForEach (manuf.toBuys) { item in
                                     VStack (alignment: .leading){

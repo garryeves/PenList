@@ -51,98 +51,95 @@ struct inkDetails: View {
             }
             .padding()
             
-            if workingVariables.selectedInk.name == "" {
-                HStack {
-                    TextField("Name", text: $workingVariables.selectedInk.name)
-                    Button("Add") {
-                        self.workingVariables.selectedInk.isNew = false
-                        self.workingVariables.selectedInk.save()
-                        sleep(2)
-                        inkList = inks()
-                        
-                        self.workingVariables.reloadInk.toggle()
-                    }
-                }
-                .padding(.leading, 10)
-                .padding(.trailing, 10)
-                .padding(.bottom, 5)
-            } else {
-                Form {
-                    TextField("Name", text: $workingVariables.selectedInk.name)
-                    
+            Form {
+                TextField("Name", text: $workingVariables.selectedInk.name)
+                
+                if workingVariables.selectedInk.name != "" {
                     TextField("Ink Family", text: $workingVariables.selectedInk.inkFamily)
                     
-                    Button(inkTypeText) {
-                        self.tempVariables.rememberedIntInkType = -1
-                        self.tempVariables.showModalInkType.displayList.removeAll()
-                        
-                        for item in inkTypes {
-                            self.tempVariables.showModalInkType.displayList.append(displayEntry(entryText: item))
+                    Text(inkTypeText)
+                        .foregroundColor(.blue)
+                        .onTapGesture {
+                            self.tempVariables.rememberedIntInkType = -1
+                            self.tempVariables.showModalInkType.displayList.removeAll()
+                            
+                            for item in inkTypes {
+                                self.tempVariables.showModalInkType.displayList.append(displayEntry(entryText: item))
+                            }
+                            
+                            self.tempVariables.showInkTypePicker = true
                         }
-                        
-                        self.tempVariables.showInkTypePicker = true
-                    }
                     .sheet(isPresented: self.$tempVariables.showInkTypePicker, onDismiss: { self.tempVariables.showInkTypePicker = false }) {
                         pickerView(displayTitle: "Select Filling System", rememberedInt: self.$tempVariables.rememberedIntInkType, showPicker: self.$tempVariables.showInkTypePicker, showModal: self.$tempVariables.showModalInkType)
                                 }
                     
                     TextField("Colour", text: $workingVariables.selectedInk.colour)
                 }
-                .frame(height: 220)
-                .padding(.leading, 10)
-                .padding(.trailing, 10)
-                .padding(.bottom, 10)
             }
-            
-            HStack {
-                VStack {
-                    Text("Notes")
-                        .font(.subheadline)
-                    
-                    TextView(text: $workingVariables.selectedInk.notes)
-                    .padding()
-                }
-                .padding(.trailing, 10)
+            .frame(height: 220)
+            .padding(.leading, 10)
+            .padding(.trailing, 10)
+            .padding(.bottom, 10)
                 
-                VStack {
-                    Text("Current Inks")
-                        .font(.subheadline)
+            if workingVariables.selectedInk.name == "" {
+                Button("Add") {
+                    self.workingVariables.selectedInk.isNew = false
+                    self.workingVariables.selectedInk.save()
+                    sleep(2)
+                    inkList = inks()
                     
-                    List {
-                        ForEach (workingVariables.selectedInk.inkItems) { item in
-                            Text(item.name)
-                            .onTapGesture {
-                                self.workingVariables.selectedMyInk = item
-                                
-                                self.showMyInk = true
+                    self.workingVariables.reloadInk.toggle()
+                }
+            } else {
+            
+                HStack {
+                    VStack {
+                        Text("Notes")
+                            .font(.subheadline)
+                        
+                        TextView(text: $workingVariables.selectedInk.notes)
+                        .padding()
+                    }
+                    .padding(.trailing, 10)
+                    
+                    VStack {
+                        Text("Current Inks")
+                            .font(.subheadline)
+                        
+                        List {
+                            ForEach (workingVariables.selectedInk.inkItems) { item in
+                                Text(item.name)
+                                .onTapGesture {
+                                    self.workingVariables.selectedMyInk = item
+                                    
+                                    self.showMyInk = true
+                                }
                             }
                         }
-                    }
-                    
-                    Button("Add Ink Stock") {
-                        self.workingVariables.selectedMyInk = myInk()
-                        self.workingVariables.selectedMyInk.manufacturer = self.workingVariables.selectedInk.manufacturer
-                        self.workingVariables.selectedMyInk.inkID = self.workingVariables.selectedInk.inkID.uuidString
                         
-                        self.showMyInk = true
-                    }
-                    .sheet(isPresented: self.$showMyInk, onDismiss: { self.showMyInk = false
-                    }) {
-                        myInkView(workingVariables: self.workingVariables, showChild: self.$showMyInk)
+                        Button("Add Ink Stock") {
+                            self.workingVariables.selectedMyInk = myInk()
+                            self.workingVariables.selectedMyInk.manufacturer = self.workingVariables.selectedInk.manufacturer
+                            self.workingVariables.selectedMyInk.inkID = self.workingVariables.selectedInk.inkID.uuidString
+                            
+                            self.showMyInk = true
                         }
+                        .sheet(isPresented: self.$showMyInk, onDismiss: { self.showMyInk = false
+                        }) {
+                            myInkView(workingVariables: self.workingVariables, showChild: self.$showMyInk)
+                            }
+                    }
+                }
+                .padding()
+                
+                Button("Save") {
+                    if self.workingVariables.selectedInk.isNew {
+                        inkList.append(self.workingVariables.selectedInk)
+                        self.workingVariables.selectedInk.isNew = false
+                    }
+                    self.workingVariables.selectedInk.save()
                 }
             }
-            .padding()
-            
-            Button("Save") {
-                if self.workingVariables.selectedInk.isNew {
-                    inkList.append(self.workingVariables.selectedInk)
-                    self.workingVariables.selectedInk.isNew = false
-                }
-                self.workingVariables.selectedInk.save()
-            }
-            
-            
             Spacer()
         }
         .padding(.bottom, kbDetails.currentHeight)

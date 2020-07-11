@@ -65,32 +65,36 @@ struct toBuyEditView: View {
             .padding(.top, 15)
                     
             Form {
-                Button(typeText) {
-                   self.tempVars.rememberedIntType = -1
-                   self.tempVars.showModalType.displayList.removeAll()
-                   
-                   for item in toBuyType {
-                       self.tempVars.showModalType.displayList.append(displayEntry(entryText: item))
+                Text(typeText)
+                    .foregroundColor(.blue)
+                    .onTapGesture {
+                       self.tempVars.rememberedIntType = -1
+                       self.tempVars.showModalType.displayList.removeAll()
+                       
+                       for item in toBuyType {
+                           self.tempVars.showModalType.displayList.append(displayEntry(entryText: item))
+                       }
+                       
+                       self.tempVars.showTypePicker = true
                    }
-                   
-                   self.tempVars.showTypePicker = true
-               }
                .padding(.trailing, 30)
                .sheet(isPresented: self.$tempVars.showTypePicker, onDismiss: { self.tempVars.showTypePicker = false }) {
                    pickerView(displayTitle: "Select Purchase Type", rememberedInt: self.$tempVars.rememberedIntType, showPicker: self.$tempVars.showTypePicker, showModal: self.$tempVars.showModalType)
                            }
                 
                 if tempVars.workingItem.type != "" {
-                    Button(manufacturerText) {
-                        self.tempVars.rememberedIntManufacturer = -1
-                        self.tempVars.showModalManufacturer.displayList.removeAll()
-                        
-                        for item in manufacturerList.manufacturers {
-                            self.tempVars.showModalManufacturer.displayList.append(displayEntry(entryText: item.name))
+                    Text(manufacturerText)
+                        .foregroundColor(.blue)
+                        .onTapGesture {
+                            self.tempVars.rememberedIntManufacturer = -1
+                            self.tempVars.showModalManufacturer.displayList.removeAll()
+                            
+                            for item in manufacturerList.manufacturers {
+                                self.tempVars.showModalManufacturer.displayList.append(displayEntry(entryText: item.name))
+                            }
+                            
+                            self.tempVars.showManufacturerPicker = true
                         }
-                        
-                        self.tempVars.showManufacturerPicker = true
-                    }
                     .sheet(isPresented: self.$tempVars.showManufacturerPicker, onDismiss: { self.tempVars.showManufacturerPicker = false }) {
                         pickerView(displayTitle: "Select Manufacturer", rememberedInt: self.$tempVars.rememberedIntManufacturer, showPicker: self.$tempVars.showManufacturerPicker, showModal: self.$tempVars.showModalManufacturer)
                                 }
@@ -103,16 +107,18 @@ struct toBuyEditView: View {
                           
                         TextField("Cost", text: $tempVars.workingItem.cost)
                         
-                        Button(typeStatus) {
-                           self.tempVars.rememberedIntStatus = -1
-                           self.tempVars.showModalStatus.displayList.removeAll()
-                           
-                           for item in toBuyStatus {
-                               self.tempVars.showModalStatus.displayList.append(displayEntry(entryText: item))
+                        Text(typeStatus)
+                            .foregroundColor(.blue)
+                            .onTapGesture {
+                               self.tempVars.rememberedIntStatus = -1
+                               self.tempVars.showModalStatus.displayList.removeAll()
+                               
+                               for item in toBuyStatus {
+                                   self.tempVars.showModalStatus.displayList.append(displayEntry(entryText: item))
+                               }
+                               
+                               self.tempVars.showStatusPicker = true
                            }
-                           
-                           self.tempVars.showStatusPicker = true
-                       }
                        .sheet(isPresented: self.$tempVars.showStatusPicker, onDismiss: { self.tempVars.showStatusPicker = false }) {
                            pickerView(displayTitle: "Select Status", rememberedInt: self.$tempVars.rememberedIntStatus, showPicker: self.$tempVars.showStatusPicker, showModal: self.$tempVars.showModalStatus)
                                    }
@@ -134,23 +140,11 @@ struct toBuyEditView: View {
                     .padding(.leading, 20)
                     .padding(.trailing, 20)
                 
-//                HStack {
-                    Button("Save") {
-                        self.tempVars.save()
-                        self.tempVars.tobuyList = toBuys()
-                    }
-                    
-//                    Spacer()
-//
-//                    Button("Mark as Bought") {
-//                        self.tempVars.workingItem.status = toBuyStatusBought
-//                        self.tempVars.save()
-//                        self.tempVars.reload.toggle()
-//                    }
-//                }
+                Button("Save") {
+                    self.tempVars.save()
+                    self.tempVars.tobuyList = toBuys()
+                }
                 .padding(.bottom, 10)
- //               .padding(.leading, 20)
- //               .padding(.trailing, 20)
             }
                     
             Spacer()

@@ -14,16 +14,16 @@ struct manufacturerView: View {
     @Binding var showChild: Bool
     @State var showPen = false
     @State var showInk = false
+    @State var newName = ""
     
     var body: some View {
         
         UITableView.appearance().separatorStyle = .none
         
-        
         let manufacturersPens = penList.pens.filter { $0.manID == workingVariables.selectedManufacturer.manID.uuidString }
-        
-        let manufacturersInks = inkList.inks.filter { $0.manID == workingVariables.selectedManufacturer.manID.uuidString }
 
+        let manufacturersInks = inkList.inks.filter { $0.manID == workingVariables.selectedManufacturer.manID.uuidString }
+        
         return VStack {
                 HStack {
                     Spacer()
@@ -37,48 +37,40 @@ struct manufacturerView: View {
                 }
                 .padding()
                 
-                if self.workingVariables.selectedManufacturer.name == "" {
-                    HStack {
-                        Text("Manufacturer")
-                            .padding(.trailing, 10)
-                        TextField("Manufacturer", text: self.$workingVariables.selectedManufacturer.name)
-                        Button("Add") {
-                            var dupFound = false
-                                            
-                            for item in manufacturerList.manufacturers {
-                                if item.name.lowercased() == self.workingVariables.selectedManufacturer.name.lowercased() {
-                                    dupFound = true
-                                    self.workingVariables.selectedManufacturer = item
-                                    break
-                                }
-                            }
-                                            
-                            if !dupFound {
-                                self.workingVariables.selectedManufacturer.isNew = false
-                                self.workingVariables.selectedManufacturer.save()
-                                sleep(2)
-                            }
-                            
-                            manufacturerList = manufacturers()
-                            self.workingVariables.reloadManufacturer.toggle()
-                        }
+                Form {
+                    TextField("Manufacturer", text: self.$workingVariables.selectedManufacturer.name)
+                    
+                    if self.workingVariables.selectedManufacturer.name != "" && !self.workingVariables.selectedManufacturer.isNew {
+                        TextField("Country", text: self.$workingVariables.selectedManufacturer.country)
                     }
-                    .padding(.leading, 10)
-                    .padding(.trailing, 10)
-                    .padding(.bottom, 5)
-                } else {
-                    Form {
-                        TextField("Manufacturer", text: self.$workingVariables.selectedManufacturer.name)
-                        
-                        if self.workingVariables.selectedManufacturer.name != "" && !self.workingVariables.selectedManufacturer.isNew {
-                            TextField("Country", text: self.$workingVariables.selectedManufacturer.country)
-                        }
-                    }
-                    .frame(height: 120)
-                    .padding(.leading, 10)
-                    .padding(.trailing, 10)
-                    .padding(.bottom, 20)
+                }
+                .frame(height: 120)
+                .padding(.leading, 10)
+                .padding(.trailing, 10)
+                .padding(.bottom, 20)
 
+                if self.workingVariables.selectedManufacturer.name == "" {
+                   Button("Add") {
+                       var dupFound = false
+
+                       for item in manufacturerList.manufacturers {
+                           if item.name.lowercased() == self.workingVariables.selectedManufacturer.name.lowercased() {
+                               dupFound = true
+                               self.workingVariables.selectedManufacturer = item
+                               break
+                           }
+                       }
+
+                       if !dupFound {
+                           self.workingVariables.selectedManufacturer.isNew = false
+                           self.workingVariables.selectedManufacturer.save()
+                           sleep(2)
+                       }
+                       manufacturerList = manufacturers()
+                       self.workingVariables.reloadManufacturer.toggle()
+                   }
+                   .padding()
+                } else {
                     if self.workingVariables.selectedManufacturer.name != "" && !self.workingVariables.selectedManufacturer.isNew {
                         Button("Save") {
                             if self.workingVariables.selectedManufacturer.isNew {
@@ -165,6 +157,7 @@ struct manufacturerView: View {
                         }
                     }
                 }
+            Spacer()
         }
         .padding(.bottom, kbDetails.currentHeight)
     }

@@ -56,6 +56,7 @@ class manufacturers: NSObject {
 class manufacturer: NSObject, Identifiable, ObservableObject {
     var manID = UUID()
     @Published var name = ""
+ //   var name = ""
     var notes = ""
     var country = ""
     var isNew = true
