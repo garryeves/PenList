@@ -15,13 +15,19 @@ class mainWorkingVariables: ObservableObject {
     
     var selectedInk = ink()
     
+    var selectedNotepad = notepad()
+    
     var myPenList = myPens()
     
     var myInkList = myInks()
     
+    var myNotepadList = myNotepads()
+    
     var selectedMyPen = myPen()
     
     var selectedMyInk = myInk()
+    
+    var selectedMyNotepad = myNotepad()
     
     func addPen() {
         if selectedManufacturer.isNew {
@@ -47,11 +53,25 @@ class mainWorkingVariables: ObservableObject {
         selectedInk.manID = selectedManufacturer.manID.uuidString
     }
     
+    func addNotepad() {
+        if selectedManufacturer.isNew {
+            if selectedManufacturer.name != "" {
+                selectedManufacturer.save()
+            } else { // No manufacturer details have been provided
+                return
+            }
+        }
+        selectedNotepad = notepad()
+        selectedNotepad.manID = selectedManufacturer.manID.uuidString
+    }
+    
     @Published var reload = false
     
     @Published var reloadManufacturer = false
     @Published var reloadPen = false
     @Published var reloadInk = false
+    @Published var reloadNotepad = false
+    @Published var reloadMyNotepad = false
     
     func reloadData() {
         myPenList = myPens()

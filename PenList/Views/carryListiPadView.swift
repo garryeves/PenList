@@ -9,9 +9,11 @@
 import SwiftUI
 
 struct carryListiPadView: View {
+    @ObservedObject var workingVariables: mainWorkingVariables
     @ObservedObject var tempVars: contentViewWorkingVariables
     
     @State var showEDCReview = false
+    @State var showMyNotepad = false
     
     var body: some View {
         return GeometryReader { geometry in
@@ -103,7 +105,32 @@ struct carryListiPadView: View {
                         }
                         Spacer()
                     } else {
-                        Text("")
+                        VStack {
+                            Text("Notepads")
+                            .font(.headline)
+                            List {
+                                ForEach (currentNotepadList.activeNotepads) {item in
+                                    Text("\(item.name)")
+                                        .contextMenu {
+                                            Button("Finished") {
+                                                item.finishedUsing = Date()
+                                                item.save()
+                                                sleep(2)
+                                                currentNotepadList.reload()
+                                                self.tempVars.reloadScreen.toggle()
+                                            }
+                                        }
+                                    .onTapGesture {
+                                        self.workingVariables.selectedMyNotepad = item
+                                        self.showMyNotepad = true
+                                    }
+                                    .sheet(isPresented: self.$showMyNotepad, onDismiss: { self.showMyNotepad = false
+                                    }) {
+                                        myNotepadView(workingVariables: self.workingVariables, showChild: self.$showMyNotepad)
+                                        }
+                                }
+                            }
+                        }
                         Spacer()
                     }
                 }

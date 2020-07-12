@@ -77,6 +77,12 @@ class manufacturer: NSObject, Identifiable, ObservableObject {
         }
     }
     
+    var notepadItems: [notepad] {
+        get {
+            return notepadList.notepads.filter { $0.manID == manID.uuidString}
+        }
+    }
+    
     init(passedmanID: String,
          passedname: String,
          passednotes: String,

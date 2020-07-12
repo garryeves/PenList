@@ -59,9 +59,9 @@ struct ContentView: View {
                         if manufacturerList.manufacturers.count > 0 {
                             if currentUseList.use.count > 0 {
                                 if UIDevice.current.userInterfaceIdiom == .phone {
-                                    carryListiPhoneView(tempVars: self.tempVars)
+                                    carryListiPhoneView(workingVariables: self.workingVariables, tempVars: self.tempVars)
                                 } else {
-                                    carryListiPadView(tempVars: self.tempVars)
+                                    carryListiPadView(workingVariables: self.workingVariables, tempVars: self.tempVars)
                                 }
                             }
                             

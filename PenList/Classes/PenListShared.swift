@@ -11,8 +11,10 @@ import Foundation
 var manufacturerList = manufacturers()
 var inkList = inks()
 var penList = pens()
+var notepadList = notepads()
 var currentPenList = myPens()
 var currentInkList = myInks()
+var currentNotepadList = myNotepads()
 var currentUseList = currentUses()
 
 let currentPenStatusActive = "Active"

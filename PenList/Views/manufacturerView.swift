@@ -14,6 +14,7 @@ struct manufacturerView: View {
     @Binding var showChild: Bool
     @State var showPen = false
     @State var showInk = false
+    @State var showNotepad = false
     @State var newName = ""
     
     var body: some View {
@@ -23,6 +24,8 @@ struct manufacturerView: View {
         let manufacturersPens = penList.pens.filter { $0.manID == workingVariables.selectedManufacturer.manID.uuidString }
 
         let manufacturersInks = inkList.inks.filter { $0.manID == workingVariables.selectedManufacturer.manID.uuidString }
+        
+        let manufacturersNotepads = notepadList.notepads.filter { $0.manID == workingVariables.selectedManufacturer.manID.uuidString }
         
         return VStack {
                 HStack {
@@ -81,78 +84,211 @@ struct manufacturerView: View {
                         }
                         .padding(.bottom, 20)
                     
-                        VStack {
+                        if UIDevice.current.userInterfaceIdiom == .phone {
                             HStack {
-                                VStack {
-                                    HStack {
-                                        Spacer()
-                                        Text("Pens")
-                                            .font(.headline)
-                                        Spacer()
+                                Spacer()
+                                Text("Pens")
+                                    .font(.headline)
+                                Spacer()
+                            }
+                            
+                            if manufacturersPens.count > 0 {
+                                List {
+                                    ForEach (manufacturersPens) {item in
+                                        Text(item.name)
+                                        .onTapGesture {
+                                            self.workingVariables.selectedPen = item
+                                            self.showPen = true
+                                        }
                                     }
-                                    if manufacturersPens.count > 0 {
-                                        List {
-                                            ForEach (manufacturersPens) {item in
-                                                Text(item.name)
-                                                .onTapGesture {
-                                                    self.workingVariables.selectedPen = item
-                                                    self.showPen = true
+                                }
+                                .border(Color.gray)
+                                .padding(.leading, 20)
+                                .padding(.trailing, 20)
+                            }
+        
+                            Button("Add Pen") {
+                                self.workingVariables.addPen()
+
+                                self.showPen = true
+                            }
+                            .padding(.bottom, 10)
+                            .sheet(isPresented: self.$showPen, onDismiss: { self.showPen = false }) {
+                                penDetails(workingVariables: self.workingVariables, showChild: self.$showPen)
+                                }
+                                
+                            HStack {
+                                Spacer()
+                                Text("Inks")
+                                    .font(.headline)
+                                Spacer()
+                            }
+                            if manufacturersInks.count > 0 {
+                                List {
+                                    ForEach (manufacturersInks) {item in
+                                        Text(item.name)
+                                        .onTapGesture {
+                                            self.workingVariables.selectedInk = item
+                                            self.showInk = true
+                                        }
+                                    }
+                                }
+                                .border(Color.gray)
+                                .padding(.leading, 20)
+                                .padding(.trailing, 20)
+                            }
+                            
+                            Button("Add Ink") {
+                                self.workingVariables.addInk()
+                                
+                                self.showInk = true
+                            }
+                                .padding(.bottom, 10)
+                            .sheet(isPresented: self.$showInk, onDismiss: { self.showInk = false }) {
+                                inkDetails(workingVariables: self.workingVariables, showChild: self.$showInk)
+                                }
+                             
+                            HStack {
+                                Spacer()
+                                Text("Notepads")
+                                    .font(.headline)
+                                Spacer()
+                            }
+                            if manufacturersNotepads.count > 0 {
+                                List {
+                                    ForEach (manufacturersNotepads) {item in
+                                        Text(item.name)
+                                        .onTapGesture {
+                                            self.workingVariables.selectedNotepad = item
+                                            self.showNotepad = true
+                                        }
+                                    }
+                                }
+                                .border(Color.gray)
+                                .padding(.leading, 20)
+                                .padding(.trailing, 20)
+                            }
+                                                    
+                            Button("Add Notepad") {
+                                self.workingVariables.addNotepad()
+                                
+                                self.showNotepad = true
+                            }
+                                .padding(.bottom, 10)
+                            .sheet(isPresented: self.$showNotepad, onDismiss: { self.showNotepad = false }) {
+                                notepadDetails(workingVariables: self.workingVariables, showChild: self.$showNotepad)
+                                }
+                
+                        } else { //not iphone
+                            VStack {
+                                HStack {
+                                    VStack {
+                                        HStack {
+                                            Spacer()
+                                            Text("Pens")
+                                                .font(.headline)
+                                            Spacer()
+                                        }
+                                        if manufacturersPens.count > 0 {
+                                            List {
+                                                ForEach (manufacturersPens) {item in
+                                                    Text(item.name)
+                                                    .onTapGesture {
+                                                        self.workingVariables.selectedPen = item
+                                                        self.showPen = true
+                                                    }
                                                 }
                                             }
+                                            .border(Color.gray)
+                                            .padding(.leading, 20)
+                                            .padding(.trailing, 20)
                                         }
-                                        .border(Color.gray)
-                                        .padding(.leading, 20)
-                                        .padding(.trailing, 20)
-                                    }
-                                    Spacer()
-                                    
-                                    Button("Add Pen") {
-                                        self.workingVariables.addPen()
+                                        Spacer()
+                                        
+                                        Button("Add Pen") {
+                                            self.workingVariables.addPen()
 
-                                        self.showPen = true
+                                            self.showPen = true
+                                        }
+                                        .padding(.bottom, 10)
+                                        .sheet(isPresented: self.$showPen, onDismiss: { self.showPen = false }) {
+                                            penDetails(workingVariables: self.workingVariables, showChild: self.$showPen)
+                                            }
                                     }
                                     .padding(.bottom, 10)
-                                    .sheet(isPresented: self.$showPen, onDismiss: { self.showPen = false }) {
-                                        penDetails(workingVariables: self.workingVariables, showChild: self.$showPen)
+                                
+                                    VStack {
+                                        HStack {
+                                            Spacer()
+                                            Text("Inks")
+                                                .font(.headline)
+                                            Spacer()
                                         }
-                                }
-                                .padding(.bottom, 10)
-                            
-                                VStack {
-                                    HStack {
-                                        Spacer()
-                                        Text("Inks")
-                                            .font(.headline)
-                                        Spacer()
-                                    }
-                                    if manufacturersInks.count > 0 {
-                                        List {
-                                            ForEach (manufacturersInks) {item in
-                                                Text(item.name)
-                                                .onTapGesture {
-                                                    self.workingVariables.selectedInk = item
-                                                    self.showInk = true
+                                        if manufacturersInks.count > 0 {
+                                            List {
+                                                ForEach (manufacturersInks) {item in
+                                                    Text(item.name)
+                                                    .onTapGesture {
+                                                        self.workingVariables.selectedInk = item
+                                                        self.showInk = true
+                                                    }
                                                 }
                                             }
+                                            .border(Color.gray)
+                                            .padding(.leading, 20)
+                                            .padding(.trailing, 20)
                                         }
-                                        .border(Color.gray)
-                                        .padding(.leading, 20)
-                                        .padding(.trailing, 20)
-                                    }
-                                
-                                    Spacer()
                                     
-                                    Button("Add Ink") {
-                                        self.workingVariables.addInk()
+                                        Spacer()
                                         
-                                        self.showInk = true
-                                    }
-                                        .padding(.bottom, 10)
-                                    .sheet(isPresented: self.$showInk, onDismiss: { self.showInk = false }) {
-                                        inkDetails(workingVariables: self.workingVariables, showChild: self.$showInk)
+                                        Button("Add Ink") {
+                                            self.workingVariables.addInk()
+                                            
+                                            self.showInk = true
                                         }
+                                            .padding(.bottom, 10)
+                                        .sheet(isPresented: self.$showInk, onDismiss: { self.showInk = false }) {
+                                            inkDetails(workingVariables: self.workingVariables, showChild: self.$showInk)
+                                            }
+                                    }
+                                    .padding(.bottom, 10)
+                                    
+                                    VStack {
+                                        HStack {
+                                            Spacer()
+                                            Text("Notepads")
+                                                .font(.headline)
+                                            Spacer()
+                                        }
+                                        if manufacturersNotepads.count > 0 {
+                                            List {
+                                                ForEach (manufacturersNotepads) {item in
+                                                    Text(item.name)
+                                                    .onTapGesture {
+                                                        self.workingVariables.selectedNotepad = item
+                                                        self.showNotepad = true
+                                                    }
+                                                }
+                                            }
+                                            .border(Color.gray)
+                                            .padding(.leading, 20)
+                                            .padding(.trailing, 20)
+                                        }
+                                    
+                                        Spacer()
+                                        
+                                        Button("Add Notepad") {
+                                            self.workingVariables.addNotepad()
+                                            
+                                            self.showNotepad = true
+                                        }
+                                            .padding(.bottom, 10)
+                                        .sheet(isPresented: self.$showNotepad, onDismiss: { self.showNotepad = false }) {
+                                            notepadDetails(workingVariables: self.workingVariables, showChild: self.$showNotepad)
+                                            }
+                                    }
+                                    .padding(.bottom, 10)
                                 }
-                                .padding(.bottom, 10)
                             }
                         }
                     }

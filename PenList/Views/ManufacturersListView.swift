@@ -74,11 +74,19 @@ struct manufacturerItemsView: View {
                 }
             }
             if item.inkItems.count > 0 {
-                if item.inkItems.count == 0 {
-                    Text("1 ink")
+                if item.inkItems.count == 1 {
+                    Text("1 ink       ")
                 }
                 else {
-                    Text("\(item.inkItems.count) inks")
+                    Text("\(item.inkItems.count) inks       ")
+                }
+            }
+            if item.notepadItems.count > 0 {
+                if item.notepadItems.count == 1 {
+                    Text("1 notepad")
+                }
+                else {
+                    Text("\(item.notepadItems.count) notepads")
                 }
             }
         }
