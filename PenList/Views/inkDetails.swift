@@ -12,6 +12,7 @@ class inkDetailsWorkingVariables: ObservableObject {
     var showModalInkType = pickerComms()
     var rememberedIntInkType = -1
     @Published var showInkTypePicker = false
+    @Published var reload = false
 }
 
 struct inkDetails: View {
@@ -22,6 +23,8 @@ struct inkDetails: View {
     @ObservedObject var kbDetails = KeyboardResponder()
     
     @State var showMyInk = false
+
+    @State var noName = false
     
     var body: some View {
         
@@ -51,10 +54,14 @@ struct inkDetails: View {
             }
             .padding()
             
+            if workingVariables.selectedInk.name.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
+                Text("Please enter the name of the Ink and then press 'Add'")
+            }
+            
             Form {
                 TextField("Name", text: $workingVariables.selectedInk.name)
                 
-                if workingVariables.selectedInk.name != "" {
+                if workingVariables.selectedInk.name.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
                     TextField("Ink Family", text: $workingVariables.selectedInk.inkFamily)
                     
                     Text(inkTypeText)
@@ -81,14 +88,25 @@ struct inkDetails: View {
             .padding(.trailing, 10)
             .padding(.bottom, 10)
                 
-            if workingVariables.selectedInk.name == "" {
+            if workingVariables.selectedInk.name.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
                 Button("Add") {
-                    self.workingVariables.selectedInk.isNew = false
-                    self.workingVariables.selectedInk.save()
-                    sleep(2)
-                    inkList = inks()
-                    
-                    self.workingVariables.reloadInk.toggle()
+                    if self.workingVariables.selectedInk.name.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
+                        self.noName = true
+                    } else {
+                        self.workingVariables.selectedInk.isNew = false
+                        self.workingVariables.selectedInk.save()
+                        sleep(2)
+                        inkList = inks()
+                        
+                        self.tempVariables.reload.toggle()
+                    }
+                }
+                .alert(isPresented: self.$noName) {
+                    Alert(title: Text("Error"),
+                          message: Text("You need to provide an Ink name before you can add it"),
+                          dismissButton: .default(Text("OK"), action: {
+                            self.noName = false
+                             }))
                 }
             } else {
             

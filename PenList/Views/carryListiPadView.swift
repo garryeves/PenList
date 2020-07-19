@@ -19,7 +19,7 @@ struct carryListiPadView: View {
         return GeometryReader { geometry in
             ZStack(alignment: .leading) {
                 HStack {
-                    if currentUseList.use.count > 0 {
+             //       if currentUseList.use.count > 0 {
                         VStack {
                             Text("Carry List")
                                 .font(.headline)
@@ -48,7 +48,7 @@ struct carryListiPadView: View {
                             }
                         }
                         .frame(minWidth: 0, idealWidth: geometry.size.width/2, maxWidth: geometry.size.width/2)
-                    }
+               //     }
         
                     if self.tempVars.selectedPen.name != "" || self.tempVars.selectedInk.name != "" {
                         VStack (alignment: .leading){

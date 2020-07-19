@@ -27,6 +27,8 @@ class myInkDetailsWorkingVariables: ObservableObject {
             }
         }
     }
+    
+    @Published var reload = false
 }
 
 struct myInkView: View {
@@ -49,16 +51,24 @@ struct myInkView: View {
         return VStack {
             HStack {
                 Spacer()
-                Text(workingVariables.selectedMyInk.name)
+                if workingVariables.selectedInk.manufacturer != "" {
+                    Text("\(workingVariables.selectedInk.manufacturer) - \(workingVariables.selectedInk.name)")
                     .font(.title)
                     .sheet(isPresented: self.$tempVars.showManufacturer, onDismiss: { self.tempVars.showManufacturer = false }) {
                         selectInkView(workingVariables: self.workingVariables, showChild: self.$tempVars.showManufacturer)
                         }
+                } else {
+                    Text("\(workingVariables.selectedMyInk.manufacturer) - \(workingVariables.selectedMyInk.name)")
+                    .font(.title)
+                    .sheet(isPresented: self.$tempVars.showManufacturer, onDismiss: { self.tempVars.showManufacturer = false }) {
+                        selectInkView(workingVariables: self.workingVariables, showChild: self.$tempVars.showManufacturer)
+                        }
+                }
                 Spacer()
                 
                 Button("Close") {
                     self.workingVariables.myInkList = myInks()
-                    self.workingVariables.reload.toggle()
+                 //   self.workingVariables.reload.toggle()
                     self.showChild = false
                 }
             }
@@ -121,7 +131,8 @@ struct myInkView: View {
                 self.workingVariables.selectedMyInk.save()
                 sleep(2)
                 currentInkList = myInks()
-                self.workingVariables.reloadPen.toggle()
+                self.tempVars.reload.toggle()
+              //  self.workingVariables.reloadPen.toggle()
             }
             .padding(.bottom, 15)
         }

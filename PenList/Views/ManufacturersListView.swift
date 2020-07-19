@@ -8,13 +8,22 @@
 
 import SwiftUI
 
+class manufacturerListVariables: ObservableObject {
+    @Published var showManufacturer = false
+}
+
 struct ManufacturersListView: View {
     @ObservedObject var workingVariables: mainWorkingVariables
     @Binding var showChild: Bool
     
-    @State var showManufacturer = false
+    @ObservedObject var tempVars = manufacturerListVariables()
+    
     
     var body: some View {
+        if manufacturerList.manufacturers.count == 0 && !self.tempVars.showManufacturer {
+            self.tempVars.showManufacturer = true
+        }
+        
         return VStack {
             HStack {
                 Spacer()
@@ -28,31 +37,37 @@ struct ManufacturersListView: View {
             }
             .padding()
             
-            List {
-                ForEach (manufacturerList.manufacturers) {item in
-                    Section(header: HStack {Spacer()
-                                            Text(item.name).font(.title)
-                                            Spacer() }) {
-                        manufacturerItemsView(item: item)
-                    }
-                    .onTapGesture {
-                        self.workingVariables.selectedManufacturer = item
-                        self.showManufacturer = true
+            if manufacturerList.manufacturers.count == 0 {
+                Text("Welcome.  The first step to take is to create a Manufacturer entry.")
+            } else {
+                List {
+                    ForEach (manufacturerList.manufacturers) {item in
+                        Section(header: HStack {Spacer()
+                                                Text(item.name).font(.title)
+                                                Spacer() }) {
+                            manufacturerItemsView(item: item)
+                        }
+                        .onTapGesture {
+                            self.workingVariables.selectedManufacturer = item
+                            self.tempVars.showManufacturer = true
+                        }
                     }
                 }
+                .padding(.bottom,10)
             }
-            .padding(.bottom,10)
 
             HStack {
                 Spacer()
                                            
                 Button("Add Manufacturer") {
                     self.workingVariables.selectedManufacturer = manufacturer()
-                    self.showManufacturer = true
+                    self.tempVars.showManufacturer = true
                 }
                 .padding()
-                .sheet(isPresented: self.$showManufacturer, onDismiss: { self.showManufacturer = false }) {
-                    manufacturerView(workingVariables: self.workingVariables, showChild: self.$showManufacturer)
+                .sheet(isPresented: self.$tempVars.showManufacturer, onDismiss: { self.tempVars.showManufacturer = false
+                    self.workingVariables.reloadManufacturer.toggle()
+                }) {
+                    manufacturerView(workingVariables: self.workingVariables, showChild: self.$tempVars.showManufacturer)
                    }
                
                 Spacer()

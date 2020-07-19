@@ -12,6 +12,7 @@ class penDetailsWorkingVariables: ObservableObject {
     var showModalFilling = pickerComms()
     var rememberedIntFilingSystem = -1
     @Published var showFilingPicker = false
+    @Published var reload = false
 }
 
 struct penDetails: View {
@@ -24,6 +25,8 @@ struct penDetails: View {
     @State var showDimensions = false
     @State var showMyPen = false
     @State var showMyPenPhone = false
+    
+    @State var noName = false
     
     var body: some View {
         UITableView.appearance().separatorStyle = .none
@@ -60,8 +63,7 @@ struct penDetails: View {
             workingVariables.selectedPen.weightTotal != "" {
             dimensionsGrip = "Grip Diameter \(workingVariables.selectedPen.diameterGrip), closed length: \(workingVariables.selectedPen.lengthClosed), weight \(workingVariables.selectedPen.weightTotal)"
         }
-        
-        
+
         return VStack {
             HStack {
                 Spacer()
@@ -75,9 +77,13 @@ struct penDetails: View {
             }
             .padding()
             
+            if workingVariables.selectedPen.name.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
+                Text("Please enter the name of the Pen and then press 'Add'")
+            }
+            
             Form {
                 TextField("Name", text: $workingVariables.selectedPen.name)
-                if workingVariables.selectedPen.name != "" {
+                if workingVariables.selectedPen.name.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
                     Text(fillingSystemText)
                         .foregroundColor(.blue)
                         .onTapGesture {
@@ -121,14 +127,25 @@ struct penDetails: View {
             .padding(.trailing, 10)
             .padding(.bottom, 10)
             
-            if workingVariables.selectedPen.name == "" {
+            if workingVariables.selectedPen.name.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
                 Button("Add") {
-                    self.workingVariables.selectedPen.isNew = false
-                    self.workingVariables.selectedPen.save()
-                    sleep(2)
-                    penList = pens()
-                    
-                    self.workingVariables.reloadPen.toggle()
+                    if self.workingVariables.selectedPen.name.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
+                        self.noName = true
+                    } else {
+                        self.workingVariables.selectedPen.isNew = false
+                        self.workingVariables.selectedPen.save()
+                        sleep(2)
+                        penList = pens()
+                        
+                        self.tempVariables.reload.toggle()
+                    }
+                }
+                .alert(isPresented: self.$noName) {
+                    Alert(title: Text("Error"),
+                          message: Text("You need to provide a Pen name before you can add it"),
+                          dismissButton: .default(Text("OK"), action: {
+                            self.noName = false
+                             }))
                 }
             } else {
                 HStack {
@@ -186,7 +203,7 @@ struct penDetails: View {
                     if self.workingVariables.selectedPen.isNew {
                         penList.append(self.workingVariables.selectedPen)
                         self.workingVariables.selectedPen.isNew = false
-                        self.workingVariables.reload.toggle()
+              //          self.workingVariables.reload.toggle()
                     }
                     self.workingVariables.selectedPen.save()
                 }

@@ -19,6 +19,8 @@ class myNotepadDetailsWorkingVariables: ObservableObject {
             }
         }
     }
+    
+    @Published var reload = false
 }
 
 struct myNotepadView: View {
@@ -37,20 +39,28 @@ struct myNotepadView: View {
         if workingVariables.selectedMyNotepad.notepadID == "" && !tempVars.showManufacturer {
             tempVars.triggerNotepadSelector()
         }
-                
+
         return VStack {
             HStack {
                 Spacer()
-                Text(workingVariables.selectedMyNotepad.name)
+                if workingVariables.selectedNotepad.manufacturer != "" {
+                    Text("\(workingVariables.selectedNotepad.manufacturer) - \(workingVariables.selectedNotepad.name)")
                     .font(.title)
                     .sheet(isPresented: self.$tempVars.showManufacturer, onDismiss: { self.tempVars.showManufacturer = false }) {
                         selectNotepadView(workingVariables: self.workingVariables, showChild: self.$tempVars.showManufacturer)
                         }
+                } else {
+                    Text("\(workingVariables.selectedMyNotepad.manufacturer) - \(workingVariables.selectedMyNotepad.name)")
+                        .font(.title)
+                        .sheet(isPresented: self.$tempVars.showManufacturer, onDismiss: { self.tempVars.showManufacturer = false }) {
+                            selectNotepadView(workingVariables: self.workingVariables, showChild: self.$tempVars.showManufacturer)
+                        }
+                }
                 Spacer()
                 
                 Button("Close") {
                     self.workingVariables.myNotepadList = myNotepads()
-                    self.workingVariables.reload.toggle()
+              //     self.workingVariables.reload.toggle()
                     self.showChild = false
                 }
             }
@@ -128,7 +138,8 @@ struct myNotepadView: View {
                 self.workingVariables.selectedMyNotepad.save()
                 sleep(2)
                 currentNotepadList = myNotepads()
-                self.workingVariables.reloadPen.toggle()
+                self.tempVars.reload.toggle()
+             //   self.workingVariables.reloadPen.toggle()
             }
             .padding(.bottom, 15)
         }

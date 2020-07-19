@@ -28,6 +28,8 @@ class myPenDetailsWorkingVariables: ObservableObject {
     }
     
     @Published var image: Image? = nil
+    
+    @Published var reload = false
 }
 
 struct myPenView: View {
@@ -70,20 +72,28 @@ struct myPenView: View {
             nibMaterialText = workingVariables.selectedMyPen.nibMaterial
         }
 
-print("Garry - Reload")
+
         return VStack {
             HStack {
                 Spacer()
-                Text("\(workingVariables.selectedMyPen.manufacturer) - \(workingVariables.selectedMyPen.penName)")
-                    .font(.title)
-                .sheet(isPresented: self.$tempVars.showManufacturer, onDismiss: { self.tempVars.showManufacturer = false }) {
-                    selectPenView(workingVariables: self.workingVariables, showChild: self.$tempVars.showManufacturer)
-                    }
+                if workingVariables.selectedPen.manufacturer != "" {
+                    Text("\(workingVariables.selectedPen.manufacturer) - \(workingVariables.selectedPen.name)")
+                        .font(.title)
+                    .sheet(isPresented: self.$tempVars.showManufacturer, onDismiss: { self.tempVars.showManufacturer = false }) {
+                        selectPenView(workingVariables: self.workingVariables, showChild: self.$tempVars.showManufacturer)
+                        }
+                } else {
+                    Text("\(workingVariables.selectedMyPen.manufacturer) - \(workingVariables.selectedMyPen.name)")
+                        .font(.title)
+                    .sheet(isPresented: self.$tempVars.showManufacturer, onDismiss: { self.tempVars.showManufacturer = false }) {
+                        selectPenView(workingVariables: self.workingVariables, showChild: self.$tempVars.showManufacturer)
+                        }
+                }
                 Spacer()
                 
                 Button("Close") {
                     self.workingVariables.myPenList = myPens()
-                    self.workingVariables.reload.toggle()
+         //           self.workingVariables.reload.toggle()
                     self.showChild = false
                 }
             }
@@ -184,7 +194,8 @@ print("Garry - Reload")
                 self.workingVariables.selectedMyPen.save()
                 sleep(2)
                 currentPenList = myPens()
-                self.workingVariables.reloadPen.toggle()
+                self.tempVars.reload.toggle()
+                //self.workingVariables.reloadPen.toggle()
             }
             .padding(.bottom, 15)
         }

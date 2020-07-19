@@ -8,17 +8,24 @@
 
 import SwiftUI
 
+class notepadDetailsWorkingVariables: ObservableObject {
+
+    @Published var reload = false
+}
+
 struct notepadDetails: View {
     @ObservedObject var workingVariables: mainWorkingVariables
     @Binding var showChild: Bool
     
     @ObservedObject var kbDetails = KeyboardResponder()
+    @ObservedObject var tempVariables = notepadDetailsWorkingVariables()
     
     @State var showMyNotepad = false
+    @State var noName = false
     
     var body: some View {
         UITableView.appearance().separatorStyle = .none
-        
+
         return VStack {
             HStack {
                 Spacer()
@@ -32,18 +39,33 @@ struct notepadDetails: View {
             }
             .padding()
             
+            if workingVariables.selectedNotepad.name.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
+                Text("Please enter the name of the Notepad and then press 'Add'")
+            }
+            
             Form {
                 TextField("Name", text: $workingVariables.selectedNotepad.name)
             }
             
-            if workingVariables.selectedNotepad.name == "" {
+            if workingVariables.selectedNotepad.name.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
                 Button("Add") {
-                    self.workingVariables.selectedNotepad.isNew = false
-                    self.workingVariables.selectedNotepad.save()
-                    sleep(2)
-                    notepadList = notepads()
-                    
-                    self.workingVariables.reloadNotepad.toggle()
+                    if self.workingVariables.selectedNotepad.name.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
+                        self.noName = true
+                    } else {
+                        self.workingVariables.selectedNotepad.isNew = false
+                        self.workingVariables.selectedNotepad.save()
+                        sleep(2)
+                        notepadList = notepads()
+                        
+                        self.tempVariables.reload.toggle()
+                    }
+                }
+                .alert(isPresented: self.$noName) {
+                    Alert(title: Text("Error"),
+                          message: Text("You need to provide a Notepad name before you can add it"),
+                          dismissButton: .default(Text("OK"), action: {
+                            self.noName = false
+                             }))
                 }
             } else {
             
