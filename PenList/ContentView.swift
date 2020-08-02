@@ -31,6 +31,9 @@ struct ContentView: View {
     @State var showMyPenPhone = false
     @State var showMyInk = false
     @State var showToBuy = false
+    @State var showAbout = false
+    
+    @State var showAllPens = false
     
     init() {
         // To remove all separators including the actual ones:
@@ -38,9 +41,6 @@ struct ContentView: View {
     }
     
     var body: some View {
-        let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String
-        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as! String
-        
         self.workingVariables.reloadData()
     
         if manufacturerList.manufacturers.count == 0 && !self.tempVars.showManufacturers {
@@ -52,8 +52,13 @@ struct ContentView: View {
                 Spacer()
                 Text("Pen List")
                     .font(.title)
+                    .onTapGesture {
+                        self.showAbout.toggle()
+                }
+                .sheet(isPresented: self.$showAbout, onDismiss: { self.showAbout = false }) {
+                    aboutScreenView(showChild: self.$showAbout)
+                    }
                 Spacer()
-                Text("Version \(version) - \(build)")
             }
             .padding()
             
@@ -62,64 +67,80 @@ struct ContentView: View {
                     
                     VStack {
                         if manufacturerList.manufacturers.count > 0 {
-                         //   if currentUseList.use.count > 0 || self.tempVars.selectedPen.penID != "" || self.tempVars.selectedInk.inkID != ""  {
-                                if UIDevice.current.userInterfaceIdiom == .phone {
-                                    carryListiPhoneView(workingVariables: self.workingVariables, tempVars: self.tempVars)
-                                } else {
-                                    carryListiPadView(workingVariables: self.workingVariables, tempVars: self.tempVars)
-                                }
-                //            }
+                            if UIDevice.current.userInterfaceIdiom == .phone {
+                                carryListiPhoneView(workingVariables: self.workingVariables, tempVars: self.tempVars)
+                            } else {
+                                carryListiPadView(workingVariables: self.workingVariables, tempVars: self.tempVars)
+                            }
                             
                             HStack {
                                 VStack {
                                     HStack {
-                                        HStack {
+                                        if self.showAllPens {
                                             Text("My Pen Collection")
                                                 .font(.headline)
+                                                .onTapGesture {
+                                                    self.showAllPens.toggle()
+                                                }
                                             .sheet(isPresented: self.$showMyPenPhone, onDismiss: { self.showMyPenPhone = false }) {
                                                 myPenViewPhone(workingVariables: self.workingVariables, showChild: self.$showMyPenPhone)
                                                 }
-                                            
-                                            Text(" ")
-                                                .sheet(isPresented: self.$showMyPen, onDismiss: { self.showMyPen = false
-                                                }) {
-                                                    myPenView(workingVariables: self.workingVariables, showChild: self.$showMyPen)
-                                                    }
+                                        
+                                        } else {
+                                            Text("My Unused Pens")
+                                                .font(.headline)
+                                                .onTapGesture {
+                                                    self.showAllPens.toggle()
+                                                }
+                                            .sheet(isPresented: self.$showMyPenPhone, onDismiss: { self.showMyPenPhone = false }) {
+                                                myPenViewPhone(workingVariables: self.workingVariables, showChild: self.$showMyPenPhone)
+                                                }
                                         }
-//                                        if self.workingVariables.myPenList.pens.count > 0 {
-//                                            Button("Add to collection") {
-//                                                self.workingVariables.selectedMyPen = myPen()
-//                                                if UIDevice.current.userInterfaceIdiom == .phone {
-//                                                    self.showMyPenPhone = true
-//                                                } else {
-//                                                    self.showMyPen = true
-//                                                }
-//                                            }
-//                                            .padding(.leading, 10)
-//                                            .sheet(isPresented: self.$showMyPen, onDismiss: { self.showMyPen = false
-//                                            }) {
-//                                                myPenView(workingVariables: self.workingVariables, showChild: self.$showMyPen)
-//                                                }
-//                                        }
+                                        
+                                        Text(" ")
+                                            .sheet(isPresented: self.$showMyPen, onDismiss: { self.showMyPen = false
+                                            }) {
+                                                myPenView(workingVariables: self.workingVariables, showChild: self.$showMyPen)
+                                                }
                                     }
                                     
-                                    List {
-                                        ForEach (self.workingVariables.myPenList.pens) {item in
-                                            Text(item.name)
-
-                                                .contextMenu {
-                                                    Button("Details") {
-                                                        self.workingVariables.selectedMyPen = item
-                                                        if UIDevice.current.userInterfaceIdiom == .phone {
-                                                             self.showMyPenPhone = true
-                                                         } else {
-                                                             self.showMyPen = true
-                                                         }
+                                    if self.showAllPens {
+                                        List {
+                                            ForEach (self.workingVariables.myPenList.pens) {item in
+                                                Text(item.name)
+                                                    .contextMenu {
+                                                        Button("Details") {
+                                                            self.workingVariables.selectedMyPen = item
+                                                            if UIDevice.current.userInterfaceIdiom == .phone {
+                                                                 self.showMyPenPhone = true
+                                                             } else {
+                                                                 self.showMyPen = true
+                                                             }
+                                                        }
                                                     }
-                                                }
-                                                .onTapGesture {
-                                                    self.tempVars.selectedPen = item
-                                                }
+                                                    .onTapGesture {
+                                                        self.tempVars.selectedPen = item
+                                                    }
+                                            }
+                                        }
+                                    } else { // show unused pens only
+                                        List {
+                                            ForEach (self.workingVariables.myPenList.unusedPens) {item in
+                                                Text(item.name)
+                                                    .contextMenu {
+                                                        Button("Details") {
+                                                            self.workingVariables.selectedMyPen = item
+                                                            if UIDevice.current.userInterfaceIdiom == .phone {
+                                                                 self.showMyPenPhone = true
+                                                             } else {
+                                                                 self.showMyPen = true
+                                                             }
+                                                        }
+                                                    }
+                                                    .onTapGesture {
+                                                        self.tempVars.selectedPen = item
+                                                    }
+                                            }
                                         }
                                     }
                                 }
@@ -131,17 +152,6 @@ struct ContentView: View {
                                             .sheet(isPresented: self.$showMyInk, onDismiss: { self.showMyInk = false }) {
                                                 myInkView(workingVariables: self.workingVariables, showChild: self.$showMyInk)
                                                 }
-                                        
-//                                        if inkList.inks.count > 0 {
-//                                            Button("Add to collection") {
-//                                                self.workingVariables.selectedMyInk = myInk()
-//                                                self.showMyInk = true
-//                                            }
-//                                            .padding(.leading, 10)
-//                                            .sheet(isPresented: self.$showMyInk, onDismiss: { self.showMyInk = false }) {
-//                                                myInkView(workingVariables: self.workingVariables, showChild: self.$showMyInk)
-//                                                }
-//                                        }
                                     }
                                     
                                     List {
@@ -183,7 +193,7 @@ struct ContentView: View {
                             .sheet(isPresented: self.$showToBuy, onDismiss: {
                                 self.showToBuy = false
                                               }) {
-                                toBuyView(showChild: self.$showToBuy)
+                                    toBuyView(showChild: self.$showToBuy)
                                 }
                         }
                     }

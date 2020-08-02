@@ -82,6 +82,29 @@ class myPens: NSObject {
             return myPenList
         }
     }
+    
+    var unusedPens: [myPen] {
+        get {
+            var tempList: [myPen] = Array()
+            
+            for item in myPenList {
+                var itemFound = false
+                
+                for edc in currentUseList.use {
+                    if item.myPenID.uuidString == edc.penID {
+                        itemFound = true
+                        break
+                    }
+                }
+                
+                if !itemFound {
+                    tempList.append(item)
+                }
+            }
+            
+            return tempList
+        }
+    }
 }
 
 class myPen: NSObject, Identifiable, ObservableObject {
