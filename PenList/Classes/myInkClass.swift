@@ -116,6 +116,15 @@ class myInk: NSObject, Identifiable, ObservableObject {
         }
     }
     
+    var inkFamily: String {
+        for item in inkList.inks {
+            if item.inkID.uuidString == inkID {
+                return item.inkFamily
+            }
+        }
+        return ""
+    }
+    
     var name: String {
         get {
             for item in inkList.inks {

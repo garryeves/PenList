@@ -87,6 +87,18 @@ class currentUse: NSObject, Identifiable, ObservableObject {
         }
     }
     
+    var penManufacturer: String {
+        get {
+            for item in currentPenList.pens {
+                if item.myPenID.uuidString == penID {
+                    return item.manufacturer
+                }
+            }
+            
+            return ""
+        }
+    }
+    
     var inkName: String {
         get {
             for item in inkList.inks {
@@ -97,6 +109,22 @@ class currentUse: NSObject, Identifiable, ObservableObject {
             return ""
         }
     }
+    
+    var inkManufacturer: String {
+        get {
+            for item in inkList.inks {
+                if item.inkID.uuidString == inkID {
+                    return item.manufacturer
+                }
+            }
+            return ""
+        }
+    }
+    
+    
+    
+    
+    
     
     override init() {
         super.init()

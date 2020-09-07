@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3405FBEF2505DEF4002472E7 /* EDCView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3405FBEE2505DEF4002472E7 /* EDCView.swift */; };
+		3405FBF12505DF42002472E7 /* inkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3405FBF02505DF42002472E7 /* inkView.swift */; };
+		3410E15C2505E25B00FC1ED5 /* notepadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3410E15B2505E25B00FC1ED5 /* notepadView.swift */; };
 		3440FF2A24551C2900528D32 /* ManufacturersListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440FF2924551C2900528D32 /* ManufacturersListView.swift */; };
 		3463D21D242ED07E005B5D45 /* selectInkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3463D21C242ED07E005B5D45 /* selectInkView.swift */; };
 		346E12792424A8CF0077B04A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346E12782424A8CF0077B04A /* AppDelegate.swift */; };
@@ -22,7 +25,6 @@
 		349848E0244A9807004FC850 /* penDimensionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349848DF244A9807004FC850 /* penDimensionView.swift */; };
 		349848E2244BE7A2004FC850 /* toBuyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349848E1244BE7A2004FC850 /* toBuyView.swift */; };
 		349D8E13243981B200BC0CBB /* carryListiPadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349D8E12243981B200BC0CBB /* carryListiPadView.swift */; };
-		349D8E152439835000BC0CBB /* carryListiPhoneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349D8E142439835000BC0CBB /* carryListiPhoneView.swift */; };
 		34A47FB62424B40B008D5C98 /* CloudKitInteraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A47FB52424B40B008D5C98 /* CloudKitInteraction.swift */; };
 		34A47FB92424B486008D5C98 /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A47FB82424B486008D5C98 /* UserInfo.swift */; };
 		34A47FBD2424B51C008D5C98 /* EvesCRMSharedFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A47FBB2424B51C008D5C98 /* EvesCRMSharedFiles.swift */; };
@@ -61,6 +63,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3405FBEE2505DEF4002472E7 /* EDCView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EDCView.swift; sourceTree = "<group>"; };
+		3405FBF02505DF42002472E7 /* inkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = inkView.swift; sourceTree = "<group>"; };
+		3410E15B2505E25B00FC1ED5 /* notepadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = notepadView.swift; sourceTree = "<group>"; };
 		3440FF2924551C2900528D32 /* ManufacturersListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManufacturersListView.swift; sourceTree = "<group>"; };
 		3463D21C242ED07E005B5D45 /* selectInkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = selectInkView.swift; sourceTree = "<group>"; };
 		346E12752424A8CE0077B04A /* PenList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PenList.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -79,7 +84,6 @@
 		349848DF244A9807004FC850 /* penDimensionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = penDimensionView.swift; sourceTree = "<group>"; };
 		349848E1244BE7A2004FC850 /* toBuyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = toBuyView.swift; sourceTree = "<group>"; };
 		349D8E12243981B200BC0CBB /* carryListiPadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = carryListiPadView.swift; sourceTree = "<group>"; };
-		349D8E142439835000BC0CBB /* carryListiPhoneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = carryListiPhoneView.swift; sourceTree = "<group>"; };
 		34A47FB52424B40B008D5C98 /* CloudKitInteraction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CloudKitInteraction.swift; sourceTree = "<group>"; };
 		34A47FB82424B486008D5C98 /* UserInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UserInfo.swift; path = PenList/UserInfo.swift; sourceTree = SOURCE_ROOT; };
 		34A47FBB2424B51C008D5C98 /* EvesCRMSharedFiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EvesCRMSharedFiles.swift; path = PenList/EvesCRMSharedFiles.swift; sourceTree = SOURCE_ROOT; };
@@ -218,7 +222,6 @@
 			children = (
 				34B1374824D65C26005AF7CF /* aboutScreenView.swift */,
 				349D8E12243981B200BC0CBB /* carryListiPadView.swift */,
-				349D8E142439835000BC0CBB /* carryListiPhoneView.swift */,
 				34EDAEA82441344100234C64 /* EDCReviewView.swift */,
 				34A47FE02426FBE1008D5C98 /* inkDetails.swift */,
 				3440FF2924551C2900528D32 /* ManufacturersListView.swift */,
@@ -241,6 +244,9 @@
 				349848E1244BE7A2004FC850 /* toBuyView.swift */,
 				3482AB8F244BEA7D00815EAE /* toBuyEditView.swift */,
 				346E3C0924A6B33700034B2B /* PickerDateView.swift */,
+				3405FBEE2505DEF4002472E7 /* EDCView.swift */,
+				3405FBF02505DF42002472E7 /* inkView.swift */,
+				3410E15B2505E25B00FC1ED5 /* notepadView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -272,7 +278,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1140;
-				LastUpgradeCheck = 1140;
+				LastUpgradeCheck = 1200;
 				ORGANIZATIONNAME = "Garry Eves";
 				TargetAttributes = {
 					346E12742424A8CE0077B04A = {
@@ -321,8 +327,10 @@
 				349848E2244BE7A2004FC850 /* toBuyView.swift in Sources */,
 				346E3C0A24A6B33700034B2B /* PickerDateView.swift in Sources */,
 				34EDAEB52442AE5F00234C64 /* penImageClass.swift in Sources */,
+				3405FBF12505DF42002472E7 /* inkView.swift in Sources */,
 				346E12792424A8CF0077B04A /* AppDelegate.swift in Sources */,
 				34A47FE12426FBE1008D5C98 /* inkDetails.swift in Sources */,
+				3410E15C2505E25B00FC1ED5 /* notepadView.swift in Sources */,
 				34A47FD72425951F008D5C98 /* penClass.swift in Sources */,
 				34A47FBD2424B51C008D5C98 /* EvesCRMSharedFiles.swift in Sources */,
 				34A47FB62424B40B008D5C98 /* CloudKitInteraction.swift in Sources */,
@@ -356,9 +364,9 @@
 				34A47FB92424B486008D5C98 /* UserInfo.swift in Sources */,
 				34A47FDF2426FBD1008D5C98 /* penDetails.swift in Sources */,
 				34A47FCB242594B3008D5C98 /* currentUseClass.swift in Sources */,
+				3405FBEF2505DEF4002472E7 /* EDCView.swift in Sources */,
 				34D00F8024B95C6400D93F42 /* myNotePads.swift in Sources */,
 				34A47FE5242703C1008D5C98 /* TextView.swift in Sources */,
-				349D8E152439835000BC0CBB /* carryListiPhoneView.swift in Sources */,
 				34D00F8424BAA1FC00D93F42 /* myNotepadView.swift in Sources */,
 				34A47FCD242594CC008D5C98 /* inkClass.swift in Sources */,
 				34EDAEB32442A03B00234C64 /* PhotoImportView.swift in Sources */,
@@ -406,6 +414,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -430,7 +439,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -466,6 +475,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -484,7 +494,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -500,11 +510,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = PenList/PenList.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 13;
 				DEVELOPMENT_ASSET_PATHS = "\"PenList/Preview Content\"";
 				DEVELOPMENT_TEAM = 76YDDNPU7W;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = PenList/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -524,11 +535,12 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = PenList/PenList.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 12;
+				CURRENT_PROJECT_VERSION = 13;
 				DEVELOPMENT_ASSET_PATHS = "\"PenList/Preview Content\"";
 				DEVELOPMENT_TEAM = 76YDDNPU7W;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = PenList/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
