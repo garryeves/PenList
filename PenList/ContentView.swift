@@ -21,7 +21,7 @@ class contentViewWorkingVariables: ObservableObject {
     
     @Published var showManufacturers = false
     
-    let columnWidth = 400
+    let columnWidth = 300
 }
 
 struct ContentView: View {

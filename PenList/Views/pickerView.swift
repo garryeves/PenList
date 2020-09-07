@@ -51,7 +51,7 @@ struct pickerView : View {
                 }
             }
             .padding()
-            .frame(width: 200, height: 300, alignment: .center)
+            .frame(width: 300, height: 300, alignment: .center)
             
             Button("Select") {
                 self.rememberedInt = self.selectedItem

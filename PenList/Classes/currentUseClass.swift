@@ -121,7 +121,16 @@ class currentUse: NSObject, Identifiable, ObservableObject {
         }
     }
     
-    
+    var inkFamily: String {
+        get {
+            for item in inkList.inks {
+                if item.inkID.uuidString == inkID {
+                    return item.inkFamily
+                }
+            }
+            return ""
+        }
+    }
     
     
     

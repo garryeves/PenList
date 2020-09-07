@@ -9,6 +9,8 @@
 import Foundation
 import CloudKit
 
+let defaultAddInkMessage = "Select Ink"
+
 class myPens: NSObject {
     fileprivate var myPenList: [myPen] = Array()
     
@@ -129,6 +131,28 @@ class myPen: NSObject, Identifiable, ObservableObject {
     var status = ""
     var yearOfManufacture = ""
     var photoList: myPenPhotos?
+    
+    var addInkMessage = defaultAddInkMessage
+    
+    private var storedInk = myInk()
+    
+    var selectedInk: myInk {
+        get {
+            return storedInk
+        }
+        set {
+            if newValue.name != "" {
+                var tempName = "\(newValue.manufacturer) - \(newValue.name)"
+                if newValue.inkFamily != "" {
+                    tempName = "\(newValue.manufacturer) - \(newValue.inkFamily) \(newValue.name)"
+                }
+                addInkMessage = "Add Ink \(tempName)"
+                storedInk = newValue
+            } else {
+                addInkMessage = defaultAddInkMessage
+            }
+        }
+    }
     
     var isNew = true
 

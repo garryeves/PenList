@@ -39,13 +39,13 @@ struct inkView: View {
                             LazyVGrid(columns: Array(repeating: .init(.flexible()), count: (Int(geometry.size.width) - 40) / tempVars.columnWidth)) {
                                 ForEach (self.workingVariables.myInkList.inks) {item in
                                     VStack {
+                                        Text("")
                                         if item.inkFamily == "" {
-                                            Text("\(item.manufacturer) - \(item.name)")
-                                                .padding()
+                                            Text(item.manufacturer)
                                         } else {
-                                            Text("\(item.manufacturer) - \(item.inkFamily) \(item.name)")
-                                                .padding()
+                                            Text("\(item.manufacturer) - \(item.inkFamily)")
                                         }
+                                        Text(item.name)
                                         
                                         HStack {
                                             Button("Details") {
@@ -76,24 +76,31 @@ struct inkView: View {
                         }
                         .background(Color.gray.opacity(0.05))
 
-                        Button("Manufacturers") {
-                            self.tempVars.showManufacturers = true
-                        }
-                        .padding()
-                        .sheet(isPresented: self.$tempVars.showManufacturers, onDismiss: { self.tempVars.showManufacturers = false }) {
-                            ManufacturersListView(workingVariables: self.workingVariables, showChild: self.$tempVars.showManufacturers)
-                           }
-
-                        if manufacturerList.manufacturers.count > 0 {
-                            Button("To Buy") {
-                                self.showToBuy = true
+                        HStack {
+                            Spacer()
+                                
+                            Button("Manufacturers") {
+                                self.tempVars.showManufacturers = true
                             }
                             .padding()
-                            .sheet(isPresented: self.$showToBuy, onDismiss: {
-                                self.showToBuy = false
-                                              }) {
-                                    toBuyView(showChild: self.$showToBuy)
+                            .sheet(isPresented: self.$tempVars.showManufacturers, onDismiss: { self.tempVars.showManufacturers = false }) {
+                                ManufacturersListView(workingVariables: self.workingVariables, showChild: self.$tempVars.showManufacturers)
+                               }
+
+                            Spacer()
+                            
+                            if manufacturerList.manufacturers.count > 0 {
+                                Button("To Buy") {
+                                    self.showToBuy = true
                                 }
+                                .padding()
+                                .sheet(isPresented: self.$showToBuy, onDismiss: {
+                                    self.showToBuy = false
+                                                  }) {
+                                        toBuyView(showChild: self.$showToBuy)
+                                    }
+                            }
+                            Spacer()
                         }
                     }
                 }

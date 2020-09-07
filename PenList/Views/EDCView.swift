@@ -8,9 +8,42 @@
 
 import SwiftUI
 
+class newPenWorkingVariables: ObservableObject {
+    var showModalInk = pickerComms()
+    var rememberedInkInt = -1
+    var penListItem = myPen()
+    
+    @Published var showInk = false
+    @Published var reload = false
+    
+    func processRecord(workingPenList: myPens, workingInkList: myInks) {
+        if rememberedInkInt > -1 {
+            var penIndex = 0
+            
+            var countIndex = 0
+            
+            for item in workingPenList.unusedPens {
+                if item.myPenID == penListItem.myPenID {
+                    penIndex = countIndex
+                    break
+                }
+                countIndex += 1
+            }
+            workingPenList.unusedPens[penIndex].selectedInk = workingInkList.inks[rememberedInkInt]
+            rememberedInkInt = -1
+//            var tempName = "\(selectedInk.manufacturer) - \(selectedInk.name)"
+//            if selectedInk.inkFamily != "" {
+//                tempName = "\(selectedInk.manufacturer) - \(selectedInk.inkFamily) \(selectedInk.name)"
+//            }
+//            addInkMessage = "Add Ink \(tempName)"
+        }
+    }
+}
+
 struct EDCView: View {
     @ObservedObject var workingVariables: mainWorkingVariables
     @ObservedObject var tempVars: contentViewWorkingVariables
+    @ObservedObject var newInk = newPenWorkingVariables()
     
     @State var showMyPen = false
     @State var showMyPenPhone = false
@@ -23,6 +56,10 @@ struct EDCView: View {
     @State var showEDCReview = false
 
     var body: some View {
+        if newInk.rememberedInkInt > -1 {
+            newInk.processRecord(workingPenList: self.workingVariables.myPenList, workingInkList: self.workingVariables.myInkList)
+        }
+        
         return  VStack {
             HStack {
                 Spacer()
@@ -45,11 +82,18 @@ struct EDCView: View {
                             LazyVGrid(columns: Array(repeating: .init(.flexible()), count: (Int(geometry.size.width) - 40) / tempVars.columnWidth)) {
                                 ForEach (currentUseList.use) {item in
                                     VStack {
-                                        Text("")
-                                        Text("\(item.penManufacturer) - \(item.penName)")
-                                        Text("")
-                                        Text("\(item.inkManufacturer) - \(item.inkName)")
-                                        Text("")
+                                        Text(item.penManufacturer)
+                                            .padding(.top, 10)
+                                        Text(item.penName)
+                                            .padding(.bottom, 5)
+                                     
+                                        if item.inkFamily == "" {
+                                            Text(item.inkManufacturer)
+                                        } else {
+                                            Text("\(item.inkManufacturer) - \(item.inkFamily)")
+                                        }
+                                        Text(item.inkName)
+
                                         HStack{
                                             Button("Review") {
                                                 self.tempVars.EDCItem = item
@@ -83,8 +127,8 @@ struct EDCView: View {
                         Text("My Unused Pens")
                             .font(.headline)
                             .padding()
-                            .sheet(isPresented: self.$showMyPenPhone, onDismiss: { self.showMyPenPhone = false }) {
-                                    myPenViewPhone(workingVariables: self.workingVariables, showChild: self.$showMyPenPhone)
+                            .sheet(isPresented: self.$showMyPen, onDismiss: { self.showMyPen = false }) {
+                                    myPenView(workingVariables: self.workingVariables, showChild: self.$showMyPen)
                             }
 
                         ScrollView {
@@ -92,8 +136,39 @@ struct EDCView: View {
                                 ForEach (self.workingVariables.myPenList.unusedPens) {item in
                                     VStack {
                                         Text("")
-                                        Text("\(item.manufacturer) - \(item.name)")
+                                        Text(item.manufacturer)
                                         Text("")
+                                        Text(item.name)
+                                        Text("")
+                                        Button(item.addInkMessage) {
+                                            if item.addInkMessage == defaultAddInkMessage {
+                                                self.newInk.penListItem = item
+                                                self.newInk.rememberedInkInt = -1
+                                                self.newInk.showModalInk.displayList.removeAll()
+                                                
+                                                for item in self.workingVariables.myInkList.inks {
+                                                    
+                                                    var tempName = "\(item.manufacturer) - \(item.name)"
+                                                    if item.inkFamily != "" {
+                                                        tempName = "\(item.manufacturer) - \(item.inkFamily) \(item.name)"
+                                                    }
+                                                    
+                                                    self.newInk.showModalInk.displayList.append(displayEntry(entryText: tempName))
+                                                }
+                                                
+                                                self.newInk.showInk = true
+                                            } else {
+                                                let temp = currentUse(newPenID: item.myPenID.uuidString, newInkID: item.selectedInk.inkID)
+                                                
+                                                currentUseList.append(temp)
+                                                self.workingVariables.myPenList = myPens()
+                                                newInk.reload.toggle()
+                                            }
+                                        }
+                                        .sheet(isPresented: self.$newInk.showInk, onDismiss: { self.newInk.showInk = false }) {
+                                            pickerView(displayTitle: "Select Filling System", rememberedInt: self.$newInk.rememberedInkInt, showPicker: self.$newInk.showInk, showModal: self.$newInk.showModalInk)
+                                                    }
+                            
                                         HStack{
                                             Spacer()
                                             Button("Details") {
@@ -118,53 +193,11 @@ struct EDCView: View {
                                 }
                             }
                         }
-
-                        Text("Notepads")
-                            .font(.headline)
-                            .padding()
-
                     }
                     .background(Color.gray.opacity(0.05))
                 }
             }
-
-
-//                    ScrollView {
-//                        LazyVGrid(columns: Array(repeating: .init(.flexible()), count: (Int(geometry.size.width) - 40) / columnWidth)) {
-//                        ForEach (currentNotepadList.activeNotepads) {item in
-//                            VStack {
-//                                Text("\(item.name)")
-//                                    .padding()
-//
-//                                HStack {
-//                                    Button("Details") {
-//                                        self.workingVariables.selectedMyNotepad = item
-//                                        self.showMyNotepad = true
-//                                    }
-//                                    .sheet(isPresented: self.$showMyNotepad, onDismiss: { self.showMyNotepad = false
-//                                    }) {
-//                                        myNotepadView(workingVariables: self.workingVariables, showChild: self.$showMyNotepad)
-//                                        }
-//                                    Spacer()
-//
-//                                    Button("Finished") {
-//                                        item.finishedUsing = Date()
-//                                        item.save()
-//                                        sleep(2)
-//                                        currentNotepadList.reload()
-//                                        self.tempVars.reloadScreen.toggle()
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-
-
-                ZStack(alignment: .leading) {
-
-                    VStack {
-                        if manufacturerList.manufacturers.count > 0 {
+            
 //                            HStack {
 //                                VStack {
 //                                    HStack {
@@ -269,28 +302,33 @@ struct EDCView: View {
 //                            Text("Welcome.  The first step to take is to create a Manufacturer entry.")
 //                        }
 
-                        Button("Manufacturers") {
-                            self.tempVars.showManufacturers = true
-                        }
-                        .padding()
-                        .sheet(isPresented: self.$tempVars.showManufacturers, onDismiss: { self.tempVars.showManufacturers = false }) {
-                            ManufacturersListView(workingVariables: self.workingVariables, showChild: self.$tempVars.showManufacturers)
-                           }
-
-                        if manufacturerList.manufacturers.count > 0 {
-                            Button("To Buy") {
-                                self.showToBuy = true
-                            }
-                            .padding()
-                            .sheet(isPresented: self.$showToBuy, onDismiss: {
-                                self.showToBuy = false
-                                              }) {
-                                    toBuyView(showChild: self.$showToBuy)
+                            HStack {
+                                Spacer()
+                                    
+                                Button("Manufacturers") {
+                                    self.tempVars.showManufacturers = true
                                 }
-                        }
+                                .padding()
+                                .sheet(isPresented: self.$tempVars.showManufacturers, onDismiss: { self.tempVars.showManufacturers = false }) {
+                                    ManufacturersListView(workingVariables: self.workingVariables, showChild: self.$tempVars.showManufacturers)
+                                   }
+
+                                Spacer()
+                                
+                                if manufacturerList.manufacturers.count > 0 {
+                                    Button("To Buy") {
+                                        self.showToBuy = true
+                                    }
+                                    .padding()
+                                    .sheet(isPresented: self.$showToBuy, onDismiss: {
+                                        self.showToBuy = false
+                                                      }) {
+                                            toBuyView(showChild: self.$showToBuy)
+                                        }
+                                }
+                                Spacer()
+                            }
                     }
                 }
-            }
-        }
-    }
+
 }
