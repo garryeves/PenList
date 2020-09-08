@@ -146,7 +146,7 @@ class myPen: NSObject, Identifiable, ObservableObject {
                 if newValue.inkFamily != "" {
                     tempName = "\(newValue.manufacturer) - \(newValue.inkFamily) \(newValue.name)"
                 }
-                addInkMessage = "Add Ink \(tempName)"
+                addInkMessage = "Add \(tempName)"
                 storedInk = newValue
             } else {
                 addInkMessage = defaultAddInkMessage

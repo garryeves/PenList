@@ -33,7 +33,7 @@ struct inkDetails: View {
         UITableView.appearance().separatorStyle = .none
         
         if tempVariables.rememberedIntInkType > -1 {
-            workingVariables.selectedInk.inkType = inkTypes[tempVariables.rememberedIntInkType]
+            workingVariables.selectedInk.inkType = workingVariables.decodeList.decodes("inkType")[tempVariables.rememberedIntInkType].decodeDescription
             tempVariables.rememberedIntInkType = -1
         }
         
@@ -72,20 +72,18 @@ struct inkDetails: View {
                 if workingVariables.selectedInk.name.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
                     TextField("Ink Family", text: $workingVariables.selectedInk.inkFamily)
                     
-                    Text(inkTypeText)
-                        .foregroundColor(.blue)
-                        .onTapGesture {
+                    Button(inkTypeText) {
                             self.tempVariables.rememberedIntInkType = -1
                             self.tempVariables.showModalInkType.displayList.removeAll()
                             
-                            for item in inkTypes {
-                                self.tempVariables.showModalInkType.displayList.append(displayEntry(entryText: item))
+                            for item in workingVariables.decodeList.decodes("inkType") {
+                                self.tempVariables.showModalInkType.displayList.append(displayEntry(entryText: item.decodeDescription))
                             }
                             
                             self.tempVariables.showInkTypePicker = true
                         }
                     .sheet(isPresented: self.$tempVariables.showInkTypePicker, onDismiss: { self.tempVariables.showInkTypePicker = false }) {
-                        pickerView(displayTitle: "Select Filling System", rememberedInt: self.$tempVariables.rememberedIntInkType, showPicker: self.$tempVariables.showInkTypePicker, showModal: self.$tempVariables.showModalInkType)
+                        pickerView(displayTitle: "Select Ink Type", rememberedInt: self.$tempVariables.rememberedIntInkType, showPicker: self.$tempVariables.showInkTypePicker, showModal: self.$tempVariables.showModalInkType)
                                 }
                     
                     TextField("Colour", text: $workingVariables.selectedInk.colour)

@@ -77,4 +77,14 @@ class mainWorkingVariables: ObservableObject {
         myPenList = myPens()
         myInkList = myInks()
     }
+    
+    var decodeList = decodes()
+    
+    func loadDecodes() {
+        let temp = populateDatabase()
+        temp.loadDecodes()
+        
+        sleep(2)
+        decodeList = decodes()
+    }
 }

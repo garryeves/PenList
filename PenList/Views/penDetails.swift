@@ -34,7 +34,7 @@ struct penDetails: View {
         UITableView.appearance().separatorStyle = .none
         
         if tempVariables.rememberedIntFilingSystem > -1 {
-            workingVariables.selectedPen.fillingSystem = fillerSystems[tempVariables.rememberedIntFilingSystem]
+            workingVariables.selectedPen.fillingSystem = workingVariables.decodeList.decodes("filler")[tempVariables.rememberedIntFilingSystem].decodeDescription
             tempVariables.rememberedIntFilingSystem = -1
         }
         
@@ -92,14 +92,12 @@ struct penDetails: View {
             Form {
                 TextField("Name", text: $workingVariables.selectedPen.name)
                 if workingVariables.selectedPen.name.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
-                    Text(fillingSystemText)
-                        .foregroundColor(.blue)
-                        .onTapGesture {
+                    Button(fillingSystemText) {
                             self.tempVariables.rememberedIntFilingSystem = -1
                             self.tempVariables.showModalFilling.displayList.removeAll()
                             
-                            for item in fillerSystems {
-                                self.tempVariables.showModalFilling.displayList.append(displayEntry(entryText: item))
+                            for item in workingVariables.decodeList.decodes("filler") {
+                                self.tempVariables.showModalFilling.displayList.append(displayEntry(entryText: item.decodeDescription))
                             }
                             
                             self.tempVariables.showFilingPicker = true

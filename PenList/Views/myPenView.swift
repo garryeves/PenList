@@ -13,8 +13,9 @@ class myPenDetailsWorkingVariables: ObservableObject {
     var rememberedIntNib = -1
     @Published var showNibPicker = false
 
-    var showModalNibMaterial = pickerComms()
+    @Published var showModalNibMaterial = pickerComms()
     var rememberedIntNibMaterial = -1
+    @Published var showNibMaterialPicker = false
     
     @Published var showManufacturer = false
     
@@ -42,18 +43,17 @@ struct myPenView: View {
     @ObservedObject var tempPhoto = selectedImageClass()
     @State var showPhotoPicker = false
     @State var showDatePicker = false
-    @State var showNibPicker = false
-    @State var showNibMaterialPicker = false
-    
+
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
+
         if workingVariables.selectedMyPen.penID == "" && !tempVars.showManufacturer {
             tempVars.triggerPenSelector()
         }
         
         if tempVars.rememberedIntNib > -1 {
-            workingVariables.selectedMyPen.nib = nibTypes[tempVars.rememberedIntNib]
+            workingVariables.selectedMyPen.nib = workingVariables.decodeList.decodes("NibSize")[tempVars.rememberedIntNib].decodeDescription
             tempVars.rememberedIntNib = -1
         }
         
@@ -64,11 +64,11 @@ struct myPenView: View {
         }
         
         if tempVars.rememberedIntNibMaterial > -1 {
-            workingVariables.selectedMyPen.nibMaterial = nibMaterialTypes[tempVars.rememberedIntNibMaterial]
+            workingVariables.selectedMyPen.nibMaterial = workingVariables.decodeList.decodes("NibMaterial")[tempVars.rememberedIntNibMaterial].decodeDescription
             tempVars.rememberedIntNibMaterial = -1
         }
         
-        var nibMaterialText = "Select Nib Meterial"
+        var nibMaterialText = "Select Nib Material"
         
         if workingVariables.selectedMyPen.nibMaterial != "" {
             nibMaterialText = workingVariables.selectedMyPen.nibMaterial
@@ -114,38 +114,35 @@ struct myPenView: View {
                     
                     TextField("colour", text: $workingVariables.selectedMyPen.colour)
                     
-                    Text(nibText)
-                        .foregroundColor(.blue)
-                        .onTapGesture {
-                            self.tempVars.rememberedIntNib = -1
-                            self.tempVars.showModalNib.displayList.removeAll()
-                            
-                            for item in nibTypes {
-                                self.tempVars.showModalNib.displayList.append(displayEntry(entryText: item))
-                            }
-                        
-                        self.showNibPicker = true
-                    }
-                    .sheet(isPresented: self.$showNibPicker, onDismiss: { self.showNibPicker = false }) {
-                        pickerView(displayTitle: "Select Filling System", rememberedInt: self.$tempVars.rememberedIntNib, showPicker: self.$showNibPicker, showModal: self.$tempVars.showModalNib)
-                                }
                     
-                    Text(nibMaterialText)
-                    .foregroundColor(.blue)
-                    .onTapGesture {
+                    Button(nibText) {
+                        self.tempVars.rememberedIntNib = -1
+                        self.tempVars.showModalNib.displayList.removeAll()
+                        
+                        for item in workingVariables.decodeList.decodes("NibSize") {
+                            self.tempVars.showModalNib.displayList.append(displayEntry(entryText: item.decodeDescription))
+                        }
+                    
+                        self.tempVars.showNibPicker = true
+                    }
+                    .sheet(isPresented: self.$tempVars.showNibPicker, onDismiss: { self.tempVars.showNibPicker = false }) {
+                    pickerView(displayTitle: "Select Nib Size", rememberedInt: self.$tempVars.rememberedIntNib, showPicker: self.$tempVars.showNibPicker, showModal: self.$tempVars.showModalNib)
+                            }
+                    
+                    Button(nibMaterialText) {
                         self.tempVars.rememberedIntNibMaterial = -1
                         self.tempVars.showModalNibMaterial.displayList.removeAll()
                         
-                        for item in nibMaterialTypes {
-                            self.tempVars.showModalNibMaterial.displayList.append(displayEntry(entryText: item))
+                        for item in workingVariables.decodeList.decodes("NibMaterial") {
+                            self.tempVars.showModalNibMaterial.displayList.append(displayEntry(entryText: item.decodeDescription))
                         }
                         
-                        self.showNibMaterialPicker = true
+                        self.tempVars.showNibMaterialPicker = true
                     }
-                    .sheet(isPresented: self.$showNibMaterialPicker, onDismiss: { self.showNibMaterialPicker = false }) {
-                        pickerView(displayTitle: "Select Filling System", rememberedInt: self.$tempVars.rememberedIntNibMaterial, showPicker: self.$showNibMaterialPicker, showModal: self.$tempVars.showModalNibMaterial)
+                        .sheet(isPresented: self.$tempVars.showNibMaterialPicker, onDismiss: { self.tempVars.showNibMaterialPicker = false }) {
+                            pickerView(displayTitle: "Select Nib Material", rememberedInt: self.$tempVars.rememberedIntNibMaterial, showPicker: self.$tempVars.showNibMaterialPicker, showModal: self.$tempVars.showModalNibMaterial)
                                 }
-                }
+                        }
                 
                 Section(header: Text("Purchased").font(.headline)) {
                     TextField("Purchased From", text: $workingVariables.selectedMyPen.purchasedFrom)
@@ -207,15 +204,15 @@ struct myPenView: View {
             }
             .padding(.bottom, 15)
         }
-        .onTapGesture {
-            let keyWindow = UIApplication.shared.connectedScenes
-                               .filter({$0.activationState == .foregroundActive})
-                               .map({$0 as? UIWindowScene})
-                               .compactMap({$0})
-                               .first?.windows
-                               .filter({$0.isKeyWindow}).first
-            keyWindow!.endEditing(true)
-        }
+//        .onTapGesture {
+//            let keyWindow = UIApplication.shared.connectedScenes
+//                               .filter({$0.activationState == .foregroundActive})
+//                               .map({$0 as? UIWindowScene})
+//                               .compactMap({$0})
+//                               .first?.windows
+//                               .filter({$0.isKeyWindow}).first
+//            keyWindow!.endEditing(true)
+//        }
         .padding(.bottom, kbDetails.currentHeight)
     }
 }
@@ -230,8 +227,6 @@ struct myPenViewPhone: View {
     @State var showPhotoPicker = false
     
     @State var showDatePicker = false
-    @State var showNibPicker = false
-    @State var showNibMaterialPicker = false
     
     @Environment(\.colorScheme) var colorScheme
     
@@ -241,7 +236,7 @@ struct myPenViewPhone: View {
         }
         
         if tempVars.rememberedIntNib > -1 {
-            workingVariables.selectedMyPen.nib = nibTypes[tempVars.rememberedIntNib]
+            workingVariables.selectedMyPen.nib = workingVariables.decodeList.decodes("NibSize")[tempVars.rememberedIntNib].decodeDescription
             tempVars.rememberedIntNib = -1
         }
         
@@ -252,7 +247,7 @@ struct myPenViewPhone: View {
         }
         
         if tempVars.rememberedIntNibMaterial > -1 {
-            workingVariables.selectedMyPen.nibMaterial = nibMaterialTypes[tempVars.rememberedIntNibMaterial]
+            workingVariables.selectedMyPen.nibMaterial = workingVariables.decodeList.decodes("NibMaterial")[tempVars.rememberedIntNibMaterial].decodeDescription
             tempVars.rememberedIntNibMaterial = -1
         }
         
@@ -305,36 +300,32 @@ struct myPenViewPhone: View {
                 Text("Nib")
                     .padding(.trailing, 5)
 
-                Text(nibText)
-                    .foregroundColor(.blue)
-                    .onTapGesture {
+                Button(nibText) {
                         self.tempVars.rememberedIntNib = -1
                         self.tempVars.showModalNib.displayList.removeAll()
                         
-                        for item in nibTypes {
-                            self.tempVars.showModalNib.displayList.append(displayEntry(entryText: item))
+                        for item in workingVariables.decodeList.decodes("NibSize") {
+                            self.tempVars.showModalNib.displayList.append(displayEntry(entryText: item.decodeDescription))
                         }
                         
-                        self.showNibPicker = true
+                        self.tempVars.showNibPicker = true
                     }
-                .sheet(isPresented: self.$showNibPicker, onDismiss: { self.showNibPicker = false }) {
-                    pickerView(displayTitle: "Select Filling System", rememberedInt: self.$tempVars.rememberedIntNib, showPicker: self.$showNibPicker, showModal: self.$tempVars.showModalNib)
+                    .sheet(isPresented: self.$tempVars.showNibPicker, onDismiss: { self.tempVars.showNibPicker = false }) {
+                        pickerView(displayTitle: "Select Nib Size", rememberedInt: self.$tempVars.rememberedIntNib, showPicker: self.$tempVars.showNibPicker, showModal: self.$tempVars.showModalNib)
                             }
                 
-                 Text(nibMaterialText)
-                    .foregroundColor(.blue)
-                     .onTapGesture {
+                 Button(nibMaterialText) {
                          self.tempVars.rememberedIntNibMaterial = -1
                          self.tempVars.showModalNibMaterial.displayList.removeAll()
                          
-                         for item in nibMaterialTypes {
-                             self.tempVars.showModalNibMaterial.displayList.append(displayEntry(entryText: item))
+                         for item in workingVariables.decodeList.decodes("NibMaterial"){
+                            self.tempVars.showModalNibMaterial.displayList.append(displayEntry(entryText: item.decodeDescription))
                          }
                          
-                         self.showNibMaterialPicker = true
+                        self.tempVars.showNibMaterialPicker = true
                      }
-                 .sheet(isPresented: self.$showNibMaterialPicker, onDismiss: { self.showNibMaterialPicker = false }) {
-                     pickerView(displayTitle: "Select Filling System", rememberedInt: self.$tempVars.rememberedIntNibMaterial, showPicker: self.$showNibMaterialPicker, showModal: self.$tempVars.showModalNibMaterial)
+                    .sheet(isPresented: self.$tempVars.showNibMaterialPicker, onDismiss: { self.tempVars.showNibMaterialPicker = false }) {
+                        pickerView(displayTitle: "Select Nib Material", rememberedInt: self.$tempVars.rememberedIntNibMaterial, showPicker: self.$tempVars.showNibMaterialPicker, showModal: self.$tempVars.showModalNibMaterial)
                 }
             }
             .padding(.bottom, 5)
@@ -401,15 +392,15 @@ struct myPenViewPhone: View {
             }
             .padding(.bottom, 5)
         }
-        .onTapGesture {
-            let keyWindow = UIApplication.shared.connectedScenes
-                               .filter({$0.activationState == .foregroundActive})
-                               .map({$0 as? UIWindowScene})
-                               .compactMap({$0})
-                               .first?.windows
-                               .filter({$0.isKeyWindow}).first
-            keyWindow!.endEditing(true)
-        }
+//        .onTapGesture {
+//            let keyWindow = UIApplication.shared.connectedScenes
+//                               .filter({$0.activationState == .foregroundActive})
+//                               .map({$0 as? UIWindowScene})
+//                               .compactMap({$0})
+//                               .first?.windows
+//                               .filter({$0.isKeyWindow}).first
+//            keyWindow!.endEditing(true)
+//        }
         .padding(.bottom, kbDetails.currentHeight)
     }
 }

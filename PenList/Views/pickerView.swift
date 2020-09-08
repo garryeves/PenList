@@ -51,12 +51,12 @@ struct pickerView : View {
                 }
             }
             .padding()
-            .frame(width: 300, height: 300, alignment: .center)
+      //      .frame(width: 300, height: 300, alignment: .center)
             
             Button("Select") {
                 self.rememberedInt = self.selectedItem
                 self.showPicker = false
-                self.showModal.reloadFlag = true
+                self.showModal.reloadFlag.toggle()
             }
         }
     }
