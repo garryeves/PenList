@@ -15,7 +15,7 @@ struct notepadView: View {
     @State var showMyNotepad = false
     @State var showAbout = false
     @State var showToBuy = false
-    
+        
     var body: some View {
         return  VStack {
             HStack {
@@ -37,39 +37,45 @@ struct notepadView: View {
                     ScrollView {
                         LazyVGrid(columns: Array(repeating: .init(.flexible()), count: (Int(geometry.size.width) - 40) / tempVars.columnWidth)) {
                         ForEach (currentNotepadList.activeNotepads) {item in
-                            VStack {
-                                Text(item.manufacturer)
-                                    .padding(.top, 10)
-                                Text(item.name)
+                            ZStack {
+                                Rectangle()
+                                    .fill(fillColour)
+                                    .cornerRadius(10.0)
+                                    .frame(width: CGFloat(tempVars.columnWidth), alignment: .center)
+                                
+                                VStack {
+                                    Text(item.manufacturer)
+                                        .padding(.top, 10)
+                                    Text(item.name)
 
-                                HStack {
-                                    Button("Details") {
-                                        self.workingVariables.selectedMyNotepad = item
-                                        self.showMyNotepad = true
-                                    }
-                                    .sheet(isPresented: self.$showMyNotepad, onDismiss: { self.showMyNotepad = false
-                                    }) {
-                                        myNotepadView(workingVariables: self.workingVariables, showChild: self.$showMyNotepad)
+                                    HStack {
+                                        Button("Details") {
+                                            self.workingVariables.selectedMyNotepad = item
+                                            self.showMyNotepad = true
                                         }
-                                    Spacer()
+                                        .sheet(isPresented: self.$showMyNotepad, onDismiss: { self.showMyNotepad = false
+                                        }) {
+                                            myNotepadView(workingVariables: self.workingVariables, showChild: self.$showMyNotepad)
+                                            }
+                                        Spacer()
 
-                                    Button("Finished") {
-                                        item.finishedUsing = Date()
-                                        item.save()
-                                        sleep(2)
-                                        currentNotepadList.reload()
-                                        self.tempVars.reloadScreen.toggle()
+                                        Button("Finished") {
+                                            item.finishedUsing = Date()
+                                            item.save()
+                                            sleep(2)
+                                            currentNotepadList.reload()
+                                            self.tempVars.reloadScreen.toggle()
+                                        }
                                     }
+                                    .padding(.top,5)
+                                    .padding(.leading, 15)
+                                    .padding(.trailing, 15)
                                 }
                                 .padding()
                             }
-                            .frame(width: CGFloat(tempVars.columnWidth), alignment: .center)
-                            .border(Color.black, width: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/)
-                            .padding()
                         }
                     }
                 }
-                    .background(Color.gray.opacity(0.05))
             }
         }
         

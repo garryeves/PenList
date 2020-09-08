@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+let fillColour = Color.gray.opacity(0.2)
+
 class newPenWorkingVariables: ObservableObject {
     var showModalInk = pickerComms()
     var rememberedInkInt = -1
@@ -31,11 +33,6 @@ class newPenWorkingVariables: ObservableObject {
             }
             workingPenList.unusedPens[penIndex].selectedInk = workingInkList.inks[rememberedInkInt]
             rememberedInkInt = -1
-//            var tempName = "\(selectedInk.manufacturer) - \(selectedInk.name)"
-//            if selectedInk.inkFamily != "" {
-//                tempName = "\(selectedInk.manufacturer) - \(selectedInk.inkFamily) \(selectedInk.name)"
-//            }
-//            addInkMessage = "Add Ink \(tempName)"
         }
     }
 }
@@ -47,14 +44,13 @@ struct EDCView: View {
     
     @State var showMyPen = false
     @State var showMyPenPhone = false
-    @State var showMyInk = false
     @State var showToBuy = false
     @State var showAbout = false
     
     @State var showAllPens = false
     
     @State var showEDCReview = false
-
+   
     var body: some View {
         if newInk.rememberedInkInt > -1 {
             newInk.processRecord(workingPenList: self.workingVariables.myPenList, workingInkList: self.workingVariables.myInkList)
@@ -75,51 +71,85 @@ struct EDCView: View {
             }
             .padding()
 
+            Text("My Unused Pens")
+                .font(.headline)
+                .padding()
+                .sheet(isPresented: self.$showMyPenPhone, onDismiss: { self.showMyPenPhone = false }) {
+                    myPenViewPhone(workingVariables: self.workingVariables, showChild: self.$showMyPenPhone)
+                    }
+            
             GeometryReader { geometry in
                 if manufacturerList.manufacturers.count > 0 {
                     VStack {
                         ScrollView {
                             LazyVGrid(columns: Array(repeating: .init(.flexible()), count: (Int(geometry.size.width) - 40) / tempVars.columnWidth)) {
                                 ForEach (currentUseList.use) {item in
-                                    VStack {
-                                        Text(item.penManufacturer)
-                                            .padding(.top, 10)
-                                        Text(item.penName)
-                                            .padding(.bottom, 5)
-                                     
-                                        if item.inkFamily == "" {
-                                            Text(item.inkManufacturer)
-                                        } else {
-                                            Text("\(item.inkManufacturer) - \(item.inkFamily)")
-                                        }
-                                        Text(item.inkName)
+                                    ZStack {
+                                        Rectangle()
+                                            .fill(fillColour)
+                                            .cornerRadius(10.0)
+                                            .frame(width: CGFloat(tempVars.columnWidth), alignment: .center)
+                                    
+                                        VStack {
+                                            Text(item.penManufacturer)
+                                                .padding(.top, 10)
+                                                .padding(.leading,10)
+                                                .padding(.trailing,10)
 
-                                        HStack{
-                                            Button("Review") {
-                                                self.tempVars.EDCItem = item
-                                                self.tempVars.rating = item.rating
-                                                self.showEDCReview = true
+                                            Text(item.penName)
+                                                .padding(.bottom, 5)
+                                                .padding(.leading,10)
+                                                .padding(.trailing,10)
+                                         
+                                            if item.inkFamily == "" {
+                                                Text(item.inkManufacturer)                                            .padding(.leading,10)
+                                                    .padding(.trailing,10)
+                                            } else {
+                                                Text("\(item.inkManufacturer) - \(item.inkFamily)")
+                                                    .padding(.leading,10)
+                                                    .padding(.trailing,10)
                                             }
-                                            .sheet(isPresented: self.$showEDCReview, onDismiss: { self.showEDCReview = false }) {
-                                                EDCReviewView(tempVars: self.tempVars, showChild: self.$showEDCReview)
+                                            
+                                            Text(item.inkName)
+                                                .padding(.leading,10)
+                                                .padding(.trailing,10)
+                                                .padding(.bottom, 10)
+
+                                            Button("Pen Details") {
+                                                self.workingVariables.selectedMyPen = item.currentPen
+                                                if UIDevice.current.userInterfaceIdiom == .phone {
+                                                     self.showMyPenPhone = true
+                                                 } else {
+                                                     self.showMyPen = true
+                                                 }
+                                            }
+                                            
+                                            HStack{
+                                                Button("Review") {
+                                                    self.tempVars.EDCItem = item
+                                                    self.tempVars.rating = item.rating
+                                                    self.showEDCReview = true
                                                 }
+                                                .sheet(isPresented: self.$showEDCReview, onDismiss: { self.showEDCReview = false }) {
+                                                    EDCReviewView(tempVars: self.tempVars, showChild: self.$showEDCReview)
+                                                    }
 
-                                            Spacer()
-                                            Button("Finished") {
-                                                item.dateEnded = Date()
-                                                item.save()
-                                            sleep(2)
-                                                currentUseList.reload()
-                                                self.tempVars.reloadScreen.toggle()
+                                                Spacer()
+                                            
+                                                Button("Finished") {
+                                                    item.dateEnded = Date()
+                                                    item.save()
+                                                sleep(2)
+                                                    currentUseList.reload()
+                                                    self.tempVars.reloadScreen.toggle()
+                                                }
                                             }
+                                            .padding(.top,5)
+                                            .padding(.leading, 15)
+                                            .padding(.trailing, 15)
                                         }
                                         .padding()
-
-
                                     }
-                                    .frame(width: CGFloat(tempVars.columnWidth), alignment: .center)
-                                    .border(/*@START_MENU_TOKEN@*/Color.black/*@END_MENU_TOKEN@*/, width: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/)
-                                    .padding()
                                 }
                             }
                         }
@@ -134,67 +164,70 @@ struct EDCView: View {
                         ScrollView {
                             LazyVGrid(columns: Array(repeating: .init(.flexible()), count: (Int(geometry.size.width) - 40) / tempVars.columnWidth)) {
                                 ForEach (self.workingVariables.myPenList.unusedPens) {item in
-                                    VStack {
-                                        Text("")
-                                        Text(item.manufacturer)
-                                        Text("")
-                                        Text(item.name)
-                                        Text("")
-                                        Button(item.addInkMessage) {
-                                            if item.addInkMessage == defaultAddInkMessage {
-                                                self.newInk.penListItem = item
-                                                self.newInk.rememberedInkInt = -1
-                                                self.newInk.showModalInk.displayList.removeAll()
-                                                
-                                                for item in self.workingVariables.myInkList.inks {
+                                    ZStack {
+                                        Rectangle()
+                                            .fill(fillColour)
+                                            .cornerRadius(10.0)
+                                            .frame(width: CGFloat(tempVars.columnWidth), alignment: .center)
+                                        
+                                        VStack {
+                                            Text("")
+                                            Text(item.manufacturer)
+                                            Text("")
+                                            Text(item.name)
+                                            Text("")
+                                            Button(item.addInkMessage) {
+                                                if item.addInkMessage == defaultAddInkMessage {
+                                                    self.newInk.penListItem = item
+                                                    self.newInk.rememberedInkInt = -1
+                                                    self.newInk.showModalInk.displayList.removeAll()
                                                     
-                                                    var tempName = "\(item.manufacturer) - \(item.name)"
-                                                    if item.inkFamily != "" {
-                                                        tempName = "\(item.manufacturer) - \(item.inkFamily) \(item.name)"
+                                                    for item in self.workingVariables.myInkList.inks {
+                                                        
+                                                        var tempName = "\(item.manufacturer) - \(item.name)"
+                                                        if item.inkFamily != "" {
+                                                            tempName = "\(item.manufacturer) - \(item.inkFamily) \(item.name)"
+                                                        }
+                                                        
+                                                        self.newInk.showModalInk.displayList.append(displayEntry(entryText: tempName))
                                                     }
                                                     
-                                                    self.newInk.showModalInk.displayList.append(displayEntry(entryText: tempName))
+                                                    self.newInk.showInk = true
+                                                } else {
+                                                    let temp = currentUse(newPenID: item.myPenID.uuidString, newInkID: item.selectedInk.inkID)
+                                                    
+                                                    currentUseList.append(temp)
+                                                    self.workingVariables.myPenList = myPens()
+                                                    newInk.reload.toggle()
                                                 }
-                                                
-                                                self.newInk.showInk = true
-                                            } else {
-                                                let temp = currentUse(newPenID: item.myPenID.uuidString, newInkID: item.selectedInk.inkID)
-                                                
-                                                currentUseList.append(temp)
-                                                self.workingVariables.myPenList = myPens()
-                                                newInk.reload.toggle()
                                             }
-                                        }
-                                        .sheet(isPresented: self.$newInk.showInk, onDismiss: { self.newInk.showInk = false }) {
-                                            pickerView(displayTitle: "Select Filling System", rememberedInt: self.$newInk.rememberedInkInt, showPicker: self.$newInk.showInk, showModal: self.$newInk.showModalInk)
-                                                    }
-                            
-                                        HStack{
-                                            Spacer()
-                                            Button("Details") {
-                                                self.workingVariables.selectedMyPen = item
-                                                if UIDevice.current.userInterfaceIdiom == .phone {
-                                                     self.showMyPenPhone = true
-                                                 } else {
-                                                     self.showMyPen = true
-                                                 }
-                                            }
-                                            .sheet(isPresented: self.$showMyPenPhone, onDismiss: { self.showMyPenPhone = false }) {
-                                                myPenViewPhone(workingVariables: self.workingVariables, showChild: self.$showMyPenPhone)
+                                            .sheet(isPresented: self.$newInk.showInk, onDismiss: { self.newInk.showInk = false }) {
+                                                pickerView(displayTitle: "Select Ink", rememberedInt: self.$newInk.rememberedInkInt, showPicker: self.$newInk.showInk, showModal: self.$newInk.showModalInk)
+                                                        }
+                                
+                                            HStack{
+                                                Spacer()
+                                                Button("Pen Details") {
+                                                    self.workingVariables.selectedMyPen = item
+                                                    if UIDevice.current.userInterfaceIdiom == .phone {
+                                                         self.showMyPenPhone = true
+                                                     } else {
+                                                         self.showMyPen = true
+                                                     }
                                                 }
 
-                                            Spacer()
+                                                Spacer()
+                                            }
+                                            .padding(.top,5)
+                                            .padding(.leading, 15)
+                                            .padding(.trailing, 15)
                                         }
                                         .padding()
                                     }
-                                    .frame(width: CGFloat(tempVars.columnWidth), alignment: .center)
-                                    .border(Color.black, width: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/)
-                                    .padding()
                                 }
                             }
                         }
                     }
-                    .background(Color.gray.opacity(0.05))
                 }
             }
             

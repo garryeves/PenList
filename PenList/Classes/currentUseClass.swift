@@ -87,6 +87,17 @@ class currentUse: NSObject, Identifiable, ObservableObject {
         }
     }
     
+    var currentPen: myPen {
+        get {
+            for item in currentPenList.pens {
+                if item.myPenID.uuidString == penID {
+                    return item
+                }
+            }
+            return myPen()
+        }
+    }
+    
     var penManufacturer: String {
         get {
             for item in currentPenList.pens {
@@ -131,9 +142,6 @@ class currentUse: NSObject, Identifiable, ObservableObject {
             return ""
         }
     }
-    
-    
-    
     
     override init() {
         super.init()

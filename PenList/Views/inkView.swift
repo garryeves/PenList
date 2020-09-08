@@ -15,8 +15,9 @@ struct inkView: View {
     @State var showToBuy = false
     @State var showAbout = false
     @State var showMyInk = false
-    
+        
     var body: some View {
+        
         return  VStack {
             HStack {
                 Spacer()
@@ -38,43 +39,52 @@ struct inkView: View {
                         ScrollView {
                             LazyVGrid(columns: Array(repeating: .init(.flexible()), count: (Int(geometry.size.width) - 40) / tempVars.columnWidth)) {
                                 ForEach (self.workingVariables.myInkList.inks) {item in
-                                    VStack {
-                                        Text("")
-                                        if item.inkFamily == "" {
-                                            Text(item.manufacturer)
-                                        } else {
-                                            Text("\(item.manufacturer) - \(item.inkFamily)")
-                                        }
-                                        Text(item.name)
+                                    ZStack {
+                                        Rectangle()
+                                            .fill(fillColour)
+                                            .cornerRadius(10.0)
+                                            .frame(width: CGFloat(tempVars.columnWidth), alignment: .center)
                                         
-                                        HStack {
-                                            Button("Details") {
-                                                self.workingVariables.selectedMyInk = item
-                                                self.showMyInk = true
+                                        VStack {
+                                            Text("")
+                                            if item.inkFamily == "" {
+                                                Text(item.manufacturer)
+                                            } else {
+                                                Text("\(item.manufacturer) - \(item.inkFamily)")
                                             }
+                                            Text(item.name)
                                             
-                                            Spacer()
-                                            
-                                            Button("Finished") {
-                                                item.finished = true
-                                                item.save()
-                                            sleep(2)
-                                                currentUseList.reload()
-                                                self.tempVars.reloadScreen.toggle()
+                                            HStack {
+                                                Button("Details") {
+                                                    self.workingVariables.selectedMyInk = item
+                                                    self.showMyInk = true
+                                                }
+                                                .sheet(isPresented: self.$showMyInk, onDismiss: { self.showMyInk = false }) {
+                                                    myInkView(workingVariables: self.workingVariables, showChild: self.$showMyInk)
+                                                    }
+                                                
+                                                Spacer()
+                                                
+                                                Button("Finished") {
+                                                    item.finished = true
+                                                    item.save()
+                                                sleep(2)
+                                                    currentUseList.reload()
+                                                    self.tempVars.reloadScreen.toggle()
+                                                }
                                             }
+                                            .padding(.top,5)
+                                            .padding(.leading, 15)
+                                            .padding(.trailing, 15)
+        //                                    .onTapGesture {
+        //                                        self.tempVars.selectedInk = item
+        //                                    }
                                         }
                                         .padding()
-    //                                    .onTapGesture {
-    //                                        self.tempVars.selectedInk = item
-    //                                    }
                                     }
                                 }
-                                .frame(width: CGFloat(tempVars.columnWidth), alignment: .center)
-                                .border(/*@START_MENU_TOKEN@*/Color.black/*@END_MENU_TOKEN@*/, width: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/)
-                                .padding()
                             }
                         }
-                        .background(Color.gray.opacity(0.05))
 
                         HStack {
                             Spacer()

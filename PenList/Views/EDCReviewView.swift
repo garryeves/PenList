@@ -13,8 +13,15 @@ struct EDCReviewView: View {
     @ObservedObject var kbDetails = KeyboardResponder()
     @Binding var showChild: Bool
     
+    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
+        var borderColour = Color.black
+        
+        if colorScheme == .dark {
+            borderColour = Color.white
+        }
+        
         return VStack {
             HStack {
                 Spacer()
@@ -49,10 +56,12 @@ struct EDCReviewView: View {
                 .padding(.leading, 20)
                 .padding(.trailing, 20)
             
-            TextView(text: $tempVars.EDCItem.notes)
-                .padding(.bottom, 10)
-                .padding(.leading, 20)
-                .padding(.trailing, 20)
+            GeometryReader { geometry in
+                TextEditor(text: $tempVars.EDCItem.notes)
+                    .border(borderColour, width: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/)
+                    .frame(width: geometry.size.width - 40, alignment: .center)
+                    .padding()
+            }
             
             Button("Save") {
                 self.tempVars.EDCItem.rating = self.tempVars.rating

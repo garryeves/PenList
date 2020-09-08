@@ -23,9 +23,17 @@ struct notepadDetails: View {
     @State var showMyNotepad = false
     @State var noName = false
     
+    @Environment(\.colorScheme) var colorScheme
+    
     var body: some View {
         UITableView.appearance().separatorStyle = .none
 
+        var borderColour = Color.black
+        
+        if colorScheme == .dark {
+            borderColour = Color.white
+        }
+        
         return VStack {
             HStack {
                 Spacer()
@@ -74,8 +82,12 @@ struct notepadDetails: View {
                         Text("Notes")
                             .font(.subheadline)
                         
-                        TextView(text: $workingVariables.selectedNotepad.notes)
-                        .padding()
+                        GeometryReader { geometry in
+                            TextEditor(text: $workingVariables.selectedNotepad.notes)
+                                .border(borderColour, width: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/)
+                                .frame(width: geometry.size.width - 40, alignment: .center)
+                                .padding()
+                        }
                     }
                     .padding(.trailing, 10)
                     

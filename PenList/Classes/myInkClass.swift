@@ -223,8 +223,8 @@ extension CloudKitInteraction {
     }
     
     func getMyInk()->[MyInk] {
-        let predicate = NSPredicate(format: "TRUEPREDICATE")
-
+     //   let predicate = NSPredicate(format: "TRUEPREDICATE")
+        let predicate = NSPredicate(format: "finished == \"FALSE\"")
         let query = CKQuery(recordType: "myInk", predicate: predicate)
         let sem = DispatchSemaphore(value: 0)
         fetchPrivateServices(query: query, sem: sem, completion: nil)

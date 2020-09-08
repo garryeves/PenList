@@ -756,18 +756,18 @@ struct PDFKitView: View {
         return VStack {
             
             HStack {
-                #if targetEnvironment(macCatalyst)
-                Button("Share") {
-                    self.activityViewController.urlEntry = fileSharingURL
-                    self.activityViewController.shareFile()
-                }
-                #else
+//                #if targetEnvironment(macCatalyst)
+//                Button("Share") {
+//                    self.activityViewController.urlEntry = fileSharingURL
+//                    self.activityViewController.shareFile()
+//                }
+//                #else
                     Button("Share") {
                         self.sharePDF = true
                     }
                     .sheet(isPresented: $sharePDF, onDismiss: { self.sharePDF = false }) {
                         ActivityViewControllerNew(activityItems: [self.url]) }
-                #endif
+//                #endif
                 
                 Spacer()
                 Button("Close") {

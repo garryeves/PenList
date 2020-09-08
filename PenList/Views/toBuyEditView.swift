@@ -15,6 +15,8 @@ struct toBuyEditView: View {
     
     @State var reload = false
     
+    @Environment(\.colorScheme) var colorScheme
+    
     var body: some View {
         var typeText = "Select type"
         var typeStatus = "Select Status"
@@ -46,6 +48,12 @@ struct toBuyEditView: View {
 
         if tempVars.workingItem.manufacturer != "" {
             manufacturerText = tempVars.workingItem.manufacturer
+        }
+        
+        var borderColour = Color.black
+        
+        if colorScheme == .dark {
+            borderColour = Color.white
         }
         
         return VStack {
@@ -135,10 +143,12 @@ struct toBuyEditView: View {
                     .padding(.leading, 20)
                     .padding(.trailing, 20)
 
-                TextView(text: $tempVars.workingItem.notes)
-                    .padding(.bottom, 10)
-                    .padding(.leading, 20)
-                    .padding(.trailing, 20)
+                GeometryReader { geometry in
+                    TextEditor(text: $tempVars.workingItem.notes)
+                        .border(borderColour, width: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/)
+                        .frame(width: geometry.size.width - 40, alignment: .center)
+                        .padding()
+                }
                 
                 Button("Save") {
                     self.tempVars.save()

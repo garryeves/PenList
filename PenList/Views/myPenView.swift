@@ -45,6 +45,8 @@ struct myPenView: View {
     @State var showNibPicker = false
     @State var showNibMaterialPicker = false
     
+    @Environment(\.colorScheme) var colorScheme
+    
     var body: some View {
         if workingVariables.selectedMyPen.penID == "" && !tempVars.showManufacturer {
             tempVars.triggerPenSelector()
@@ -72,6 +74,11 @@ struct myPenView: View {
             nibMaterialText = workingVariables.selectedMyPen.nibMaterial
         }
 
+        var borderColour = Color.black
+        
+        if colorScheme == .dark {
+            borderColour = Color.white
+        }
 
         return VStack {
             HStack {
@@ -93,7 +100,6 @@ struct myPenView: View {
                 
                 Button("Close") {
                     self.workingVariables.myPenList = myPens()
-         //           self.workingVariables.reload.toggle()
                     self.showChild = false
                 }
             }
@@ -146,12 +152,12 @@ struct myPenView: View {
                     
                     TextField("Price", text: $workingVariables.selectedMyPen.cost)
                     
-                    #if targetEnvironment(macCatalyst)
-                        DatePicker(selection: $workingVariables.selectedMyPen.datePurchased, displayedComponents: .date) {
-                            Text("Purchase Date")
-                        }
-                        .labelsHidden()
-                    #else
+//                    #if targetEnvironment(macCatalyst)
+//                        DatePicker(selection: $workingVariables.selectedMyPen.datePurchased, displayedComponents: .date) {
+//                            Text("Purchase Date")
+//                        }
+//                        .labelsHidden()
+//                    #else
                          Text(workingVariables.selectedMyPen.datePurchased.formatDateToString)
                             .onTapGesture {
                                 self.showDatePicker = true
@@ -159,7 +165,7 @@ struct myPenView: View {
                             .sheet(isPresented: self.$showDatePicker, onDismiss: { self.showDatePicker = false }) {
                                 pickerDateView(displayTitle: "Purchase Date", showPicker: self.$showDatePicker, selectedDate: self.$workingVariables.selectedMyPen.datePurchased)
                                 }
-                    #endif
+//                    #endif
                 }
             }
             .frame(height: 400)
@@ -185,10 +191,12 @@ struct myPenView: View {
             }
                 .padding(.bottom, 5)
 
-            TextView(text: $workingVariables.selectedMyPen.notes)
-            .padding(.bottom, 5)
-            .padding(.leading, 20)
-            .padding(.trailing, 20)
+            GeometryReader { geometry in
+                TextEditor(text: $workingVariables.selectedMyPen.notes)
+                    .border(borderColour, width: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/)
+                    .frame(width: geometry.size.width - 40, alignment: .center)
+                    .padding()
+            }
             
             Button("Save") {
                 self.workingVariables.selectedMyPen.save()
@@ -225,6 +233,8 @@ struct myPenViewPhone: View {
     @State var showNibPicker = false
     @State var showNibMaterialPicker = false
     
+    @Environment(\.colorScheme) var colorScheme
+    
     var body: some View {
         if workingVariables.selectedMyPen.penID == "" && !tempVars.showManufacturer {
             tempVars.triggerPenSelector()
@@ -252,6 +262,12 @@ struct myPenViewPhone: View {
             nibMaterialText = workingVariables.selectedMyPen.nibMaterial
         }
 
+        var borderColour = Color.black
+        
+        if colorScheme == .dark {
+            borderColour = Color.white
+        }
+        
         return VStack {
             HStack {
                 Spacer()
@@ -370,10 +386,12 @@ struct myPenViewPhone: View {
             }
                 .padding(.bottom, 5)
 
-            TextView(text: $workingVariables.selectedMyPen.notes)
-            .padding(.bottom, 5)
-            .padding(.leading, 20)
-            .padding(.trailing, 20)
+            GeometryReader { geometry in
+                TextEditor(text: $workingVariables.selectedMyPen.notes)
+                    .border(borderColour, width: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/)
+                    .frame(width: geometry.size.width - 40, alignment: .center)
+                    .padding()
+            }
 
             Button("Save") {
                 self.workingVariables.selectedMyPen.save()

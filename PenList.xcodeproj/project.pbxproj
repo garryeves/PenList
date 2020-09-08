@@ -42,7 +42,6 @@
 		34A47FDF2426FBD1008D5C98 /* penDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A47FDE2426FBD1008D5C98 /* penDetails.swift */; };
 		34A47FE12426FBE1008D5C98 /* inkDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A47FE02426FBE1008D5C98 /* inkDetails.swift */; };
 		34A47FE32426FF9A008D5C98 /* mainWorkingVariables.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A47FE22426FF9A008D5C98 /* mainWorkingVariables.swift */; };
-		34A47FE5242703C1008D5C98 /* TextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A47FE4242703C1008D5C98 /* TextView.swift */; };
 		34A47FE7242707C5008D5C98 /* pickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A47FE6242707C5008D5C98 /* pickerView.swift */; };
 		34A47FE9242722AD008D5C98 /* myPenView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A47FE8242722AD008D5C98 /* myPenView.swift */; };
 		34A47FEB242722BD008D5C98 /* myInkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A47FEA242722BD008D5C98 /* myInkView.swift */; };
@@ -101,7 +100,6 @@
 		34A47FDE2426FBD1008D5C98 /* penDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = penDetails.swift; sourceTree = "<group>"; };
 		34A47FE02426FBE1008D5C98 /* inkDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = inkDetails.swift; sourceTree = "<group>"; };
 		34A47FE22426FF9A008D5C98 /* mainWorkingVariables.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mainWorkingVariables.swift; sourceTree = "<group>"; };
-		34A47FE4242703C1008D5C98 /* TextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextView.swift; sourceTree = "<group>"; };
 		34A47FE6242707C5008D5C98 /* pickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = pickerView.swift; sourceTree = "<group>"; };
 		34A47FE8242722AD008D5C98 /* myPenView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = myPenView.swift; sourceTree = "<group>"; };
 		34A47FEA242722BD008D5C98 /* myInkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = myInkView.swift; sourceTree = "<group>"; };
@@ -237,7 +235,6 @@
 				34EDAEB22442A03B00234C64 /* PhotoImportView.swift */,
 				34A47FE6242707C5008D5C98 /* pickerView.swift */,
 				34EDAEAA244137CF00234C64 /* RatingView.swift */,
-				34A47FE4242703C1008D5C98 /* TextView.swift */,
 				3463D21C242ED07E005B5D45 /* selectInkView.swift */,
 				34D00F8524BAA8E700D93F42 /* selectNotepadView.swift */,
 				34A47FEC2427264D008D5C98 /* selectPenView.swift */,
@@ -366,7 +363,6 @@
 				34A47FCB242594B3008D5C98 /* currentUseClass.swift in Sources */,
 				3405FBEF2505DEF4002472E7 /* EDCView.swift in Sources */,
 				34D00F8024B95C6400D93F42 /* myNotePads.swift in Sources */,
-				34A47FE5242703C1008D5C98 /* TextView.swift in Sources */,
 				34D00F8424BAA1FC00D93F42 /* myNotepadView.swift in Sources */,
 				34A47FCD242594CC008D5C98 /* inkClass.swift in Sources */,
 				34EDAEB32442A03B00234C64 /* PhotoImportView.swift in Sources */,
@@ -510,7 +506,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = PenList/PenList.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 14;
+				CURRENT_PROJECT_VERSION = 15;
 				DEVELOPMENT_ASSET_PATHS = "\"PenList/Preview Content\"";
 				DEVELOPMENT_TEAM = 76YDDNPU7W;
 				ENABLE_PREVIEWS = YES;
@@ -535,7 +531,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = PenList/PenList.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 14;
+				CURRENT_PROJECT_VERSION = 15;
 				DEVELOPMENT_ASSET_PATHS = "\"PenList/Preview Content\"";
 				DEVELOPMENT_TEAM = 76YDDNPU7W;
 				ENABLE_PREVIEWS = YES;

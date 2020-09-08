@@ -9,14 +9,6 @@
 import SwiftUI
 
 class myInkDetailsWorkingVariables: ObservableObject {
-//    var showModalNib = pickerComms()
-//    var rememberedIntNib = -1
-//    @Published var showNibPicker = false
-
-//    var showModalNibMaterial = pickerComms()
-//    var rememberedIntNibMaterial = -1
-//    @Published var showNibMaterialPicker = false
-    
     @Published var showManufacturer = false
     
     func triggerInkSelector() {
@@ -41,13 +33,21 @@ struct myInkView: View {
     @State var showPhotoPicker = false
     @State var showDatePicker = false
     
+    @Environment(\.colorScheme) var colorScheme
+    
     var body: some View {
         UITableView.appearance().separatorStyle = .none
         
         if workingVariables.selectedMyInk.inkID == "" && !tempVars.showManufacturer {
             tempVars.triggerInkSelector()
         }
-                
+             
+        var borderColour = Color.black
+        
+        if colorScheme == .dark {
+            borderColour = Color.white
+        }
+        
         return VStack {
             HStack {
                 Spacer()
@@ -82,13 +82,13 @@ struct myInkView: View {
                     TextField("Purchased From", text: $workingVariables.selectedMyInk.boughtFrom)
                     
                     TextField("Price", text: $workingVariables.selectedMyInk.cost)
-                    
-                    #if targetEnvironment(macCatalyst)
-                        DatePicker(selection: $workingVariables.selectedMyInk.dateBought, displayedComponents: .date) {
-                            Text("Purchase Date")
-                        }
-                        .labelsHidden()
-                    #else
+//
+//                    #if targetEnvironment(macCatalyst)
+//                        DatePicker(selection: $workingVariables.selectedMyInk.dateBought, displayedComponents: .date) {
+//                            Text("Purchase Date")
+//                        }
+//                        .labelsHidden()
+//                    #else
                          Text(workingVariables.selectedMyInk.dateBought.formatDateToString)
                             .onTapGesture {
                                 self.showDatePicker = true
@@ -96,7 +96,7 @@ struct myInkView: View {
                             .sheet(isPresented: self.$showDatePicker, onDismiss: { self.showDatePicker = false }) {
                                 pickerDateView(displayTitle: "Purchase Date", showPicker: self.$showDatePicker, selectedDate: self.$workingVariables.selectedMyInk.dateBought)
                                 }
-                    #endif
+//                    #endif
                 }
             }
             .frame(height: 200)
@@ -122,10 +122,12 @@ struct myInkView: View {
             }
             .padding(.bottom, 5)
             
-            TextView(text: $workingVariables.selectedMyInk.notes)
-            .padding(.bottom, 10)
-            .padding(.leading, 20)
-            .padding(.trailing, 20)
+            GeometryReader { geometry in
+                TextEditor(text: $workingVariables.selectedMyInk.notes)
+                    .border(borderColour, width: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/)
+                    .frame(width: geometry.size.width - 40, alignment: .center)
+                    .padding()
+            }
             
             Button("Save") {
                 self.workingVariables.selectedMyInk.save()

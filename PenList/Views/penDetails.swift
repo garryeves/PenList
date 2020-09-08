@@ -28,6 +28,8 @@ struct penDetails: View {
     
     @State var noName = false
     
+    @Environment(\.colorScheme) var colorScheme
+    
     var body: some View {
         UITableView.appearance().separatorStyle = .none
         
@@ -64,6 +66,12 @@ struct penDetails: View {
             dimensionsGrip = "Grip Diameter \(workingVariables.selectedPen.diameterGrip), closed length: \(workingVariables.selectedPen.lengthClosed), weight \(workingVariables.selectedPen.weightTotal)"
         }
 
+        var borderColour = Color.black
+        
+        if colorScheme == .dark {
+            borderColour = Color.white
+        }
+        
         return VStack {
             HStack {
                 Spacer()
@@ -153,8 +161,12 @@ struct penDetails: View {
                         Text("Notes")
                             .font(.subheadline)
                     
-                        TextView(text: $workingVariables.selectedPen.notes)
-                            .padding()
+                        GeometryReader { geometry in
+                            TextEditor(text: $workingVariables.selectedPen.notes)
+                                .border(borderColour, width: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/)
+                                .frame(width: geometry.size.width - 40, alignment: .center)
+                                .padding()
+                        }
                     }
                     .padding(.trailing, 10)
                     

@@ -33,11 +33,19 @@ struct myNotepadView: View {
  //   @State var showPhotoPicker = false
     @State var showDatePicker = false
     
+    @Environment(\.colorScheme) var colorScheme
+    
     var body: some View {
         UITableView.appearance().separatorStyle = .none
 
         if workingVariables.selectedMyNotepad.notepadID == "" && !tempVars.showManufacturer {
             tempVars.triggerNotepadSelector()
+        }
+        
+        var borderColour = Color.black
+        
+        if colorScheme == .dark {
+            borderColour = Color.white
         }
 
         return VStack {
@@ -75,12 +83,12 @@ struct myNotepadView: View {
                     
                     TextField("Price", text: $workingVariables.selectedMyNotepad.cost)
                     
-                    #if targetEnvironment(macCatalyst)
-                        DatePicker(selection: $workingVariables.selectedMyNotepad.dateBought, displayedComponents: .date) {
-                            Text("Purchase Date")
-                        }
-                        .labelsHidden()
-                    #else
+//                    #if targetEnvironment(macCatalyst)
+//                        DatePicker(selection: $workingVariables.selectedMyNotepad.dateBought, displayedComponents: .date) {
+//                            Text("Purchase Date")
+//                        }
+//                        .labelsHidden()
+//                    #else
                          Text(workingVariables.selectedMyNotepad.dateBought.formatDateToString)
                             .onTapGesture {
                                 self.showDatePicker = true
@@ -88,7 +96,7 @@ struct myNotepadView: View {
                             .sheet(isPresented: self.$showDatePicker, onDismiss: { self.showDatePicker = false }) {
                                 pickerDateView(displayTitle: "Purchase Date", showPicker: self.$showDatePicker, selectedDate: self.$workingVariables.selectedMyNotepad.dateBought)
                                 }
-                    #endif
+  //                  #endif
                     
                     if workingVariables.selectedMyNotepad.startedUsing == nil {
                         Button("Start Using") {
@@ -129,10 +137,12 @@ struct myNotepadView: View {
             }
             .padding(.bottom, 5)
             
-            TextView(text: $workingVariables.selectedMyNotepad.notes)
-            .padding(.bottom, 10)
-            .padding(.leading, 20)
-            .padding(.trailing, 20)
+            GeometryReader { geometry in
+                TextEditor(text: $workingVariables.selectedMyNotepad.notes)
+                    .border(borderColour, width: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/)
+                    .frame(width: geometry.size.width - 40, alignment: .center)
+                    .padding()
+            }
             
             Button("Save") {
                 self.workingVariables.selectedMyNotepad.save()

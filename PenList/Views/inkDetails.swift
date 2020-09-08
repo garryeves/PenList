@@ -26,6 +26,8 @@ struct inkDetails: View {
 
     @State var noName = false
     
+    @Environment(\.colorScheme) var colorScheme
+    
     var body: some View {
         
         UITableView.appearance().separatorStyle = .none
@@ -39,6 +41,12 @@ struct inkDetails: View {
         
         if workingVariables.selectedInk.inkType != "" {
             inkTypeText = workingVariables.selectedInk.inkType
+        }
+        
+        var borderColour = Color.black
+        
+        if colorScheme == .dark {
+            borderColour = Color.white
         }
         
         return VStack {
@@ -115,8 +123,12 @@ struct inkDetails: View {
                         Text("Notes")
                             .font(.subheadline)
                         
-                        TextView(text: $workingVariables.selectedInk.notes)
-                        .padding()
+                        GeometryReader { geometry in
+                            TextEditor(text: $workingVariables.selectedInk.notes)
+                                .border(borderColour, width: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/)
+                                .frame(width: geometry.size.width - 40, alignment: .center)
+                                .padding()
+                        }
                     }
                     .padding(.trailing, 10)
                     
