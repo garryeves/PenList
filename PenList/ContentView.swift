@@ -66,6 +66,18 @@ struct ContentView: View {
                     Image(systemName: "book")
                     Text("Notepads")
                 }
+            
+            ManufacturersListView(workingVariables: self.workingVariables)
+                .tabItem {
+                    Image(systemName: "book")
+                    Text("Manufacturers")
+                }
+            
+            toBuyView()
+                .tabItem {
+                    Image(systemName: "book")
+                    Text("To Buy")
+                }
         }
     }
 }

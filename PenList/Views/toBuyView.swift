@@ -74,7 +74,7 @@ class myToBuyWorkingVariables: ObservableObject {
 }
 
 struct toBuyView: View {
-    @Binding var showChild: Bool
+  //  @Binding var showChild: Bool
     
     @ObservedObject var tempVars = myToBuyWorkingVariables()
     @ObservedObject var kbDetails = KeyboardResponder()
@@ -103,21 +103,21 @@ struct toBuyView: View {
         }
         
         return VStack {
-            HStack {
-                Spacer()
-                Text("Items To Buy")
-                    .font(.title)
-                Spacer()
-                
-                Button("Close") {
-                    self.showChild = false
-                }
-            }
-            .padding(.bottom, 10)
-            .padding(.leading, 20)
-            .padding(.trailing, 20)
-            .padding(.top, 15)
-            
+//            HStack {
+//                Spacer()
+//                Text("Items To Buy")
+//                    .font(.title)
+//                Spacer()
+//                
+//                Button("Close") {
+//                    self.showChild = false
+//                }
+//            }
+//            .padding(.bottom, 10)
+//            .padding(.leading, 20)
+//            .padding(.trailing, 20)
+//            .padding(.top, 15)
+//            
             HStack {
                 Text("Filter by")
                 

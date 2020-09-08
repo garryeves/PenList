@@ -14,7 +14,7 @@ class manufacturerListVariables: ObservableObject {
 
 struct ManufacturersListView: View {
     @ObservedObject var workingVariables: mainWorkingVariables
-    @Binding var showChild: Bool
+//    @Binding var showChild: Bool
     
     @ObservedObject var tempVars = manufacturerListVariables()
     
@@ -25,17 +25,17 @@ struct ManufacturersListView: View {
         }
         
         return VStack {
-            HStack {
-                Spacer()
-                Text("Manufacturers List")
-                    .font(.title)
-                Spacer()
-                
-                Button("Close") {
-                    self.showChild = false
-                }
-            }
-            .padding()
+//            HStack {
+//                Spacer()
+//                Text("Manufacturers List")
+//                    .font(.title)
+//                Spacer()
+//
+//                Button("Close") {
+//                    self.showChild = false
+//                }
+//            }
+//            .padding()
             
             if manufacturerList.manufacturers.count == 0 {
                 Text("Welcome.  The first step to take is to create a Manufacturer entry.")

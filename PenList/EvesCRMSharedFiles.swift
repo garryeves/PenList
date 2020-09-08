@@ -18,13 +18,13 @@ public var debugMessages: Bool = false
 
 public var myCurrentViewController: AnyObject!
 
-public let greenColour = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
-public let cyanColour = UIColor(red: 51/255, green: 255/255, blue: 255/255, alpha: 0.25)
-public let redColour = UIColor(red: 190/255, green: 102/255, blue: 102/255, alpha: 0.25)
-public let greyColour = UIColor(red: 192/255, green: 192/255, blue: 192/255, alpha: 0.25)
-public let yellowColour = UIColor(red: 255/255, green: 255/255, blue: 0/255, alpha: 0.25)
-public let brownColour = UIColor(red: 255/255, green: 178/255, blue: 102/255, alpha: 0.25)
-public let darkGreenColour = UIColor(red: 0.0, green: 100/255, blue: 0.0, alpha: 1.0)
+//public let greenColour = UIColor(red: 190/255, green: 254/255, blue: 235/255, alpha: 0.25)
+//public let cyanColour = UIColor(red: 51/255, green: 255/255, blue: 255/255, alpha: 0.25)
+//public let redColour = UIColor(red: 190/255, green: 102/255, blue: 102/255, alpha: 0.25)
+//public let greyColour = UIColor(red: 192/255, green: 192/255, blue: 192/255, alpha: 0.25)
+//public let yellowColour = UIColor(red: 255/255, green: 255/255, blue: 0/255, alpha: 0.25)
+//public let brownColour = UIColor(red: 255/255, green: 178/255, blue: 102/255, alpha: 0.25)
+//public let darkGreenColour = UIColor(red: 0.0, green: 100/255, blue: 0.0, alpha: 1.0)
 
 public func getDeviceType() -> UIUserInterfaceIdiom
 {

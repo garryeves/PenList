@@ -76,41 +76,11 @@ struct inkView: View {
                                             .padding(.top,5)
                                             .padding(.leading, 15)
                                             .padding(.trailing, 15)
-        //                                    .onTapGesture {
-        //                                        self.tempVars.selectedInk = item
-        //                                    }
                                         }
                                         .padding()
                                     }
                                 }
                             }
-                        }
-
-                        HStack {
-                            Spacer()
-                                
-                            Button("Manufacturers") {
-                                self.tempVars.showManufacturers = true
-                            }
-                            .padding()
-                            .sheet(isPresented: self.$tempVars.showManufacturers, onDismiss: { self.tempVars.showManufacturers = false }) {
-                                ManufacturersListView(workingVariables: self.workingVariables, showChild: self.$tempVars.showManufacturers)
-                               }
-
-                            Spacer()
-                            
-                            if manufacturerList.manufacturers.count > 0 {
-                                Button("To Buy") {
-                                    self.showToBuy = true
-                                }
-                                .padding()
-                                .sheet(isPresented: self.$showToBuy, onDismiss: {
-                                    self.showToBuy = false
-                                                  }) {
-                                        toBuyView(showChild: self.$showToBuy)
-                                    }
-                            }
-                            Spacer()
                         }
                     }
                 }

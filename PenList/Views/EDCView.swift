@@ -8,7 +8,8 @@
 
 import SwiftUI
 
-let fillColour = Color.gray.opacity(0.2)
+let fillColour = Color(red: 190/255, green: 254/255, blue: 235/255).opacity(0.2)
+// let fillColour = Color.gray.opacity(0.2)
 
 class newPenWorkingVariables: ObservableObject {
     var showModalInk = pickerComms()
@@ -71,7 +72,7 @@ struct EDCView: View {
             }
             .padding()
 
-            Text("My Unused Pens")
+            Text("My EDC Pens")
                 .font(.headline)
                 .padding()
                 .sheet(isPresented: self.$showMyPenPhone, onDismiss: { self.showMyPenPhone = false }) {
@@ -88,7 +89,6 @@ struct EDCView: View {
                                         Rectangle()
                                             .fill(fillColour)
                                             .cornerRadius(10.0)
-                                            .frame(width: CGFloat(tempVars.columnWidth), alignment: .center)
                                     
                                         VStack {
                                             Text(item.penManufacturer)
@@ -102,7 +102,7 @@ struct EDCView: View {
                                                 .padding(.trailing,10)
                                          
                                             if item.inkFamily == "" {
-                                                Text(item.inkManufacturer)                                            .padding(.leading,10)
+                                                Text(item.inkManufacturer)                             .padding(.leading,10)
                                                     .padding(.trailing,10)
                                             } else {
                                                 Text("\(item.inkManufacturer) - \(item.inkFamily)")
@@ -150,217 +150,100 @@ struct EDCView: View {
                                         }
                                         .padding()
                                     }
+                                    .frame(width: CGFloat(tempVars.columnWidth), alignment: .center)
                                 }
                             }
                         }
+                        .frame(height: geometry.size.height * 0.6 )
+                        .padding()
+                        
+                        VStack {
+                            Text("My Unused Pens")
+                                .font(.headline)
+                                .padding()
+                                .sheet(isPresented: self.$showMyPen, onDismiss: { self.showMyPen = false }) {
+                                        myPenView(workingVariables: self.workingVariables, showChild: self.$showMyPen)
+                                }
 
-                        Text("My Unused Pens")
-                            .font(.headline)
-                            .padding()
-                            .sheet(isPresented: self.$showMyPen, onDismiss: { self.showMyPen = false }) {
-                                    myPenView(workingVariables: self.workingVariables, showChild: self.$showMyPen)
-                            }
+                            ScrollView {
+                                LazyVGrid(columns: Array(repeating: .init(.flexible()), count: (Int(geometry.size.width) - 40) / tempVars.columnWidth)) {
+                                    ForEach (self.workingVariables.myPenList.unusedPens) {item in
+                                        ZStack {
+                                            Rectangle()
+                                                .fill(fillColour)
+                                                .cornerRadius(10.0)
+                                                .frame(width: CGFloat(tempVars.columnWidth), alignment: .center)
 
-                        ScrollView {
-                            LazyVGrid(columns: Array(repeating: .init(.flexible()), count: (Int(geometry.size.width) - 40) / tempVars.columnWidth)) {
-                                ForEach (self.workingVariables.myPenList.unusedPens) {item in
-                                    ZStack {
-                                        Rectangle()
-                                            .fill(fillColour)
-                                            .cornerRadius(10.0)
-                                            .frame(width: CGFloat(tempVars.columnWidth), alignment: .center)
-                                        
-                                        VStack {
-                                            Text("")
-                                            Text(item.manufacturer)
-                                            Text("")
-                                            Text(item.name)
-                                            Text("")
-                                            Button(item.addInkMessage) {
-                                                if item.addInkMessage == defaultAddInkMessage {
-                                                    self.newInk.penListItem = item
-                                                    self.newInk.rememberedInkInt = -1
-                                                    self.newInk.showModalInk.displayList.removeAll()
-                                                    
-                                                    for item in self.workingVariables.myInkList.inks {
-                                                        
-                                                        var tempName = "\(item.manufacturer) - \(item.name)"
-                                                        if item.inkFamily != "" {
-                                                            tempName = "\(item.manufacturer) - \(item.inkFamily) \(item.name)"
+                                            VStack {
+                                                Text("")
+                                                Text(item.manufacturer)
+                                                Text("")
+                                                Text(item.name)
+                                                Text("")
+                                                Button(item.addInkMessage) {
+                                                    if item.addInkMessage == defaultAddInkMessage {
+                                                        self.newInk.penListItem = item
+                                                        self.newInk.rememberedInkInt = -1
+                                                        self.newInk.showModalInk.displayList.removeAll()
+
+                                                        for item in self.workingVariables.myInkList.inks {
+
+                                                            var tempName = "\(item.manufacturer) - \(item.name)"
+                                                            if item.inkFamily != "" {
+                                                                tempName = "\(item.manufacturer) - \(item.inkFamily) \(item.name)"
+                                                            }
+
+                                                            self.newInk.showModalInk.displayList.append(displayEntry(entryText: tempName))
                                                         }
-                                                        
-                                                        self.newInk.showModalInk.displayList.append(displayEntry(entryText: tempName))
+
+                                                        self.newInk.showInk = true
+                                                    } else {
+                                                        let temp = currentUse(newPenID: item.myPenID.uuidString, newInkID: item.selectedInk.inkID)
+
+                                                        currentUseList.append(temp)
+                                                        self.workingVariables.myPenList = myPens()
+                                                        newInk.reload.toggle()
                                                     }
-                                                    
-                                                    self.newInk.showInk = true
-                                                } else {
-                                                    let temp = currentUse(newPenID: item.myPenID.uuidString, newInkID: item.selectedInk.inkID)
-                                                    
-                                                    currentUseList.append(temp)
-                                                    self.workingVariables.myPenList = myPens()
-                                                    newInk.reload.toggle()
                                                 }
-                                            }
-                                            .sheet(isPresented: self.$newInk.showInk, onDismiss: { self.newInk.showInk = false }) {
-                                                pickerView(displayTitle: "Select Ink", rememberedInt: self.$newInk.rememberedInkInt, showPicker: self.$newInk.showInk, showModal: self.$newInk.showModalInk)
-                                                        }
-                                
-                                            HStack{
-                                                Spacer()
-                                                Button("Pen Details") {
-                                                    self.workingVariables.selectedMyPen = item
-                                                    if UIDevice.current.userInterfaceIdiom == .phone {
-                                                         self.showMyPenPhone = true
-                                                     } else {
-                                                         self.showMyPen = true
-                                                     }
-                                                }
+                                                .sheet(isPresented: self.$newInk.showInk, onDismiss: { self.newInk.showInk = false }) {
+                                                    pickerView(displayTitle: "Select Ink", rememberedInt: self.$newInk.rememberedInkInt, showPicker: self.$newInk.showInk, showModal: self.$newInk.showModalInk)
+                                                            }
 
-                                                Spacer()
+                                                HStack{
+                                                    Spacer()
+                                                    Button("Pen Details") {
+                                                        self.workingVariables.selectedMyPen = item
+                                                        if UIDevice.current.userInterfaceIdiom == .phone {
+                                                             self.showMyPenPhone = true
+                                                         } else {
+                                                             self.showMyPen = true
+                                                         }
+                                                    }
+
+                                                    Spacer()
+                                                }
+                                                .padding(.top,5)
+                                                .padding(.leading, 15)
+                                                .padding(.trailing, 15)
                                             }
-                                            .padding(.top,5)
-                                            .padding(.leading, 15)
-                                            .padding(.trailing, 15)
+                                            .padding()
                                         }
-                                        .padding()
                                     }
                                 }
                             }
                         }
+                        .padding()
                     }
                 }
             }
             
-//                            HStack {
-//                                VStack {
-//                                    HStack {
-//                                        if self.showAllPens {
-//                                            Text("My Pen Collection")
-//                                                .font(.headline)
-//                                                .onTapGesture {
-//                                                    self.showAllPens.toggle()
-//                                                }
-//                                            .sheet(isPresented: self.$showMyPenPhone, onDismiss: { self.showMyPenPhone = false }) {
-//                                                myPenViewPhone(workingVariables: self.workingVariables, showChild: self.$showMyPenPhone)
-//                                                }
-//
-//                                        } else {
-//                                            Text("My Unused Pens")
-//                                                .font(.headline)
-//                                                .onTapGesture {
-//                                                    self.showAllPens.toggle()
-//                                                }
-//                                            .sheet(isPresented: self.$showMyPenPhone, onDismiss: { self.showMyPenPhone = false }) {
-//                                                myPenViewPhone(workingVariables: self.workingVariables, showChild: self.$showMyPenPhone)
-//                                                }
-//                                        }
-//
-//                                        Text(" ")
-//                                            .sheet(isPresented: self.$showMyPen, onDismiss: { self.showMyPen = false
-//                                            }) {
-//                                                myPenView(workingVariables: self.workingVariables, showChild: self.$showMyPen)
-//                                                }
-//                                    }
-//
-//                                    if self.showAllPens {
-//                                        List {
-//                                            ForEach (self.workingVariables.myPenList.pens) {item in
-//                                                Text(item.name)
-//                                                    .contextMenu {
-//                                                        Button("Details") {
-//                                                            self.workingVariables.selectedMyPen = item
-//                                                            if UIDevice.current.userInterfaceIdiom == .phone {
-//                                                                 self.showMyPenPhone = true
-//                                                             } else {
-//                                                                 self.showMyPen = true
-//                                                             }
-//                                                        }
-//                                                    }
-//                                                    .onTapGesture {
-//                                                        self.tempVars.selectedPen = item
-//                                                    }
-//                                            }
-//                                        }
-//                                    } else { // show unused pens only
-//                                        List {
-//                                            ForEach (self.workingVariables.myPenList.unusedPens) {item in
-//                                                Text(item.name)
-//                                                    .contextMenu {
-//                                                        Button("Details") {
-//                                                            self.workingVariables.selectedMyPen = item
-//                                                            if UIDevice.current.userInterfaceIdiom == .phone {
-//                                                                 self.showMyPenPhone = true
-//                                                             } else {
-//                                                                 self.showMyPen = true
-//                                                             }
-//                                                        }
-//                                                    }
-//                                                    .onTapGesture {
-//                                                        self.tempVars.selectedPen = item
-//                                                    }
-//                                            }
-//                                        }
-//                                    }
-//                                }
-//
-//                                VStack {
-//                                    HStack {
-//                                        Text("My Ink Collection")
-//                                            .font(.headline)
-//                                            .sheet(isPresented: self.$showMyInk, onDismiss: { self.showMyInk = false }) {
-//                                                myInkView(workingVariables: self.workingVariables, showChild: self.$showMyInk)
-//                                                }
-//                                    }
-//
-//                                    List {
-//                                        ForEach (self.workingVariables.myInkList.inks) {item in
-//                                            Text(item.name)
-//                                            .contextMenu {
-//                                                Button("Details") {
-//                                                    self.workingVariables.selectedMyInk = item
-//                                                    self.showMyInk = true
-//                                                }
-//                                            }
-//                                            .onTapGesture {
-//                                                self.tempVars.selectedInk = item
-//                                            }
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                            .padding(.top, 15)
-//
+
 //                        } else {
 //                            // No manufacturers yet so show onboarding
 //                            Text("Welcome.  The first step to take is to create a Manufacturer entry.")
 //                        }
 
-                            HStack {
-                                Spacer()
-                                    
-                                Button("Manufacturers") {
-                                    self.tempVars.showManufacturers = true
-                                }
-                                .padding()
-                                .sheet(isPresented: self.$tempVars.showManufacturers, onDismiss: { self.tempVars.showManufacturers = false }) {
-                                    ManufacturersListView(workingVariables: self.workingVariables, showChild: self.$tempVars.showManufacturers)
-                                   }
 
-                                Spacer()
-                                
-                                if manufacturerList.manufacturers.count > 0 {
-                                    Button("To Buy") {
-                                        self.showToBuy = true
-                                    }
-                                    .padding()
-                                    .sheet(isPresented: self.$showToBuy, onDismiss: {
-                                        self.showToBuy = false
-                                                      }) {
-                                            toBuyView(showChild: self.$showToBuy)
-                                        }
-                                }
-                                Spacer()
-                            }
                     }
                 }
 
