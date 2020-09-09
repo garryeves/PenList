@@ -83,6 +83,11 @@ struct inkView: View {
                             }
                         }
                     }
+                } else {
+                    Spacer()
+                    Text("You must create a Manufaturer first")
+                        .font(.largeTitle)
+                    Spacer()
                 }
             }
         }

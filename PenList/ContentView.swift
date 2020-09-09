@@ -69,13 +69,13 @@ struct ContentView: View {
             
             ManufacturersListView(workingVariables: self.workingVariables)
                 .tabItem {
-                    Image(systemName: "book")
+                    Image(systemName: "bag")
                     Text("Manufacturers")
                 }
             
             toBuyView()
                 .tabItem {
-                    Image(systemName: "book")
+                    Image(systemName: "cart")
                     Text("To Buy")
                 }
         }

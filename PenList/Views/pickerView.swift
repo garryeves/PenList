@@ -43,6 +43,7 @@ struct pickerView : View {
         return VStack (alignment: .center) {
             Text(displayTitle)
                 .font(.title)
+                .padding()
 
             Picker(selection: $selectedItem, label: Text("")) {
                 
@@ -51,6 +52,7 @@ struct pickerView : View {
                 }
             }
             .padding()
+            .pickerStyle(WheelPickerStyle())
       //      .frame(width: 300, height: 300, alignment: .center)
             
             Button("Select") {
@@ -58,6 +60,9 @@ struct pickerView : View {
                 self.showPicker = false
                 self.showModal.reloadFlag.toggle()
             }
+            .padding()
+            
+            Spacer()
         }
     }
 }

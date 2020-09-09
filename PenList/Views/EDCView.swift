@@ -72,7 +72,7 @@ struct EDCView: View {
             }
             .padding()
 
-            Text("My EDC Pens")
+            Text("My Inked Pens")
                 .font(.headline)
                 .padding()
                 .sheet(isPresented: self.$showMyPenPhone, onDismiss: { self.showMyPenPhone = false }) {
@@ -148,7 +148,6 @@ struct EDCView: View {
                                             .padding(.leading, 15)
                                             .padding(.trailing, 15)
                                         }
-                                        .padding()
                                     }
                                     .frame(width: CGFloat(tempVars.columnWidth), alignment: .center)
                                 }
@@ -158,9 +157,8 @@ struct EDCView: View {
                         .padding()
                         
                         VStack {
-                            Text("My Unused Pens")
+                            Text("My UnInked Pens")
                                 .font(.headline)
-                                .padding()
                                 .sheet(isPresented: self.$showMyPen, onDismiss: { self.showMyPen = false }) {
                                         myPenView(workingVariables: self.workingVariables, showChild: self.$showMyPen)
                                 }
@@ -232,19 +230,14 @@ struct EDCView: View {
                                 }
                             }
                         }
-                        .padding()
                     }
+                } else {
+                    Spacer()
+                    Text("You must create a Manufaturer first")
+                        .font(.largeTitle)
+                    Spacer()
                 }
             }
-            
-
-//                        } else {
-//                            // No manufacturers yet so show onboarding
-//                            Text("Welcome.  The first step to take is to create a Manufacturer entry.")
-//                        }
-
-
-                    }
-                }
-
+        }
+    }
 }

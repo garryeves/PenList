@@ -226,8 +226,10 @@
 			children = (
 				34B1374824D65C26005AF7CF /* aboutScreenView.swift */,
 				349D8E12243981B200BC0CBB /* carryListiPadView.swift */,
+				3405FBEE2505DEF4002472E7 /* EDCView.swift */,
 				34EDAEA82441344100234C64 /* EDCReviewView.swift */,
 				34A47FE02426FBE1008D5C98 /* inkDetails.swift */,
+				3405FBF02505DF42002472E7 /* inkView.swift */,
 				3440FF2924551C2900528D32 /* ManufacturersListView.swift */,
 				34A47FC82424C1D3008D5C98 /* manufacturerView.swift */,
 				34A47FEA242722BD008D5C98 /* myInkView.swift */,
@@ -236,6 +238,7 @@
 				34A47FE8242722AD008D5C98 /* myPenView.swift */,
 				34EDAEB62442BDED00234C64 /* myPenImagesView.swift */,
 				34D00F8124BAA06400D93F42 /* notepadDetailsView.swift */,
+				3410E15B2505E25B00FC1ED5 /* notepadView.swift */,
 				34A47FDE2426FBD1008D5C98 /* penDetails.swift */,
 				349848DF244A9807004FC850 /* penDimensionView.swift */,
 				34EDAEB22442A03B00234C64 /* PhotoImportView.swift */,
@@ -247,9 +250,6 @@
 				349848E1244BE7A2004FC850 /* toBuyView.swift */,
 				3482AB8F244BEA7D00815EAE /* toBuyEditView.swift */,
 				346E3C0924A6B33700034B2B /* PickerDateView.swift */,
-				3405FBEE2505DEF4002472E7 /* EDCView.swift */,
-				3405FBF02505DF42002472E7 /* inkView.swift */,
-				3410E15B2505E25B00FC1ED5 /* notepadView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -514,7 +514,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = PenList/PenList.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 16;
+				CURRENT_PROJECT_VERSION = 18;
 				DEVELOPMENT_ASSET_PATHS = "\"PenList/Preview Content\"";
 				DEVELOPMENT_TEAM = 76YDDNPU7W;
 				ENABLE_PREVIEWS = YES;
@@ -529,7 +529,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Debug;
 		};
@@ -539,7 +539,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = PenList/PenList.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 16;
+				CURRENT_PROJECT_VERSION = 18;
 				DEVELOPMENT_ASSET_PATHS = "\"PenList/Preview Content\"";
 				DEVELOPMENT_TEAM = 76YDDNPU7W;
 				ENABLE_PREVIEWS = YES;
@@ -554,7 +554,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,6";
 			};
 			name = Release;
 		};

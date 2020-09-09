@@ -14,51 +14,100 @@ class manufacturerListVariables: ObservableObject {
 
 struct ManufacturersListView: View {
     @ObservedObject var workingVariables: mainWorkingVariables
-//    @Binding var showChild: Bool
     
     @ObservedObject var tempVars = manufacturerListVariables()
-    
-    
+        
     var body: some View {
         if manufacturerList.manufacturers.count == 0 && !self.tempVars.showManufacturer {
             self.tempVars.showManufacturer = true
         }
         
+        let columnWidth = 250
+        
         return VStack {
-//            HStack {
-//                Spacer()
-//                Text("Manufacturers List")
-//                    .font(.title)
-//                Spacer()
-//
-//                Button("Close") {
-//                    self.showChild = false
-//                }
-//            }
-//            .padding()
-            
             if manufacturerList.manufacturers.count == 0 {
                 Text("Welcome.  The first step to take is to create a Manufacturer entry.")
             } else {
-                List {
-                    ForEach (manufacturerList.manufacturers) {item in
-                        Section(header: HStack {Spacer()
-                                                Text(item.name).font(.title)
-                                                Spacer() }) {
-                            manufacturerItemsView(item: item)
-                        }
-                        .onTapGesture {
-                            self.workingVariables.selectedManufacturer = item
-                            self.tempVars.showManufacturer = true
+                
+                GeometryReader { geometry in
+                    VStack {
+                        ScrollView {
+                            ForEach (manufacturerList.manufacturers) {item in
+                                HStack {
+                                    Spacer()
+                                    Text(item.name).font(.largeTitle)
+                                        
+                                    Spacer()
+                                    
+                                    Button("\(item.name) Details") {
+                                        self.workingVariables.selectedManufacturer = item
+                                        self.tempVars.showManufacturer = true
+                                    }
+                                }
+                                .padding(.top, 5)
+                                .padding(.bottom, 5)
+                                .padding(.leading, 15)
+                                .padding(.trailing, 15)
+                    
+                                LazyVGrid(columns: Array(repeating: .init(.flexible()), count: (Int(geometry.size.width) - 40) / columnWidth)) {
+                                    
+                                    if item.penItems.count > 0 {
+                                        ForEach (item.penItems) {subItem in
+                                            ZStack {
+                                                Rectangle()
+                                                    .fill(fillColour)
+                                                    .cornerRadius(10.0)
+
+                                                Text("Pen : \(subItem.name)")
+                                                    .padding(.top,15)
+                                                    .padding(.bottom,15)
+                                            }
+                                            .frame(width: CGFloat(columnWidth), alignment: .center)
+                                        }
+                                    }
+                                    
+                                    if item.inkItems.count > 0 {
+                                        ForEach (item.inkItems) {subItem in
+                                            ZStack {
+                                                Rectangle()
+                                                    .fill(fillColour)
+                                                    .cornerRadius(10.0)
+
+                                                if subItem.inkFamily == "" {
+                                                    Text("Ink : \(subItem.name)")
+                                                        .padding(.top,15)
+                                                        .padding(.bottom,15)
+                                                } else {
+                                                    Text("Ink : \(subItem.inkFamily) \(subItem.name)")
+                                                        .padding(.top,15)
+                                                        .padding(.bottom,15)
+                                                }
+                                            }
+                                            .frame(width: CGFloat(columnWidth), alignment: .center)
+                                        }
+                                    }
+                                    
+                                    if item.notepadItems.count > 0 {
+                                        ForEach (item.notepadItems) {subItem in
+                                            ZStack {
+                                                Rectangle()
+                                                    .fill(fillColour)
+                                                    .cornerRadius(10.0)
+
+                                                Text("Notepad : \(subItem.name)")
+                                                    .padding(.top,15)
+                                                    .padding(.bottom,15)
+                                            }
+                                            .frame(width: CGFloat(columnWidth), alignment: .center)
+                                        }
+                                    }
+                                }
+
+                            }
                         }
                     }
                 }
-                .padding(.bottom,10)
-            }
-
-            HStack {
-                Spacer()
-                                           
+                
                 Button("Add Manufacturer") {
                     self.workingVariables.selectedManufacturer = manufacturer()
                     self.tempVars.showManufacturer = true
@@ -69,40 +118,6 @@ struct ManufacturersListView: View {
                 }) {
                     manufacturerView(workingVariables: self.workingVariables, showChild: self.$tempVars.showManufacturer)
                    }
-               
-                Spacer()
-            }
-        }
-    }
-}
-
-struct manufacturerItemsView: View {
-    var item: manufacturer
-    
-    var body: some View {
-        return HStack {
-            if item.penItems.count > 0 {
-                if item.penItems.count == 1 {
-                    Text("1 pen       ")
-                } else {
-                    Text("\(item.penItems.count) pens      ")
-                }
-            }
-            if item.inkItems.count > 0 {
-                if item.inkItems.count == 1 {
-                    Text("1 ink       ")
-                }
-                else {
-                    Text("\(item.inkItems.count) inks       ")
-                }
-            }
-            if item.notepadItems.count > 0 {
-                if item.notepadItems.count == 1 {
-                    Text("1 notepad")
-                }
-                else {
-                    Text("\(item.notepadItems.count) notepads")
-                }
             }
         }
     }

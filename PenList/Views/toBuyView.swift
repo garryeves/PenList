@@ -74,8 +74,6 @@ class myToBuyWorkingVariables: ObservableObject {
 }
 
 struct toBuyView: View {
-  //  @Binding var showChild: Bool
-    
     @ObservedObject var tempVars = myToBuyWorkingVariables()
     @ObservedObject var kbDetails = KeyboardResponder()
     
@@ -83,6 +81,8 @@ struct toBuyView: View {
     
     var body: some View {
         UITableView.appearance().separatorStyle = .singleLine
+        
+        let columnWidth = 300
         
         var typeText = "Select type"
         
@@ -103,21 +103,6 @@ struct toBuyView: View {
         }
         
         return VStack {
-//            HStack {
-//                Spacer()
-//                Text("Items To Buy")
-//                    .font(.title)
-//                Spacer()
-//                
-//                Button("Close") {
-//                    self.showChild = false
-//                }
-//            }
-//            .padding(.bottom, 10)
-//            .padding(.leading, 20)
-//            .padding(.trailing, 20)
-//            .padding(.top, 15)
-//            
             HStack {
                 Text("Filter by")
                 
@@ -132,99 +117,117 @@ struct toBuyView: View {
                     
                     self.tempVars.showDisplayTypePicker = true
                 }
-                .padding(.trailing, 30)
                 .sheet(isPresented: self.$tempVars.showDisplayTypePicker, onDismiss: { self.tempVars.showDisplayTypePicker = false }) {
                     pickerView(displayTitle: "Select Purchase Type", rememberedInt: self.$tempVars.rememberedIntDisplayType, showPicker: self.$tempVars.showDisplayTypePicker, showModal: self.$tempVars.showModalDisplayType)
                             }
             }
- // What I want to do is group by type then manufacturer and display nicer
-            List {
-                ForEach (displayList) {topLevel in
-                    Section(header: HStack {Spacer()
-                                            Text(topLevel.type).font(.title)
-                                            Spacer() }) {
-                        ForEach (topLevel.toBuys) { manuf in
-                            Section(header: HStack {Spacer()
-                                Text(manuf.manufacturer).font(.headline)
-                                                    Spacer() }) {
-                                ForEach (manuf.toBuys) { item in
-                                    VStack (alignment: .leading){
-                                        HStack {
-                                            Text(item.name)
-                                            Spacer()
-                                            Text(item.cost)
-                                        }
-                                        .padding(.bottom, 5)
-                                    }
-                                    .contextMenu {
-                                        Button("Details") {
-                                            self.tempVars.workingItem = item
-                                            self.showEdit = true
-                                        }
-                                        Button("Mark as Bought") {
-                                            item.status = toBuyStatusBought
-                                            item.save()
-                                        
-                                            // now we need to create the item in the correct table
-                                            
-                                            switch item.type {
-                                                case tobuyPen:
-                                                    let tempPen = pen()
+            .padding(.top, 15)
+            
+            GeometryReader { geometry in
+                if manufacturerList.manufacturers.count > 0 {
+                    VStack {
+                        ScrollView {
+                            ForEach (displayList) {topLevel in
+                                Text(topLevel.type).font(.largeTitle)
+                                    .padding(.top, 5)
+                                    .padding(.bottom, 5)
+                            
+                                ForEach (topLevel.toBuys) { manuf in
+                                    Text(manuf.manufacturer).font(.title)
+                                
+                                    LazyVGrid(columns: Array(repeating: .init(.flexible()), count: (Int(geometry.size.width) - 40) / columnWidth)) {
+                                        ForEach (manuf.toBuys) {item in
+                                            ZStack {
+                                                Rectangle()
+                                                    .fill(fillColour)
+                                                    .cornerRadius(10.0)
+
+                                                VStack {
+                                                    Text(item.name)
+                                                        .padding(.top,15)
+                                                        .padding(.bottom,10)
+
+                                                    Text(item.cost)
                                                     
-                                                    tempPen.newPen(passedname: item.name, passedmanID: item.manID, passednotes: item.notes)
-                                                
-                                                    sleep(2)
-                                                    
-                                                    penList = pens()
-                                                    currentPenList = myPens()
-                                                
-                                                case toBuyInk:
-                                                    let tempInk = ink()
+                                                    HStack {
+                                                        Button("Details") {
+                                                            self.tempVars.workingItem = item
+                                                            self.showEdit = true
+                                                        }
                                                         
-                                                    tempInk.newInk(passedmanID: item.manID, passedname: item.name, passednotes: item.notes)
-                                                    
-                                                    sleep(2)
-                                                  
-                                                    inkList = inks()
-                                                    currentInkList = myInks()
-                                                
-                                                case toBuyNotebook:
-                                                    print("At the momnt we don't do anything with Notebooks")
-                                                
-                                                default:
-                                                    print("At the momnt we don't do anything with Other")
+                                                        Button("Mark as Bought") {
+                                                            item.status = toBuyStatusBought
+                                                            item.save()
+                                                        
+                                                            // now we need to create the item in the correct table
+                                                            
+                                                            switch item.type {
+                                                                case tobuyPen:
+                                                                    let tempPen = pen()
+                                                                    
+                                                                    tempPen.newPen(passedname: item.name, passedmanID: item.manID, passednotes: item.notes)
+                                                                
+                                                                    sleep(2)
+                                                                    
+                                                                    penList = pens()
+                                                                    currentPenList = myPens()
+                                                                
+                                                                case toBuyInk:
+                                                                    let tempInk = ink()
+                                                                        
+                                                                    tempInk.newInk(passedmanID: item.manID, passedname: item.name, passednotes: item.notes)
+                                                                    
+                                                                    sleep(2)
+                                                                  
+                                                                    inkList = inks()
+                                                                    currentInkList = myInks()
+                                                                
+                                                                case toBuyNotebook:
+                                                                    print("At the momnt we don't do anything with Notebooks")
+                                                                
+                                                                default:
+                                                                    print("At the momnt we don't do anything with Other")
+                                                            }
+                                                            
+                                                            self.tempVars.tobuyList = toBuys()
+                                                            self.tempVars.reload.toggle()
+                                                        }
+                                                        
+                                                        Button("Remove") {
+                                                            self.tempVars.delete(item)
+                                                            self.tempVars.tobuyList = toBuys()
+                                                            self.tempVars.reload.toggle()
+                                                        }
+                                                    }
+                                                    .padding(.top,10)
+                                                    .padding(.leading, 15)
+                                                    .padding(.trailing, 15)
+                                                    .padding(.bottom, 15)
+                                                }
                                             }
-                                            
-                                            self.tempVars.tobuyList = toBuys()
-                                            self.tempVars.reload.toggle()
-                                        }
-                                        Button("Remove") {
-                                            self.tempVars.delete(item)
-                                            self.tempVars.tobuyList = toBuys()
-                                            self.tempVars.reload.toggle()
+                                            .frame(width: CGFloat(columnWidth), alignment: .center)
                                         }
                                     }
                                 }
                             }
                         }
+                        
+                        Button("Add") {
+                            self.tempVars.add()
+                            self.showEdit = true
+                        }
+                        .padding()
+                        .sheet(isPresented: self.$showEdit, onDismiss: { self.showEdit = false }) {
+                            toBuyEditView(tempVars: self.tempVars, showChild: self.$showEdit)
+                            }
                     }
+                } else {
+                    Spacer()
+                    Text("You must create a Manufaturer first")
+                        .font(.largeTitle)
+                    Spacer()
                 }
             }
-            .listStyle(GroupedListStyle())
-            .padding(.bottom, 10)
-            .padding(.leading, 20)
-            .padding(.trailing, 20)
-            
-            Button("Add") {
-                self.tempVars.add()
-                self.showEdit = true
-            }
-            .sheet(isPresented: self.$showEdit, onDismiss: { self.showEdit = false }) {
-                toBuyEditView(tempVars: self.tempVars, showChild: self.$showEdit)
-                }
-
-            Spacer()
         }
-        .padding(.bottom, kbDetails.currentHeight)
     }
 }
