@@ -147,6 +147,7 @@ struct EDCView: View {
                                             .padding(.top,5)
                                             .padding(.leading, 15)
                                             .padding(.trailing, 15)
+                                            .padding(.bottom, 15)
                                         }
                                     }
                                     .frame(width: CGFloat(tempVars.columnWidth), alignment: .center)
