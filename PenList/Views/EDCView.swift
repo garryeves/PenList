@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-let fillColour = Color(red: 190/255, green: 254/255, blue: 235/255).opacity(0.4)
+let fillColour = Color(red: 190/255, green: 254/255, blue: 235/255).opacity(0.3)
 // let fillColour = Color.gray.opacity(0.2)
 
 class newPenWorkingVariables: ObservableObject {
@@ -20,19 +20,17 @@ class newPenWorkingVariables: ObservableObject {
     @Published var reload = false
     
     func processRecord(workingPenList: myPens, workingInkList: myInks) {
-        if rememberedInkInt > -1 {
-            var penIndex = 0
-            
-            var countIndex = 0
-            
+        if rememberedInkInt > 0 {
             for item in workingPenList.unusedPens {
                 if item.myPenID == penListItem.myPenID {
-                    penIndex = countIndex
+                    let temp = currentUse(newPenID: item.myPenID.uuidString, newInkID: workingInkList.inks[rememberedInkInt - 1].inkID)
+
+                    currentUseList.append(temp)
                     break
                 }
-                countIndex += 1
             }
-            workingPenList.unusedPens[penIndex].selectedInk = workingInkList.inks[rememberedInkInt]
+             
+            reload.toggle()
             rememberedInkInt = -1
         }
     }
@@ -53,8 +51,9 @@ struct EDCView: View {
     @State var showEDCReview = false
    
     var body: some View {
-        if newInk.rememberedInkInt > -1 {
+        if newInk.rememberedInkInt > 0 {
             newInk.processRecord(workingPenList: self.workingVariables.myPenList, workingInkList: self.workingVariables.myInkList)
+            workingVariables.myPenList = myPens()
         }
         
         return  VStack {
@@ -115,49 +114,40 @@ struct EDCView: View {
                                                 .padding(.trailing,10)
                                                 .padding(.bottom, 10)
 
-//                                            Menu("Actions") {
-//                                                Button("Pen Details", action: details)
-//                                                
-//                                                Button("Review", action: review)
-//                                                
-//                                                Button("Finished", action: finished)
-//                                                
-//                                                Button("Finished", action: history)
-//                                            } 
-                                            
-                                            Button("Pen Details") {
-                                                self.workingVariables.selectedMyPen = item.currentPen
-                                                if UIDevice.current.userInterfaceIdiom == .phone {
-                                                     self.showMyPenPhone = true
-                                                 } else {
-                                                     self.showMyPen = true
-                                                 }
-                                            }
-                                            
-                                            HStack{
-                                                Button("Review") {
-                                                    self.tempVars.EDCItem = item
-                                                    self.tempVars.rating = item.rating
-                                                    self.showEDCReview = true
-                                                }
-                                                .sheet(isPresented: self.$showEDCReview, onDismiss: { self.showEDCReview = false }) {
-                                                    EDCReviewView(tempVars: self.tempVars, showChild: self.$showEDCReview)
-                                                    }
-
-                                                Spacer()
-                                            
-                                                Button("Finished") {
+                                            Menu("Action to take") {
+                                                Button("Pen Details", action: {
+                                                        self.workingVariables.selectedMyPen = item.currentPen
+                                                        if UIDevice.current.userInterfaceIdiom == .phone {
+                                                             self.showMyPenPhone = true
+                                                         } else {
+                                                             self.showMyPen = true
+                                                         }
+                                                })
+                                                
+                                                Button("Review", action: {                                 self.tempVars.EDCItem = item
+                                                        self.tempVars.rating = item.rating
+                                                        self.showEDCReview = true})
+                                                
+                                                Button("Finished", action: {
                                                     item.dateEnded = Date()
                                                     item.save()
-                                                sleep(2)
+                                                    sleep(2)
                                                     currentUseList.reload()
                                                     self.tempVars.reloadScreen.toggle()
-                                                }
+                                                })
+                                                
+                                                Button("History", action: {
+                                                        print("history calls")
+                                                    
+                                                })
                                             }
                                             .padding(.top,5)
                                             .padding(.leading, 15)
                                             .padding(.trailing, 15)
                                             .padding(.bottom, 15)
+                                            .sheet(isPresented: self.$showEDCReview, onDismiss: { self.showEDCReview = false }) {
+                                                EDCReviewView(tempVars: self.tempVars, showChild: self.$showEDCReview)
+                                                }
                                         }
                                     }
                                     .frame(width: CGFloat(tempVars.columnWidth), alignment: .center)
@@ -189,51 +179,44 @@ struct EDCView: View {
                                                 Text("")
                                                 Text(item.name)
                                                 Text("")
-                                                Button(item.addInkMessage) {
-                                                    if item.addInkMessage == defaultAddInkMessage {
-                                                        self.newInk.penListItem = item
-                                                        self.newInk.rememberedInkInt = -1
-                                                        self.newInk.showModalInk.displayList.removeAll()
+                                                
+                                                Menu("Action to take") {
+                                                    Button(item.addInkMessage, action: {
+                                                        if item.addInkMessage == defaultAddInkMessage {
+                                                            self.newInk.penListItem = item
+                                                            self.newInk.rememberedInkInt = -1
+                                                            self.newInk.showModalInk.displayList.removeAll()
 
-                                                        for item in self.workingVariables.myInkList.inks {
+                                                            self.newInk.showModalInk.displayList.append(displayEntry(entryText: "No selection"))
+                                                            for item in self.workingVariables.myInkList.inks {
 
-                                                            var tempName = "\(item.manufacturer) - \(item.name)"
-                                                            if item.inkFamily != "" {
-                                                                tempName = "\(item.manufacturer) - \(item.inkFamily) \(item.name)"
+                                                                var tempName = "\(item.manufacturer) - \(item.name)"
+                                                                if item.inkFamily != "" {
+                                                                    tempName = "\(item.manufacturer) - \(item.inkFamily) \(item.name)"
+                                                                }
+
+                                                                self.newInk.showModalInk.displayList.append(displayEntry(entryText: tempName))
                                                             }
 
-                                                            self.newInk.showModalInk.displayList.append(displayEntry(entryText: tempName))
+                                                            self.newInk.showInk = true
                                                         }
-
-                                                        self.newInk.showInk = true
-                                                    } else {
-                                                        let temp = currentUse(newPenID: item.myPenID.uuidString, newInkID: item.selectedInk.inkID)
-
-                                                        currentUseList.append(temp)
-                                                        self.workingVariables.myPenList = myPens()
-                                                        newInk.reload.toggle()
-                                                    }
-                                                }
-                                                .sheet(isPresented: self.$newInk.showInk, onDismiss: { self.newInk.showInk = false }) {
-                                                    pickerView(displayTitle: "Select Ink", rememberedInt: self.$newInk.rememberedInkInt, showPicker: self.$newInk.showInk, showModal: self.$newInk.showModalInk)
-                                                            }
-
-                                                HStack{
-                                                    Spacer()
-                                                    Button("Pen Details") {
+                                                    })
+                                                    
+                                                    Button("Pen Details", action: {
                                                         self.workingVariables.selectedMyPen = item
                                                         if UIDevice.current.userInterfaceIdiom == .phone {
                                                              self.showMyPenPhone = true
                                                          } else {
                                                              self.showMyPen = true
                                                          }
-                                                    }
-
-                                                    Spacer()
+                                                    })
                                                 }
                                                 .padding(.top,5)
                                                 .padding(.leading, 15)
                                                 .padding(.trailing, 15)
+                                                .sheet(isPresented: self.$newInk.showInk, onDismiss: { self.newInk.showInk = false }) {
+                                                    pickerView(displayTitle: "Select Ink", rememberedInt: self.$newInk.rememberedInkInt, showPicker: self.$newInk.showInk, showModal: self.$newInk.showModalInk)
+                                                            }
                                             }
                                             .padding()
                                         }
@@ -251,36 +234,4 @@ struct EDCView: View {
             }
         }
     }
-    
-//    func details() {
-//
-//    }
-    
-    func review() {
-        
-    }
-    
-    func finished() {
-        
-    }
-    
-    func history() {
-        
-    }
-    
-    func details() {
-print("yes")
-    }
-
-//    func review(_ item: currentUse) {
-//
-//    }
-//
-//    func finished(_ item: currentUse) {
-//
-//    }
-//
-//    func history(_ item: currentUse) {
-//
-//    }
 }
