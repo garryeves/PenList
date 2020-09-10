@@ -152,16 +152,13 @@ struct toBuyView: View {
                                                             .padding(.bottom,5)
                                                     }
                                                     
-                                                    Button("Details") {
-                                                        self.tempVars.workingItem = item
-                                                        self.showEdit = true
-                                                    }
-                                                    .padding(.bottom,5)
-
-                                                    HStack {
-                                                        Spacer()
+                                                    Menu("Action to take") {
+                                                        Button("Details", action: {
+                                                            self.tempVars.workingItem = item
+                                                            self.showEdit = true
+                                                        })
                                                         
-                                                        Button("Mark as Bought") {
+                                                        Button("Mark as Bought", action: {
                                                             item.status = toBuyStatusBought
                                                             item.save()
                                                         
@@ -197,17 +194,14 @@ struct toBuyView: View {
                                                             
                                                             self.tempVars.tobuyList = toBuys()
                                                             self.tempVars.reload.toggle()
-                                                        }
+                                                        })
                                                         
-                                                        Spacer()
-
-                                                        Button("Remove") {
+                                                        Button("Remove", action: {
                                                             self.tempVars.delete(item)
                                                             self.tempVars.tobuyList = toBuys()
                                                             self.tempVars.reload.toggle()
-                                                        }
+                                                        })
                                                         
-                                                        Spacer()
                                                     }
                                                     .padding(.leading, 15)
                                                     .padding(.trailing, 15)

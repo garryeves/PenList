@@ -48,28 +48,27 @@ struct notepadView: View {
                                         .padding(.top, 10)
                                     Text(item.name)
 
-                                    HStack {
-                                        Button("Details") {
+                                    Menu("Action to take") {
+                                        Button("Details", action: {
                                             self.workingVariables.selectedMyNotepad = item
                                             self.showMyNotepad = true
-                                        }
-                                        .sheet(isPresented: self.$showMyNotepad, onDismiss: { self.showMyNotepad = false
-                                        }) {
-                                            myNotepadView(workingVariables: self.workingVariables, showChild: self.$showMyNotepad)
-                                            }
-                                        Spacer()
-
-                                        Button("Finished") {
+                                        })
+                                        
+                                        Button("Finished", action: {
                                             item.finishedUsing = Date()
                                             item.save()
                                             sleep(2)
                                             currentNotepadList.reload()
                                             self.tempVars.reloadScreen.toggle()
-                                        }
+                                        })
                                     }
                                     .padding(.top,5)
                                     .padding(.leading, 15)
                                     .padding(.trailing, 15)
+                                    .sheet(isPresented: self.$showMyNotepad, onDismiss: { self.showMyNotepad = false
+                                    }) {
+                                        myNotepadView(workingVariables: self.workingVariables, showChild: self.$showMyNotepad)
+                                        }
                                 }
                                 .padding()
                             }

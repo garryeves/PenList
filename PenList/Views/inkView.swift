@@ -54,28 +54,26 @@ struct inkView: View {
                                             }
                                             Text(item.name)
                                             
-                                            HStack {
-                                                Button("Details") {
+                                            Menu("Action to take") {
+                                                Button("Details", action: {
                                                     self.workingVariables.selectedMyInk = item
                                                     self.showMyInk = true
-                                                }
-                                                .sheet(isPresented: self.$showMyInk, onDismiss: { self.showMyInk = false }) {
-                                                    myInkView(workingVariables: self.workingVariables, showChild: self.$showMyInk)
-                                                    }
+                                                })
                                                 
-                                                Spacer()
-                                                
-                                                Button("Finished") {
+                                                Button("Finished", action: {
                                                     item.finished = true
                                                     item.save()
-                                                sleep(2)
+                                                    sleep(2)
                                                     currentUseList.reload()
                                                     self.tempVars.reloadScreen.toggle()
-                                                }
+                                                })
                                             }
                                             .padding(.top,5)
                                             .padding(.leading, 15)
                                             .padding(.trailing, 15)
+                                            .sheet(isPresented: self.$showMyInk, onDismiss: { self.showMyInk = false }) {
+                                                myInkView(workingVariables: self.workingVariables, showChild: self.$showMyInk)
+                                                }
                                         }
                                         .padding()
                                     }
@@ -85,7 +83,7 @@ struct inkView: View {
                     }
                 } else {
                     Spacer()
-                    Text("You must create a Manufaturer first")
+                    Text("You must create a Manufacturer first")
                         .font(.largeTitle)
                     Spacer()
                 }
