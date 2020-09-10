@@ -17,6 +17,10 @@ struct ManufacturersListView: View {
     
     @ObservedObject var tempVars = manufacturerListVariables()
         
+    @State var showPen = false
+    @State var showInk = false
+    @State var showNotepad = false
+    
     var body: some View {
         if manufacturerList.manufacturers.count == 0 && !self.tempVars.showManufacturer {
             self.tempVars.showManufacturer = true
@@ -28,7 +32,6 @@ struct ManufacturersListView: View {
             if manufacturerList.manufacturers.count == 0 {
                 Text("Welcome.  The first step to take is to create a Manufacturer entry.")
             } else {
-                
                 GeometryReader { geometry in
                     VStack {
                         ScrollView {
@@ -58,9 +61,22 @@ struct ManufacturersListView: View {
                                                     .fill(fillColour)
                                                     .cornerRadius(10.0)
 
-                                                Text("Pen : \(subItem.name)")
-                                                    .padding(.top,15)
-                                                    .padding(.bottom,15)
+                                                VStack {
+                                                    Text("Pen : \(subItem.name)")
+                                                        .padding(.top,15)
+                                                        .padding(.bottom,5)
+                                                    
+                                                    Button("Details") {
+                                                        self.workingVariables.selectedPen = subItem
+                                                        self.showPen = true
+                                                    }
+                                                    .sheet(isPresented: self.$showPen, onDismiss: { self.showPen = false
+                                                        self.workingVariables.reloadPen.toggle()
+                                                    }) {
+                                                        penDetails(workingVariables: self.workingVariables, showChild: self.$showPen)
+                                                        }
+                                                }
+                                                .padding(.bottom,15)
                                             }
                                             .frame(width: CGFloat(columnWidth), alignment: .center)
                                         }
@@ -73,15 +89,28 @@ struct ManufacturersListView: View {
                                                     .fill(fillColour)
                                                     .cornerRadius(10.0)
 
-                                                if subItem.inkFamily == "" {
-                                                    Text("Ink : \(subItem.name)")
-                                                        .padding(.top,15)
-                                                        .padding(.bottom,15)
-                                                } else {
-                                                    Text("Ink : \(subItem.inkFamily) \(subItem.name)")
-                                                        .padding(.top,15)
-                                                        .padding(.bottom,15)
+                                                VStack {
+                                                    if subItem.inkFamily == "" {
+                                                        Text("Ink : \(subItem.name)")
+                                                            .padding(.top,15)
+                                                            .padding(.bottom,5)
+                                                    } else {
+                                                        Text("Ink : \(subItem.inkFamily) \(subItem.name)")
+                                                            .padding(.top,15)
+                                                            .padding(.bottom,5)
+                                                    }
+                                                    
+                                                    Button("Details") {
+                                                        self.workingVariables.selectedInk = subItem
+                                                        self.showInk = true
+                                                    }
+                                                    .sheet(isPresented: self.$showInk, onDismiss: { self.showInk = false
+                                                        self.workingVariables.reloadInk.toggle()
+                                                    }) {
+                                                        inkDetails(workingVariables: self.workingVariables, showChild: self.$showInk)
+                                                        }
                                                 }
+                                                .padding(.bottom,15)
                                             }
                                             .frame(width: CGFloat(columnWidth), alignment: .center)
                                         }
@@ -93,10 +122,22 @@ struct ManufacturersListView: View {
                                                 Rectangle()
                                                     .fill(fillColour)
                                                     .cornerRadius(10.0)
-
-                                                Text("Notepad : \(subItem.name)")
-                                                    .padding(.top,15)
-                                                    .padding(.bottom,15)
+                                                
+                                                VStack {
+                                                    Text("Notepad : \(subItem.name)")
+                                                        .padding(.top,15)
+                                                        .padding(.bottom,5)
+                                                    
+                                                    Button("Details") {                                self.workingVariables.selectedNotepad = subItem
+                                                        self.showNotepad = true
+                                                    }
+                                                    .sheet(isPresented: self.$showNotepad, onDismiss: { self.showNotepad = false
+                                                        self.workingVariables.reloadNotepad.toggle()
+                                                    }) {
+                                                        notepadDetails(workingVariables: self.workingVariables, showChild: self.$showNotepad)
+                                                        }
+                                                }
+                                                .padding(.bottom,15)
                                             }
                                             .frame(width: CGFloat(columnWidth), alignment: .center)
                                         }

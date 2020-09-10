@@ -29,13 +29,6 @@ struct ContentView: View {
     
     @ObservedObject var tempVars = contentViewWorkingVariables()
 
-    
-//    init() {
-//        // To remove all separators including the actual ones:
-//        UITableView.appearance().separatorStyle = .none
-//    }
-    
-
     var body: some View {
         self.workingVariables.reloadData()
     

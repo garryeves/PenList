@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-let fillColour = Color(red: 190/255, green: 254/255, blue: 235/255).opacity(0.2)
+let fillColour = Color(red: 190/255, green: 254/255, blue: 235/255).opacity(0.4)
 // let fillColour = Color.gray.opacity(0.2)
 
 class newPenWorkingVariables: ObservableObject {
@@ -115,6 +115,16 @@ struct EDCView: View {
                                                 .padding(.trailing,10)
                                                 .padding(.bottom, 10)
 
+//                                            Menu("Actions") {
+//                                                Button("Pen Details", action: details)
+//                                                
+//                                                Button("Review", action: review)
+//                                                
+//                                                Button("Finished", action: finished)
+//                                                
+//                                                Button("Finished", action: history)
+//                                            } 
+                                            
                                             Button("Pen Details") {
                                                 self.workingVariables.selectedMyPen = item.currentPen
                                                 if UIDevice.current.userInterfaceIdiom == .phone {
@@ -241,4 +251,36 @@ struct EDCView: View {
             }
         }
     }
+    
+//    func details() {
+//
+//    }
+    
+    func review() {
+        
+    }
+    
+    func finished() {
+        
+    }
+    
+    func history() {
+        
+    }
+    
+    func details() {
+print("yes")
+    }
+
+//    func review(_ item: currentUse) {
+//
+//    }
+//
+//    func finished(_ item: currentUse) {
+//
+//    }
+//
+//    func history(_ item: currentUse) {
+//
+//    }
 }
