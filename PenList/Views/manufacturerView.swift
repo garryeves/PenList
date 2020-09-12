@@ -49,7 +49,7 @@ struct manufacturerView: View {
             Form {
                 TextField("Manufacturer Name", text: self.$workingVariables.selectedManufacturer.name)
                 
-                if self.workingVariables.selectedManufacturer.name != "" && !self.workingVariables.selectedManufacturer.isNew {
+                if self.workingVariables.selectedManufacturer.name != "" {
                     TextField("Country", text: self.$workingVariables.selectedManufacturer.country)
                 }
             }
@@ -58,46 +58,12 @@ struct manufacturerView: View {
             .padding(.trailing, 10)
             .padding(.bottom, 20)
 
-            if self.workingVariables.selectedManufacturer.name.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
-                Button("Add") {
-                    if self.workingVariables.selectedManufacturer.name.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
-                        self.noName = true
-                    } else {
-                       var dupFound = false
-
-                       for item in manufacturerList.manufacturers {
-                           if item.name.lowercased() == self.workingVariables.selectedManufacturer.name.lowercased() {
-                               dupFound = true
-                               self.workingVariables.selectedManufacturer = item
-                               break
-                           }
-                       }
-
-                       if !dupFound {
-                           self.workingVariables.selectedManufacturer.isNew = false
-                           self.workingVariables.selectedManufacturer.save()
-                           sleep(2)
-                       }
-                       manufacturerList = manufacturers()
-                       self.reload.toggle()
-                    }
-                }
-               .padding()
-                .alert(isPresented: self.$noName) {
-                    Alert(title: Text("Error"),
-                          message: Text("You need to provide a Manufacturer name before you can add it"),
-                          dismissButton: .default(Text("OK"), action: {
-                            self.noName = false
-                             }))
-                }
-            } else {
-                if self.workingVariables.selectedManufacturer.name != "" && !self.workingVariables.selectedManufacturer.isNew {
+            if self.workingVariables.selectedManufacturer.name.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
+                if self.workingVariables.selectedManufacturer.name != "" {
                     Button("Save") {
-                        if self.workingVariables.selectedManufacturer.isNew {
-                            manufacturerList.append(self.workingVariables.selectedManufacturer)
-                            self.workingVariables.selectedManufacturer.isNew = false
+                        if self.workingVariables.selectedManufacturer.name.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
+                            self.workingVariables.selectedManufacturer.save()
                         }
-                        self.workingVariables.selectedManufacturer.save()
                     }
                     .padding(.bottom, 20)
                 
@@ -318,7 +284,6 @@ struct manufacturerView: View {
             }
             Spacer()
         }
-        .padding(.bottom, kbDetails.currentHeight)
     }
 }
 

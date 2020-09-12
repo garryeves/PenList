@@ -21,6 +21,9 @@ struct ManufacturersListView: View {
     @State var showInk = false
     @State var showNotepad = false
     
+    @State var newManufacturerName = ""
+    @State var dupManufacturerFound = false
+    
     var body: some View {
         if manufacturerList.manufacturers.count == 0 && !self.tempVars.showManufacturer {
             self.tempVars.showManufacturer = true
@@ -148,18 +151,47 @@ struct ManufacturersListView: View {
                         }
                     }
                 }
-                
-                Button("Add Manufacturer") {
-                    self.workingVariables.selectedManufacturer = manufacturer()
-                    self.tempVars.showManufacturer = true
-                }
-                .padding()
-                .sheet(isPresented: self.$tempVars.showManufacturer, onDismiss: { self.tempVars.showManufacturer = false
-                    self.workingVariables.reloadManufacturer.toggle()
-                }) {
-                    manufacturerView(workingVariables: self.workingVariables, showChild: self.$tempVars.showManufacturer)
-                   }
             }
+            
+            HStack {
+                Spacer()
+                
+                Text("Add New Manufacturer")
+                    .sheet(isPresented: self.$tempVars.showManufacturer, onDismiss: { self.tempVars.showManufacturer = false
+                        manufacturerList = manufacturers()
+                        self.workingVariables.reloadManufacturer.toggle()
+                    }) {
+                        manufacturerView(workingVariables: self.workingVariables, showChild: self.$tempVars.showManufacturer)
+                       }
+                  
+                TextField("New Manufacturer name", text: $newManufacturerName)
+                    .frame(width: 300)
+
+                if newManufacturerName != "" {
+                    Button("Add Manufacturer") {
+                        var dupFound = false
+
+                        for item in manufacturerList.manufacturers {
+                            if item.name.lowercased() == self.newManufacturerName.lowercased() {
+                                dupFound = true
+                                break
+                            }
+                        }
+
+                        if !dupFound {
+                            self.workingVariables.selectedManufacturer = manufacturer(passedname: newManufacturerName)
+                            self.tempVars.showManufacturer = true
+                        } else {
+                            dupManufacturerFound = true
+                        }
+                    }
+                    .alert(isPresented: $dupManufacturerFound) {
+                                Alert(title: Text("Duplicate Manufacturer Found"), message: Text("Please Check Manufacturer Name"), dismissButton: .default(Text("OK")))
+                            }
+                }
+                Spacer()
+            }
+            .padding()
         }
     }
 }

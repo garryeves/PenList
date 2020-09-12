@@ -56,10 +56,8 @@ class manufacturers: NSObject {
 class manufacturer: NSObject, Identifiable, ObservableObject {
     var manID = UUID()
     @Published var name = ""
- //   var name = ""
     var notes = ""
     var country = ""
-    var isNew = true
 
     override init() {
         super.init()
@@ -92,7 +90,12 @@ class manufacturer: NSObject, Identifiable, ObservableObject {
         name = passedname
         notes = passednotes
         country = passedcountry
-        isNew = false
+    }
+    
+    init(passedname: String) {
+        super.init()
+        name = passedname
+        save()
     }
 
     func save()
