@@ -30,19 +30,34 @@ struct carryListiPadView: View {
                             List {
                                 ForEach (currentUseList.use) {item in
                                     Text("\(item.penName) - \(item.inkName)")
-                                        .contextMenu {
-                                            Button("Review") {
-                                                self.tempVars.EDCItem = item
-                                                self.tempVars.rating = item.rating
-                                                self.showEDCReview = true
-                                            }
-                                            Button("Finished") {
-                                                item.dateEnded = Date()
-                                                item.save()
-                                            sleep(2)
-                                                currentUseList.reload()
-                                                self.tempVars.reloadScreen.toggle()
-                                            }
+//                                        .contextMenu {
+//                                            Button("Review") {
+//                                                self.tempVars.EDCItem = item
+//                                                self.tempVars.rating = item.rating
+//                                                self.showEDCReview = true
+//                                            }
+//                                            Button("Finished") {
+//                                                item.dateEnded = Date()
+//                                                item.save()
+//                                            sleep(2)
+//                                                currentUseList.reload()
+//                                                self.tempVars.reloadScreen.toggle()
+//                                            }
+//                                    }
+                                    
+                                    Menu("Action to take") {
+                                        Button("Review") {
+                                            self.tempVars.EDCItem = item
+                                            self.tempVars.rating = item.rating
+                                            self.showEDCReview = true
+                                        }
+                                        Button("Finished") {
+                                            item.dateEnded = Date()
+                                            item.save()
+                                        sleep(2)
+                                            currentUseList.reload()
+                                            self.tempVars.reloadScreen.toggle()
+                                        }
                                     }
                                 }
                             }
@@ -111,15 +126,15 @@ struct carryListiPadView: View {
                             List {
                                 ForEach (currentNotepadList.activeNotepads) {item in
                                     Text("\(item.name)")
-                                        .contextMenu {
-                                            Button("Finished") {
-                                                item.finishedUsing = Date()
-                                                item.save()
-                                                sleep(2)
-                                                currentNotepadList.reload()
-                                                self.tempVars.reloadScreen.toggle()
-                                            }
-                                        }
+//                                        .contextMenu {
+//                                            Button("Finished") {
+//                                                item.finishedUsing = Date()
+//                                                item.save()
+//                                                sleep(2)
+//                                                currentNotepadList.reload()
+//                                                self.tempVars.reloadScreen.toggle()
+//                                            }
+//                                        }
                                     .onTapGesture {
                                         self.workingVariables.selectedMyNotepad = item
                                         self.showMyNotepad = true
@@ -128,6 +143,16 @@ struct carryListiPadView: View {
                                     }) {
                                         myNotepadView(workingVariables: self.workingVariables, showChild: self.$showMyNotepad)
                                         }
+                                    
+                                    Menu("Action to take") {
+                                        Button("Finished") {
+                                            item.finishedUsing = Date()
+                                            item.save()
+                                            sleep(2)
+                                            currentNotepadList.reload()
+                                            self.tempVars.reloadScreen.toggle()
+                                        }
+                                    }
                                 }
                             }
                         }

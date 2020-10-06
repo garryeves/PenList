@@ -26,7 +26,6 @@
 		34872BD22424ADBD004270DD /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34872BD12424ADBD004270DD /* CloudKit.framework */; };
 		349848E0244A9807004FC850 /* penDimensionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349848DF244A9807004FC850 /* penDimensionView.swift */; };
 		349848E2244BE7A2004FC850 /* toBuyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349848E1244BE7A2004FC850 /* toBuyView.swift */; };
-		349D8E13243981B200BC0CBB /* carryListiPadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349D8E12243981B200BC0CBB /* carryListiPadView.swift */; };
 		34A47FB62424B40B008D5C98 /* CloudKitInteraction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A47FB52424B40B008D5C98 /* CloudKitInteraction.swift */; };
 		34A47FB92424B486008D5C98 /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A47FB82424B486008D5C98 /* UserInfo.swift */; };
 		34A47FBD2424B51C008D5C98 /* EvesCRMSharedFiles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A47FBB2424B51C008D5C98 /* EvesCRMSharedFiles.swift */; };
@@ -86,7 +85,6 @@
 		34872BD12424ADBD004270DD /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		349848DF244A9807004FC850 /* penDimensionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = penDimensionView.swift; sourceTree = "<group>"; };
 		349848E1244BE7A2004FC850 /* toBuyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = toBuyView.swift; sourceTree = "<group>"; };
-		349D8E12243981B200BC0CBB /* carryListiPadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = carryListiPadView.swift; sourceTree = "<group>"; };
 		34A47FB52424B40B008D5C98 /* CloudKitInteraction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CloudKitInteraction.swift; sourceTree = "<group>"; };
 		34A47FB82424B486008D5C98 /* UserInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UserInfo.swift; path = PenList/UserInfo.swift; sourceTree = SOURCE_ROOT; };
 		34A47FBB2424B51C008D5C98 /* EvesCRMSharedFiles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = EvesCRMSharedFiles.swift; path = PenList/EvesCRMSharedFiles.swift; sourceTree = SOURCE_ROOT; };
@@ -225,7 +223,6 @@
 			isa = PBXGroup;
 			children = (
 				34B1374824D65C26005AF7CF /* aboutScreenView.swift */,
-				349D8E12243981B200BC0CBB /* carryListiPadView.swift */,
 				3405FBEE2505DEF4002472E7 /* EDCView.swift */,
 				34EDAEA82441344100234C64 /* EDCReviewView.swift */,
 				34A47FE02426FBE1008D5C98 /* inkDetails.swift */,
@@ -350,7 +347,6 @@
 				34D00F8224BAA06400D93F42 /* notepadDetailsView.swift in Sources */,
 				34D00F8624BAA8E700D93F42 /* selectNotepadView.swift in Sources */,
 				34A47FD924259535008D5C98 /* toBuyClass.swift in Sources */,
-				349D8E13243981B200BC0CBB /* carryListiPadView.swift in Sources */,
 				3482AB90244BEA7D00815EAE /* toBuyEditView.swift in Sources */,
 				3440FF2A24551C2900528D32 /* ManufacturersListView.swift in Sources */,
 				34A47FE7242707C5008D5C98 /* pickerView.swift in Sources */,
@@ -514,7 +510,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = PenList/PenList.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 25;
+				CURRENT_PROJECT_VERSION = 27;
 				DEVELOPMENT_ASSET_PATHS = "\"PenList/Preview Content\"";
 				DEVELOPMENT_TEAM = 76YDDNPU7W;
 				ENABLE_PREVIEWS = YES;
@@ -539,7 +535,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = PenList/PenList.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 25;
+				CURRENT_PROJECT_VERSION = 27;
 				DEVELOPMENT_ASSET_PATHS = "\"PenList/Preview Content\"";
 				DEVELOPMENT_TEAM = 76YDDNPU7W;
 				ENABLE_PREVIEWS = YES;

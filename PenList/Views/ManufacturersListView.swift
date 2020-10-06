@@ -153,20 +153,22 @@ struct ManufacturersListView: View {
                 }
             }
             
-            HStack {
-                Spacer()
-                
+            if UIDevice.current.userInterfaceIdiom == .phone {
                 Text("Add New Manufacturer")
+                    .padding(.top, 5)
+                      
+                TextField("New Manufacturer name", text: $newManufacturerName)
+                    .padding(.top, 5)
+                    .padding(.leading, 15)
+                    .padding(.trailing, 15)
+                    .padding(.bottom, 5)
                     .sheet(isPresented: self.$tempVars.showManufacturer, onDismiss: { self.tempVars.showManufacturer = false
                         manufacturerList = manufacturers()
                         self.workingVariables.reloadManufacturer.toggle()
                     }) {
                         manufacturerView(workingVariables: self.workingVariables, showChild: self.$tempVars.showManufacturer)
                        }
-                  
-                TextField("New Manufacturer name", text: $newManufacturerName)
-                    .frame(width: 300)
-
+                
                 if newManufacturerName != "" {
                     Button("Add Manufacturer") {
                         var dupFound = false
@@ -185,13 +187,53 @@ struct ManufacturersListView: View {
                             dupManufacturerFound = true
                         }
                     }
+                    .padding(.bottom, 10)
                     .alert(isPresented: $dupManufacturerFound) {
                                 Alert(title: Text("Duplicate Manufacturer Found"), message: Text("Please Check Manufacturer Name"), dismissButton: .default(Text("OK")))
                             }
                 }
-                Spacer()
+            } else {
+                HStack {
+                    Spacer()
+                    
+                    Text("Add New Manufacturer")
+                    
+                    TextField("New Manufacturer name", text: $newManufacturerName)
+                        .frame(width: 300)
+                        .sheet(isPresented: self.$tempVars.showManufacturer, onDismiss: { self.tempVars.showManufacturer = false
+                            manufacturerList = manufacturers()
+                            self.newManufacturerName = ""
+                            self.workingVariables.reloadManufacturer.toggle()
+                        }) {
+                            manufacturerView(workingVariables: self.workingVariables, showChild: self.$tempVars.showManufacturer)
+                           }
+
+                    if newManufacturerName != "" {
+                        Button("Add Manufacturer") {
+                            var dupFound = false
+
+                            for item in manufacturerList.manufacturers {
+                                if item.name.lowercased() == self.newManufacturerName.lowercased() {
+                                    dupFound = true
+                                    break
+                                }
+                            }
+
+                            if !dupFound {
+                                self.workingVariables.selectedManufacturer = manufacturer(passedname: newManufacturerName)
+                                self.tempVars.showManufacturer = true
+                            } else {
+                                dupManufacturerFound = true
+                            }
+                        }
+                        .alert(isPresented: $dupManufacturerFound) {
+                                    Alert(title: Text("Duplicate Manufacturer Found"), message: Text("Please Check Manufacturer Name"), dismissButton: .default(Text("OK")))
+                                }
+                    }
+                    Spacer()
+                }
+                .padding()
             }
-            .padding()
         }
     }
 }

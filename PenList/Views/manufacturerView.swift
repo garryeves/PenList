@@ -18,6 +18,8 @@ struct manufacturerView: View {
     @State var newName = ""
     @State var reload = false
     @State var noName = false
+    @State var newItem = ""
+    @State var dupItemFound = false
     
     var body: some View {
         
@@ -89,18 +91,6 @@ struct manufacturerView: View {
                             .padding(.leading, 20)
                             .padding(.trailing, 20)
                         }
-    
-                        Button("Add Pen") {
-                            self.workingVariables.addPen()
-
-                            self.showPen = true
-                        }
-                        .padding(.bottom, 10)
-                        .sheet(isPresented: self.$showPen, onDismiss: { self.showPen = false
-                            self.workingVariables.reloadPen.toggle()
-                        }) {
-                            penDetails(workingVariables: self.workingVariables, showChild: self.$showPen)
-                            }
                             
                         HStack {
                             Spacer()
@@ -123,18 +113,6 @@ struct manufacturerView: View {
                             .padding(.trailing, 20)
                         }
                         
-                        Button("Add Ink") {
-                            self.workingVariables.addInk()
-                            
-                            self.showInk = true
-                        }
-                            .padding(.bottom, 10)
-                        .sheet(isPresented: self.$showInk, onDismiss: { self.showInk = false
-                            self.workingVariables.reloadInk.toggle()
-                        }) {
-                            inkDetails(workingVariables: self.workingVariables, showChild: self.$showInk)
-                            }
-                         
                         HStack {
                             Spacer()
                             Text("Notepads")
@@ -155,19 +133,6 @@ struct manufacturerView: View {
                             .padding(.leading, 20)
                             .padding(.trailing, 20)
                         }
-                                                
-                        Button("Add Notepad") {
-                            self.workingVariables.addNotepad()
-                            
-                            self.showNotepad = true
-                        }
-                            .padding(.bottom, 10)
-                        .sheet(isPresented: self.$showNotepad, onDismiss: { self.showNotepad = false
-                            self.workingVariables.reloadNotepad.toggle()
-                        }) {
-                            notepadDetails(workingVariables: self.workingVariables, showChild: self.$showNotepad)
-                            }
-            
                     } else { //not iphone
                         VStack {
                             HStack {
@@ -193,16 +158,6 @@ struct manufacturerView: View {
                                         .padding(.trailing, 20)
                                     }
                                     Spacer()
-                                    
-                                    Button("Add Pen") {
-                                        self.workingVariables.addPen()
-
-                                        self.showPen = true
-                                    }
-                                    .padding(.bottom, 10)
-                                    .sheet(isPresented: self.$showPen, onDismiss: { self.showPen = false }) {
-                                        penDetails(workingVariables: self.workingVariables, showChild: self.$showPen)
-                                        }
                                 }
                                 .padding(.bottom, 10)
                             
@@ -229,16 +184,6 @@ struct manufacturerView: View {
                                     }
                                 
                                     Spacer()
-                                    
-                                    Button("Add Ink") {
-                                        self.workingVariables.addInk()
-                                        
-                                        self.showInk = true
-                                    }
-                                        .padding(.bottom, 10)
-                                    .sheet(isPresented: self.$showInk, onDismiss: { self.showInk = false }) {
-                                        inkDetails(workingVariables: self.workingVariables, showChild: self.$showInk)
-                                        }
                                 }
                                 .padding(.bottom, 10)
                                 
@@ -265,21 +210,206 @@ struct manufacturerView: View {
                                     }
                                 
                                     Spacer()
-                                    
-                                    Button("Add Notepad") {
-                                        self.workingVariables.addNotepad()
-                                        
-                                        self.showNotepad = true
-                                    }
-                                        .padding(.bottom, 10)
-                                    .sheet(isPresented: self.$showNotepad, onDismiss: { self.showNotepad = false }) {
-                                        notepadDetails(workingVariables: self.workingVariables, showChild: self.$showNotepad)
-                                        }
                                 }
                                 .padding(.bottom, 10)
                             }
                         }
                     }
+                }
+                
+                if UIDevice.current.userInterfaceIdiom == .phone {
+                    Text("Add New Item")
+                        .padding(.top, 5)
+                    
+                    TextField("New item name", text: $newItem)
+                        .padding(.top, 5)
+                        .padding(.leading, 15)
+                        .padding(.trailing, 15)
+                        .padding(.bottom, 5)
+                    
+                    if newItem != "" {
+                        HStack {
+                            Button("Add Pen") {
+                                var dupFound = false
+
+                                for item in penList.pens {
+                                    if item.name.lowercased() == self.newItem.lowercased() {
+                                        dupFound = true
+                                        break
+                                    }
+                                }
+
+                                if !dupFound {
+                                    self.workingVariables.selectedPen = pen(passedmanID: self.workingVariables.selectedManufacturer.manID.uuidString, passedname: newItem)
+                                    self.showPen = true
+                                } else {
+                                    dupItemFound = true
+                                }
+                            }
+                            .alert(isPresented: $dupItemFound) {
+                                        Alert(title: Text("Duplicate Pen Found"), message: Text("Please Check the pen name"), dismissButton: .default(Text("OK")))
+                                    }
+                            .sheet(isPresented: self.$showPen, onDismiss: {
+                                    penList = pens()
+                                    self.showPen = false
+                                    self.newItem = ""
+                            }) {
+                                penDetails(workingVariables: self.workingVariables, showChild: self.$showPen)
+                                }
+                            
+                            Button("Add Ink") {
+                                var dupFound = false
+
+                                for item in inkList.inks {
+                                    if item.name.lowercased() == self.newItem.lowercased() {
+                                        dupFound = true
+                                        break
+                                    }
+                                }
+
+                                if !dupFound {
+                                    self.workingVariables.selectedInk = ink(passedmanID: self.workingVariables.selectedManufacturer.manID.uuidString, passedname: newItem)
+                                    self.showInk = true
+                                } else {
+                                    dupItemFound = true
+                                }
+                            }
+                            .alert(isPresented: $dupItemFound) {
+                                        Alert(title: Text("Duplicate Ink Found"), message: Text("Please Check the ink name"), dismissButton: .default(Text("OK")))
+                                    }
+                            .sheet(isPresented: self.$showInk, onDismiss: {
+                                    inkList = inks()
+                                    self.showInk = false
+                                    self.newItem = ""
+                            }) {
+                                inkDetails(workingVariables: self.workingVariables, showChild: self.$showInk)
+                                }
+                            
+                            Button("Add Notepad") {
+                                var dupFound = false
+
+                                for item in notepadList.notepads {
+                                    if item.name.lowercased() == self.newItem.lowercased() {
+                                        dupFound = true
+                                        break
+                                    }
+                                }
+
+                                if !dupFound {
+                                    self.workingVariables.selectedNotepad = notepad(passedmanID: self.workingVariables.selectedManufacturer.manID.uuidString, passedname: newItem)
+                                    self.showNotepad = true
+                                } else {
+                                    dupItemFound = true
+                                }
+                            }
+                            .alert(isPresented: $dupItemFound) {
+                                        Alert(title: Text("Duplicate Notepad Found"), message: Text("Please Check the notepad name"), dismissButton: .default(Text("OK")))
+                                    }
+                            .sheet(isPresented: self.$showNotepad, onDismiss: {
+                                    notepadList = notepads()
+                                    self.showNotepad = false
+                                    self.newItem = ""
+                            }) {
+                                notepadDetails(workingVariables: self.workingVariables, showChild: self.$showNotepad)
+                                }
+                        }
+                        .padding(.bottom, 10)
+                    }
+                } else {
+                    HStack {
+                        Spacer()
+
+                        Text("Add New Item")
+                        
+                        TextField("New item name", text: $newItem)
+
+                        if newItem != "" {
+                            Button("Add Pen") {
+                                var dupFound = false
+
+                                for item in penList.pens {
+                                    if item.name.lowercased() == self.newItem.lowercased() {
+                                        dupFound = true
+                                        break
+                                    }
+                                }
+
+                                if !dupFound {
+                                    self.workingVariables.selectedPen = pen(passedmanID: self.workingVariables.selectedManufacturer.manID.uuidString, passedname: newItem)
+                                    self.showPen = true
+                                } else {
+                                    dupItemFound = true
+                                }
+                            }
+                            .alert(isPresented: $dupItemFound) {
+                                        Alert(title: Text("Duplicate Pen Found"), message: Text("Please Check the pen name"), dismissButton: .default(Text("OK")))
+                                    }
+                            .sheet(isPresented: self.$showPen, onDismiss: {
+                                    penList = pens()
+                                    self.showPen = false
+                                    self.newItem = ""
+                            }) {
+                                penDetails(workingVariables: self.workingVariables, showChild: self.$showPen)
+                                }
+                            
+                            Button("Add Ink") {
+                                var dupFound = false
+
+                                for item in inkList.inks {
+                                    if item.name.lowercased() == self.newItem.lowercased() {
+                                        dupFound = true
+                                        break
+                                    }
+                                }
+
+                                if !dupFound {
+                                    self.workingVariables.selectedInk = ink(passedmanID: self.workingVariables.selectedManufacturer.manID.uuidString, passedname: newItem)
+                                    self.showInk = true
+                                } else {
+                                    dupItemFound = true
+                                }
+                            }
+                            .alert(isPresented: $dupItemFound) {
+                                        Alert(title: Text("Duplicate Ink Found"), message: Text("Please Check the ink name"), dismissButton: .default(Text("OK")))
+                                    }
+                            .sheet(isPresented: self.$showInk, onDismiss: {
+                                    inkList = inks()
+                                    self.showInk = false
+                                    self.newItem = ""
+                            }) {
+                                inkDetails(workingVariables: self.workingVariables, showChild: self.$showInk)
+                                }
+                            
+                            Button("Add Notepad") {
+                                var dupFound = false
+
+                                for item in notepadList.notepads {
+                                    if item.name.lowercased() == self.newItem.lowercased() {
+                                        dupFound = true
+                                        break
+                                    }
+                                }
+
+                                if !dupFound {
+                                    self.workingVariables.selectedNotepad = notepad(passedmanID: self.workingVariables.selectedManufacturer.manID.uuidString, passedname: newItem)
+                                    self.showNotepad = true
+                                } else {
+                                    dupItemFound = true
+                                }
+                            }
+                            .alert(isPresented: $dupItemFound) {
+                                        Alert(title: Text("Duplicate Notepad Found"), message: Text("Please Check the notepad name"), dismissButton: .default(Text("OK")))
+                                    }
+                            .sheet(isPresented: self.$showNotepad, onDismiss: {
+                                    notepadList = notepads()
+                                    self.showNotepad = false
+                                    self.newItem = ""
+                            }) {
+                                notepadDetails(workingVariables: self.workingVariables, showChild: self.$showNotepad)
+                                }
+                        }
+                    }
+                    .padding()
                 }
             }
             Spacer()

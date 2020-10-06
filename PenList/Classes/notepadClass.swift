@@ -113,6 +113,18 @@ class notepad: NSObject, Identifiable, ObservableObject {
         isNew = false
     }
     
+    init(passedmanID: String,
+         passedname: String)
+    {
+        super.init()
+
+        manID = passedmanID
+        name = passedname
+        isNew = true
+        
+        save()
+    }
+    
     func newInk(passedmanID: String,
                 passedname: String,
                 passednotes: String)

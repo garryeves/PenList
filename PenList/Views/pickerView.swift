@@ -52,8 +52,7 @@ struct pickerView : View {
                 }
             }
             .padding()
-            .pickerStyle(WheelPickerStyle())
-      //      .frame(width: 300, height: 300, alignment: .center)
+    //       .pickerStyle(WheelPickerStyle())
             
             Button("Select") {
                 self.rememberedInt = self.selectedItem
