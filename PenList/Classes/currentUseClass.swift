@@ -22,6 +22,46 @@ class currentUses: NSObject {
         getData()
     }
     
+    init(penID: String) {
+        super.init()
+        if myCloudDB == nil {
+            myCloudDB = CloudKitInteraction()
+        }
+        
+        for item in myCloudDB.getUseHistory(penID: penID) {
+            let object = currentUse(passeddateEnded: item.dateEnded,
+                                    passeddateStarted: item.dateStarted,
+                                    passedinkID: item.inkID,
+                                    passednotes: item.notes,
+                                    passedpenID: item.penID,
+                                    passedrating: item.rating,
+                                    passedUseID: item.useID)
+            myCurrentUse.append(object)
+        }
+
+        sortArrayByDate()
+    }
+    
+    init(inkID: String) {
+        super.init()
+        if myCloudDB == nil {
+            myCloudDB = CloudKitInteraction()
+        }
+        
+        for item in myCloudDB.getUseHistory(inkID: inkID) {
+            let object = currentUse(passeddateEnded: item.dateEnded,
+                                    passeddateStarted: item.dateStarted,
+                                    passedinkID: item.inkID,
+                                    passednotes: item.notes,
+                                    passedpenID: item.penID,
+                                    passedrating: item.rating,
+                                    passedUseID: item.useID)
+            myCurrentUse.append(object)
+        }
+
+        sortArrayByDate()
+    }
+    
     func reload() {
         myCurrentUse.removeAll()
         
@@ -40,20 +80,20 @@ class currentUses: NSObject {
             myCurrentUse.append(object)
         }
 
-        sortArrayByName()
+        sortArrayByDate()
     }
     
     func append(_ newItem: currentUse){
         myCurrentUse.append(newItem)
     }
 
-    func sortArrayByName() {
+    func sortArrayByDate() {
         if myCurrentUse.count > 1 {
             myCurrentUse.sort {
                 if $0.dateStarted == $1.dateStarted {
                     return $0.rating < $1.rating
                 } else {
-                    return $0.dateStarted < $1.dateStarted
+                    return $0.dateStarted > $1.dateStarted
                 }
             }
         }
@@ -221,7 +261,31 @@ extension CloudKitInteraction {
 
         return populateCurrentUse(returnArray)
     }
+    
+    func getUseHistory(penID: String)->[CurrentUse] {
+        let predicate = NSPredicate(format: "penID == \"\(penID)\"")
 
+        let query = CKQuery(recordType: "currentUse", predicate: predicate)
+        let sem = DispatchSemaphore(value: 0)
+        fetchPrivateServices(query: query, sem: sem, completion: nil)
+        
+        sem.wait()
+
+        return populateCurrentUse(returnArray)
+    }
+    
+    func getUseHistory(inkID: String)->[CurrentUse] {
+        let predicate = NSPredicate(format: "inkID == \"\(inkID)\"")
+
+        let query = CKQuery(recordType: "currentUse", predicate: predicate)
+        let sem = DispatchSemaphore(value: 0)
+        fetchPrivateServices(query: query, sem: sem, completion: nil)
+        
+        sem.wait()
+
+        return populateCurrentUse(returnArray)
+    }
+    
     func saveCurrentUse(_ sourceRecord: CurrentUse) {
         let sem = DispatchSemaphore(value: 0)
         let predicate = NSPredicate(format: "useID == \"\(sourceRecord.useID)\"") // better be accurate to get only the record you need
@@ -280,4 +344,3 @@ extension CloudKitInteraction {
         sem.wait()
     }
 }
-

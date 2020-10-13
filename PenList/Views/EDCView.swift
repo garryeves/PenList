@@ -45,10 +45,13 @@ struct EDCView: View {
     @State var showMyPenPhone = false
     @State var showToBuy = false
     @State var showAbout = false
+    @State var showHistory = false
     
     @State var showAllPens = false
     
     @State var showEDCReview = false
+    
+    @State var usagePassedEntry = usageWorkingVariables()
    
     var body: some View {
         if newInk.rememberedInkInt > 0 {
@@ -56,6 +59,7 @@ struct EDCView: View {
             workingVariables.myPenList = myPens()
         }
         
+        print("Ignore this debug line - for some reason fails without it - \(usagePassedEntry.penID)")
         return  VStack {
             HStack {
                 Spacer()
@@ -137,8 +141,8 @@ struct EDCView: View {
                                                 })
                                                 
                                                 Button("History", action: {
-                                                        print("history calls")
-                                                    
+                                                    usagePassedEntry = usageWorkingVariables(penItem: item.currentPen)
+                                                    self.showHistory = true
                                                 })
                                             }
                                             .padding(.top,5)
@@ -151,6 +155,9 @@ struct EDCView: View {
                                         }
                                     }
                                     .frame(width: CGFloat(tempVars.columnWidth), alignment: .center)
+                                    .sheet(isPresented: self.$showHistory, onDismiss: { self.showHistory = false }) {
+                                        usageHistoryView(workingVariables: usagePassedEntry, showChild: self.$showHistory)
+                                        }
                                 }
                             }
                         }
@@ -209,6 +216,11 @@ struct EDCView: View {
                                                          } else {
                                                              self.showMyPen = true
                                                          }
+                                                    })
+                                                    
+                                                    Button("History", action: {
+                                                        usagePassedEntry = usageWorkingVariables(penItem: item)
+                                                        self.showHistory = true
                                                     })
                                                 }
                                                 .padding(.top,5)

@@ -22,6 +22,7 @@
 		346E12852424A8D00077B04A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 346E12842424A8D00077B04A /* Preview Assets.xcassets */; };
 		346E12882424A8D00077B04A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 346E12862424A8D00077B04A /* LaunchScreen.storyboard */; };
 		346E3C0A24A6B33700034B2B /* PickerDateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346E3C0924A6B33700034B2B /* PickerDateView.swift */; };
+		3473BB89253546C600EFC6C2 /* usageHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3473BB88253546C600EFC6C2 /* usageHistoryView.swift */; };
 		3482AB90244BEA7D00815EAE /* toBuyEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3482AB8F244BEA7D00815EAE /* toBuyEditView.swift */; };
 		34872BD22424ADBD004270DD /* CloudKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34872BD12424ADBD004270DD /* CloudKit.framework */; };
 		349848E0244A9807004FC850 /* penDimensionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349848DF244A9807004FC850 /* penDimensionView.swift */; };
@@ -81,6 +82,7 @@
 		346E12892424A8D00077B04A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		346E128F2424A8DF0077B04A /* PenList.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PenList.entitlements; sourceTree = "<group>"; };
 		346E3C0924A6B33700034B2B /* PickerDateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickerDateView.swift; sourceTree = "<group>"; };
+		3473BB88253546C600EFC6C2 /* usageHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = usageHistoryView.swift; sourceTree = "<group>"; };
 		3482AB8F244BEA7D00815EAE /* toBuyEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = toBuyEditView.swift; sourceTree = "<group>"; };
 		34872BD12424ADBD004270DD /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		349848DF244A9807004FC850 /* penDimensionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = penDimensionView.swift; sourceTree = "<group>"; };
@@ -239,6 +241,7 @@
 				34A47FDE2426FBD1008D5C98 /* penDetails.swift */,
 				349848DF244A9807004FC850 /* penDimensionView.swift */,
 				34EDAEB22442A03B00234C64 /* PhotoImportView.swift */,
+				346E3C0924A6B33700034B2B /* PickerDateView.swift */,
 				34A47FE6242707C5008D5C98 /* pickerView.swift */,
 				34EDAEAA244137CF00234C64 /* RatingView.swift */,
 				3463D21C242ED07E005B5D45 /* selectInkView.swift */,
@@ -246,7 +249,7 @@
 				34A47FEC2427264D008D5C98 /* selectPenView.swift */,
 				349848E1244BE7A2004FC850 /* toBuyView.swift */,
 				3482AB8F244BEA7D00815EAE /* toBuyEditView.swift */,
-				346E3C0924A6B33700034B2B /* PickerDateView.swift */,
+				3473BB88253546C600EFC6C2 /* usageHistoryView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -369,6 +372,7 @@
 				34D00F8024B95C6400D93F42 /* myNotePads.swift in Sources */,
 				34D00F8424BAA1FC00D93F42 /* myNotepadView.swift in Sources */,
 				34A47FCD242594CC008D5C98 /* inkClass.swift in Sources */,
+				3473BB89253546C600EFC6C2 /* usageHistoryView.swift in Sources */,
 				34EDAEB32442A03B00234C64 /* PhotoImportView.swift in Sources */,
 				346E127E2424A8CF0077B04A /* PenList.xcdatamodeld in Sources */,
 			);
@@ -510,7 +514,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = PenList/PenList.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 27;
+				CURRENT_PROJECT_VERSION = 28;
 				DEVELOPMENT_ASSET_PATHS = "\"PenList/Preview Content\"";
 				DEVELOPMENT_TEAM = 76YDDNPU7W;
 				ENABLE_PREVIEWS = YES;
@@ -535,7 +539,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = PenList/PenList.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 27;
+				CURRENT_PROJECT_VERSION = 28;
 				DEVELOPMENT_ASSET_PATHS = "\"PenList/Preview Content\"";
 				DEVELOPMENT_TEAM = 76YDDNPU7W;
 				ENABLE_PREVIEWS = YES;

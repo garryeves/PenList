@@ -15,9 +15,12 @@ struct inkView: View {
     @State var showToBuy = false
     @State var showAbout = false
     @State var showMyInk = false
-        
+    @State var showHistory = false
+    @State var usagePassedEntry = usageWorkingVariables()
+    
     var body: some View {
-        
+        print("Ignore this debug line - for some reason fails without it - \(usagePassedEntry.inkID)")
+
         return  VStack {
             HStack {
                 Spacer()
@@ -67,6 +70,11 @@ struct inkView: View {
                                                     currentUseList.reload()
                                                     self.tempVars.reloadScreen.toggle()
                                                 })
+                                                
+                                                Button("History", action: {
+                                                    usagePassedEntry = usageWorkingVariables(inkItem: item)
+                                                    self.showHistory = true
+                                                })
                                             }
                                             .padding(.top,5)
                                             .padding(.leading, 15)
@@ -76,6 +84,9 @@ struct inkView: View {
                                                 }
                                         }
                                         .padding()
+                                        .sheet(isPresented: self.$showHistory, onDismiss: { self.showHistory = false }) {
+                                            usageHistoryView(workingVariables: usagePassedEntry, showChild: self.$showHistory)
+                                            }
                                     }
                                 }
                             }
