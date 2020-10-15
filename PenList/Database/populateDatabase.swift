@@ -11,6 +11,14 @@ import Foundation
 class populateDatabase {
     
     func loadDecodes() {
+        
+        /* Version 1.1
+        let _ = decode(passeddecodeDescription: "Glass", passeddecodeOrder: 6, passeddecodeType: "NibMaterial")
+        
+        let _ = decode(passeddecodeDescription: "Glass", passeddecodeOrder: 17, passeddecodeType: "NibSize")
+        */
+        
+        /* Version 1.0
 print("Done none")
         let _ = decode(passeddecodeDescription: "Steel", passeddecodeOrder: 1, passeddecodeType: "NibMaterial")
 print("Done a")
@@ -45,5 +53,6 @@ print("Done 3")
         let _ = decode(passeddecodeDescription: "Built-In Vacuum", passeddecodeOrder: 3, passeddecodeType: "filler")
         let _ = decode(passeddecodeDescription: "Eyedropper", passeddecodeOrder: 4, passeddecodeType: "filler")
 print("Done 4")
+ */
     }
 }
