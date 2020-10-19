@@ -40,6 +40,8 @@ struct ContentView: View {
         
   //      workingVariables.loadDecodes()
         
+
+        
         return TabView {
             
             EDCView(workingVariables: workingVariables, tempVars: tempVars)

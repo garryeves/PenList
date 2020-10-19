@@ -83,20 +83,9 @@ struct myNotepadView: View {
                     
                     TextField("Price", text: $workingVariables.selectedMyNotepad.cost)
                     
-//                    #if targetEnvironment(macCatalyst)
-//                        DatePicker(selection: $workingVariables.selectedMyNotepad.dateBought, displayedComponents: .date) {
-//                            Text("Purchase Date")
-//                        }
-//                        .labelsHidden()
-//                    #else
-                         Text(workingVariables.selectedMyNotepad.dateBought.formatDateToString)
-                            .onTapGesture {
-                                self.showDatePicker = true
-                            }
-                            .sheet(isPresented: self.$showDatePicker, onDismiss: { self.showDatePicker = false }) {
-                                pickerDateView(displayTitle: "Purchase Date", showPicker: self.$showDatePicker, selectedDate: self.$workingVariables.selectedMyNotepad.dateBought)
-                                }
-  //                  #endif
+                    DatePicker(selection: $workingVariables.selectedMyNotepad.dateBought, displayedComponents: .date) {
+                        Text("Purchase Date")
+                    }
                     
                     if workingVariables.selectedMyNotepad.startedUsing == nil {
                         Button("Start Using") {

@@ -8,18 +8,24 @@
 
 import SwiftUI
 
+class inkViewWorkingVariables: ObservableObject {
+    @Published var showAbout = false
+    @Published var showMyInk = false
+    @Published var showHistory = false
+}
+
 struct inkView: View {
     @ObservedObject var workingVariables: mainWorkingVariables
     @ObservedObject var tempVars: contentViewWorkingVariables
     
-    @State var showToBuy = false
-    @State var showAbout = false
-    @State var showMyInk = false
-    @State var showHistory = false
+//    @State var showAbout = false
+//    @State var showMyInk = false
+//    @State var showHistory = false
     @State var usagePassedEntry = usageWorkingVariables()
+    @ObservedObject var inkTemp = inkViewWorkingVariables()
     
     var body: some View {
-        print("Ignore this debug line - for some reason fails without it - \(usagePassedEntry.inkID)")
+        print("Ignore this ink debug line - for some reason fails without it - \(usagePassedEntry.inkID)")
 
         return  VStack {
             HStack {
@@ -27,10 +33,10 @@ struct inkView: View {
                 Text("Ink List")
                     .font(.title)
                     .onTapGesture {
-                        self.showAbout.toggle()
+                        self.inkTemp.showAbout.toggle()
                 }
-                .sheet(isPresented: self.$showAbout, onDismiss: { self.showAbout = false }) {
-                    aboutScreenView(showChild: self.$showAbout)
+                    .sheet(isPresented: self.$inkTemp.showAbout, onDismiss: { self.inkTemp.showAbout = false }) {
+                    aboutScreenView(showChild: self.$inkTemp.showAbout)
                 }
                 Spacer()
             }
@@ -47,6 +53,9 @@ struct inkView: View {
                                             .fill(fillColour)
                                             .cornerRadius(10.0)
                                             .frame(width: CGFloat(tempVars.columnWidth), alignment: .center)
+                                            .sheet(isPresented: self.$inkTemp.showMyInk, onDismiss: { self.inkTemp.showMyInk = false }) {
+                                                myInkView(workingVariables: self.workingVariables, showChild: self.$inkTemp.showMyInk)
+                                                }
                                         
                                         VStack {
                                             Text("")
@@ -55,12 +64,14 @@ struct inkView: View {
                                             } else {
                                                 Text("\(item.manufacturer) - \(item.inkFamily)")
                                             }
+                                            
                                             Text(item.name)
+
                                             
                                             Menu("Action to take") {
                                                 Button("Details", action: {
                                                     self.workingVariables.selectedMyInk = item
-                                                    self.showMyInk = true
+                                                    self.inkTemp.showMyInk = true
                                                 })
                                                 
                                                 Button("Finished", action: {
@@ -73,19 +84,16 @@ struct inkView: View {
                                                 
                                                 Button("History", action: {
                                                     usagePassedEntry = usageWorkingVariables(inkItem: item)
-                                                    self.showHistory = true
+                                                    self.inkTemp.showHistory = true
                                                 })
                                             }
                                             .padding(.top,5)
                                             .padding(.leading, 15)
                                             .padding(.trailing, 15)
-                                            .sheet(isPresented: self.$showMyInk, onDismiss: { self.showMyInk = false }) {
-                                                myInkView(workingVariables: self.workingVariables, showChild: self.$showMyInk)
-                                                }
                                         }
                                         .padding()
-                                        .sheet(isPresented: self.$showHistory, onDismiss: { self.showHistory = false }) {
-                                            usageHistoryView(workingVariables: usagePassedEntry, showChild: self.$showHistory)
+                                        .sheet(isPresented: self.$inkTemp.showHistory, onDismiss: { self.inkTemp.showHistory = false }) {
+                                            usageHistoryView(workingVariables: usagePassedEntry, showChild: self.$inkTemp.showHistory)
                                             }
                                     }
                                 }

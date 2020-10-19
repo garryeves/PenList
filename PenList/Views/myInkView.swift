@@ -47,7 +47,7 @@ struct myInkView: View {
         if colorScheme == .dark {
             borderColour = Color.white
         }
-        
+
         return VStack {
             HStack {
                 Spacer()
@@ -82,21 +82,10 @@ struct myInkView: View {
                     TextField("Purchased From", text: $workingVariables.selectedMyInk.boughtFrom)
                     
                     TextField("Price", text: $workingVariables.selectedMyInk.cost)
-//
-//                    #if targetEnvironment(macCatalyst)
-//                        DatePicker(selection: $workingVariables.selectedMyInk.dateBought, displayedComponents: .date) {
-//                            Text("Purchase Date")
-//                        }
-//                        .labelsHidden()
-//                    #else
-                         Text(workingVariables.selectedMyInk.dateBought.formatDateToString)
-                            .onTapGesture {
-                                self.showDatePicker = true
-                            }
-                            .sheet(isPresented: self.$showDatePicker, onDismiss: { self.showDatePicker = false }) {
-                                pickerDateView(displayTitle: "Purchase Date", showPicker: self.$showDatePicker, selectedDate: self.$workingVariables.selectedMyInk.dateBought)
-                                }
-//                    #endif
+
+                    DatePicker(selection: $workingVariables.selectedMyInk.dateBought, displayedComponents: .date) {
+                        Text("Purchase Date")
+                    }
                 }
             }
             .frame(height: 200)

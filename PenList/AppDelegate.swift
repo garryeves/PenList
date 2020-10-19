@@ -8,14 +8,57 @@
 
 import UIKit
 import CoreData
+import CloudKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
+    // Inserted for data sync
+    
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        print("Garry debug register")
+        print("\n\nTOKEN TAKEN\n\n")
+    }
 
+    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+        print("Garry debug not register")
+    }
+    
+ 
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        print("Garry Debug Received notification!")
+        
+//        let viewController = self.window?.rootViewController as? ViewController
+//        guard let viewController = self.window?.rootViewController as? ViewController else { return }
+        
+        let dict = userInfo as! [String: NSObject]
+        guard let notification:CKDatabaseNotification = CKNotification(fromRemoteNotificationDictionary:dict) as? CKDatabaseNotification else { return }
+        
+ //       viewController!.fetchChanges(in: notification.databaseScope) {
+ //           completionHandler(.newData)
+ //       }
+    }
+
+    
+    // Inserted for data sync - ended
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
+        // Inserted for data sync
+print("Garry debug register")
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+            if let error = error {
+                print("D'oh: \(error.localizedDescription)")
+            } //else {
+           //     application.registerForRemoteNotifications()
+         //   }
+        }
+        
+        application.registerForRemoteNotifications()
+        print("Garry debug - check \(application.isRegisteredForRemoteNotifications)")
+        // Inserted for data sync - ended
+        
         return true
     }
 

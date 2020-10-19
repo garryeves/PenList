@@ -149,20 +149,9 @@ struct myPenView: View {
                     
                     TextField("Price", text: $workingVariables.selectedMyPen.cost)
                     
-//                    #if targetEnvironment(macCatalyst)
-//                        DatePicker(selection: $workingVariables.selectedMyPen.datePurchased, displayedComponents: .date) {
-//                            Text("Purchase Date")
-//                        }
-//                        .labelsHidden()
-//                    #else
-                         Text(workingVariables.selectedMyPen.datePurchased.formatDateToString)
-                            .onTapGesture {
-                                self.showDatePicker = true
-                            }
-                            .sheet(isPresented: self.$showDatePicker, onDismiss: { self.showDatePicker = false }) {
-                                pickerDateView(displayTitle: "Purchase Date", showPicker: self.$showDatePicker, selectedDate: self.$workingVariables.selectedMyPen.datePurchased)
-                                }
-//                    #endif
+                    DatePicker(selection: $workingVariables.selectedMyPen.datePurchased, displayedComponents: .date) {
+                        Text("Purchase Date")
+                    }
                 }
             }
             .frame(height: 400)
@@ -347,13 +336,9 @@ struct myPenViewPhone: View {
                 .padding(.leading, 20)
                 .padding(.bottom, 5)
 
-                 Text(workingVariables.selectedMyPen.datePurchased.formatDateToString)
-                    .onTapGesture {
-                        self.showDatePicker = true
-                    }
-                    .sheet(isPresented: self.$showDatePicker, onDismiss: { self.showDatePicker = false }) {
-                        pickerDateView(displayTitle: "Purchase Date", showPicker: self.$showDatePicker, selectedDate: self.$workingVariables.selectedMyPen.datePurchased)
-                        }
+                DatePicker(selection: $workingVariables.selectedMyPen.datePurchased, displayedComponents: .date) {
+                    Text("Purchase Date")
+                }
             }
             .padding(.bottom, 5)
             .padding(.leading, 20)
