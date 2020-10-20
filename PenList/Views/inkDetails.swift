@@ -9,9 +9,6 @@
 import SwiftUI
 
 class inkDetailsWorkingVariables: ObservableObject {
-    var showModalInkType = pickerComms()
-    var rememberedIntInkType = -1
-    @Published var showInkTypePicker = false
     @Published var reload = false
 }
 
@@ -31,11 +28,6 @@ struct inkDetails: View {
     var body: some View {
         
         UITableView.appearance().separatorStyle = .none
-        
-        if tempVariables.rememberedIntInkType > -1 {
-            workingVariables.selectedInk.inkType = workingVariables.decodeList.decodes("inkType")[tempVariables.rememberedIntInkType].decodeDescription
-            tempVariables.rememberedIntInkType = -1
-        }
         
         var inkTypeText = "Select"
         
@@ -72,19 +64,24 @@ struct inkDetails: View {
                 if workingVariables.selectedInk.name.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
                     TextField("Ink Family", text: $workingVariables.selectedInk.inkFamily)
                     
-                    Button(inkTypeText) {
-                            self.tempVariables.rememberedIntInkType = -1
-                            self.tempVariables.showModalInkType.displayList.removeAll()
-                            
-                            for item in workingVariables.decodeList.decodes("inkType") {
-                                self.tempVariables.showModalInkType.displayList.append(displayEntry(entryText: item.decodeDescription))
-                            }
-                            
-                            self.tempVariables.showInkTypePicker = true
-                        }
-                    .sheet(isPresented: self.$tempVariables.showInkTypePicker, onDismiss: { self.tempVariables.showInkTypePicker = false }) {
-                        pickerView(displayTitle: "Select Ink Type", rememberedInt: self.$tempVariables.rememberedIntInkType, showPicker: self.$tempVariables.showInkTypePicker, showModal: self.$tempVariables.showModalInkType)
+                    if UIDevice.current.userInterfaceIdiom == .phone || UIDevice.current.userInterfaceIdiom == .pad {
+                        Menu(inkTypeText) {
+                            ForEach (workingVariables.decodeList.decodesText("inkType"), id: \.self) { item in
+                                Button(item) {
+                                    workingVariables.selectedInk.inkType = item
+                                    tempVariables.reload.toggle()
                                 }
+                            }
+                        }
+                        .padding(.bottom, 10)
+                    } else {
+                        Picker("Ink Type", selection: $workingVariables.selectedInk.inkType) {
+                            ForEach (workingVariables.decodeList.decodesText("inkType"), id: \.self) { item in
+                                Text(item)
+                            }
+                        }
+                        .padding(.bottom, 10)
+                    }
                     
                     TextField("Colour", text: $workingVariables.selectedInk.colour)
                 }

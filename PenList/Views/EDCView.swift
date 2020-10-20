@@ -12,27 +12,18 @@ let fillColour = Color(red: 190/255, green: 254/255, blue: 235/255).opacity(0.3)
 // let fillColour = Color.gray.opacity(0.2)
 
 class newPenWorkingVariables: ObservableObject {
-    var showModalInk = pickerComms()
-    var rememberedInkInt = -1
     var penListItem = myPen()
     
-    @Published var showInk = false
     @Published var reload = false
     
-    func processRecord(workingPenList: myPens, workingInkList: myInks) {
-        if rememberedInkInt > 0 {
-            for item in workingPenList.unusedPens {
-                if item.myPenID == penListItem.myPenID {
-                    let temp = currentUse(newPenID: item.myPenID.uuidString, newInkID: workingInkList.inks[rememberedInkInt - 1].inkID)
+    @Published var showInk = false
+    
+    func processRecord(selectedPen: myPen, selectedInk: myInk) {
+            let temp = currentUse(newPenID: selectedPen.myPenID.uuidString, newInkID: selectedInk.inkID)
 
-                    currentUseList.append(temp)
-                    break
-                }
-            }
-             
+            currentUseList.append(temp)
+
             reload.toggle()
-            rememberedInkInt = -1
-        }
     }
 }
 
@@ -54,11 +45,6 @@ struct EDCView: View {
     @State var usagePassedEntry = usageWorkingVariables()
    
     var body: some View {
-        if newInk.rememberedInkInt > 0 {
-            newInk.processRecord(workingPenList: self.workingVariables.myPenList, workingInkList: self.workingVariables.myInkList)
-            workingVariables.myPenList = myPens()
-        }
-        
         print("Ignore this debug line - for some reason fails without it - \(usagePassedEntry.penID)")
         return  VStack {
             HStack {
@@ -105,7 +91,8 @@ struct EDCView: View {
                                                 .padding(.trailing,10)
                                          
                                             if item.inkFamily == "" {
-                                                Text(item.inkManufacturer)                             .padding(.leading,10)
+                                                Text(item.inkManufacturer)
+                                                    .padding(.leading,10)
                                                     .padding(.trailing,10)
                                             } else {
                                                 Text("\(item.inkManufacturer) - \(item.inkFamily)")
@@ -128,7 +115,8 @@ struct EDCView: View {
                                                          }
                                                 })
                                                 
-                                                Button("Review", action: {                                 self.tempVars.EDCItem = item
+                                                Button("Review", action: {
+                                                        self.tempVars.EDCItem = item
                                                         self.tempVars.rating = item.rating
                                                         self.showEDCReview = true})
                                                 
@@ -188,26 +176,14 @@ struct EDCView: View {
                                                 Text("")
                                                 
                                                 Menu("Action to take") {
-                                                    Button(item.addInkMessage, action: {
-                                                        if item.addInkMessage == defaultAddInkMessage {
-                                                            self.newInk.penListItem = item
-                                                            self.newInk.rememberedInkInt = -1
-                                                            self.newInk.showModalInk.displayList.removeAll()
-
-                                                            self.newInk.showModalInk.displayList.append(displayEntry(entryText: "No selection"))
-                                                            for item in self.workingVariables.myInkList.inks {
-
-                                                                var tempName = "\(item.manufacturer) - \(item.name)"
-                                                                if item.inkFamily != "" {
-                                                                    tempName = "\(item.manufacturer) - \(item.inkFamily) \(item.name)"
-                                                                }
-
-                                                                self.newInk.showModalInk.displayList.append(displayEntry(entryText: tempName))
-                                                            }
-
-                                                            self.newInk.showInk = true
+                                                    ForEach (self.workingVariables.myInkList.inks, id: \.self) { inkItem in
+                                                        Button("Add \(inkItem.name)") {
+                                                            newInk.processRecord(selectedPen: item, selectedInk: inkItem)
+                                                            workingVariables.myPenList = myPens()
                                                         }
-                                                    })
+                                                    }
+                                                    
+                                                    Text(" ")
                                                     
                                                     Button("Pen Details", action: {
                                                         self.workingVariables.selectedMyPen = item
@@ -226,9 +202,6 @@ struct EDCView: View {
                                                 .padding(.top,5)
                                                 .padding(.leading, 15)
                                                 .padding(.trailing, 15)
-                                                .sheet(isPresented: self.$newInk.showInk, onDismiss: { self.newInk.showInk = false }) {
-                                                    pickerView(displayTitle: "Select Ink", rememberedInt: self.$newInk.rememberedInkInt, showPicker: self.$newInk.showInk, showModal: self.$newInk.showModalInk)
-                                                            }
                                             }
                                             .padding()
                                         }

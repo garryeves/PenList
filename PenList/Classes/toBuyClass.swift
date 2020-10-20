@@ -161,11 +161,22 @@ class toBuy: NSObject, Identifiable, ObservableObject {
     @Published var name = ""
     var notes = ""
     @Published var status = toBuyStatusPlanned
-    var type = ""
+    @Published var type = ""
     var whereFrom = ""
 
     var isNew = true
-
+    
+    var manufacturerRecord: manufacturer? {
+        get {
+            for item in manufacturerList.manufacturers {
+                if item.manID.uuidString == manID {
+                    return item
+                }
+            }
+            
+            return nil
+        }
+    }
     var manufacturer: String {
         get {
             for item in manufacturerList.manufacturers {

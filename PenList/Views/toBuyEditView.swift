@@ -20,36 +20,15 @@ struct toBuyEditView: View {
     var body: some View {
         var typeText = "Select type"
         var typeStatus = "Select Status"
-        var manufacturerText = "Select Manufacturer"
         
-        if tempVars.rememberedIntType > -1 {
-            tempVars.workingItem.type = toBuyType[tempVars.rememberedIntType]
-            tempVars.rememberedIntType = -1
+        if tempVars.type != "" {
+            typeText = tempVars.type
         }
         
-        if tempVars.workingItem.type != "" {
-            typeText = tempVars.workingItem.type
-        }
-        
-        if tempVars.rememberedIntStatus > -1 {
-            tempVars.workingItem.status = toBuyStatus[tempVars.rememberedIntStatus]
-            tempVars.rememberedIntStatus = -1
-        }
-        
-        if tempVars.workingItem.status != "" {
-            typeStatus = tempVars.workingItem.status
-        }
-        
-        if tempVars.rememberedIntManufacturer > -1 {
-            tempVars.manID = manufacturerList.manufacturers[tempVars.rememberedIntManufacturer].manID.uuidString
-            tempVars.workingItem.manufacturer = manufacturerList.manufacturers[tempVars.rememberedIntManufacturer].name
-            tempVars.rememberedIntManufacturer = -1
+        if tempVars.status != "" {
+            typeStatus = tempVars.status
         }
 
-        if tempVars.workingItem.manufacturer != "" {
-            manufacturerText = tempVars.workingItem.manufacturer
-        }
-        
         var borderColour = Color.black
         
         if colorScheme == .dark {
@@ -73,39 +52,39 @@ struct toBuyEditView: View {
             .padding(.top, 15)
                     
             Form {
-                Text(typeText)
-                    .foregroundColor(.blue)
-                    .onTapGesture {
-                       self.tempVars.rememberedIntType = -1
-                       self.tempVars.showModalType.displayList.removeAll()
-                       
-                       for item in toBuyType {
-                           self.tempVars.showModalType.displayList.append(displayEntry(entryText: item))
-                       }
-                       
-                       self.tempVars.showTypePicker = true
-                   }
-               .padding(.trailing, 30)
-               .sheet(isPresented: self.$tempVars.showTypePicker, onDismiss: { self.tempVars.showTypePicker = false }) {
-                   pickerView(displayTitle: "Select Purchase Type", rememberedInt: self.$tempVars.rememberedIntType, showPicker: self.$tempVars.showTypePicker, showModal: self.$tempVars.showModalType)
-                           }
+                if UIDevice.current.userInterfaceIdiom == .phone || UIDevice.current.userInterfaceIdiom == .pad {
+                    Menu(typeText) {
+                        ForEach (toBuyType, id: \.self) { item in
+                            Button(item) {
+                                tempVars.setType = item
+                            }
+                        }
+                    }
+                } else {
+                    Picker("", selection: $tempVars.setType) {
+                        ForEach (toBuyType, id: \.self) { item in
+                            Text(item)
+                        }
+                    }
+                }
                 
                 if tempVars.workingItem.type != "" {
-                    Text(manufacturerText)
-                        .foregroundColor(.blue)
-                        .onTapGesture {
-                            self.tempVars.rememberedIntManufacturer = -1
-                            self.tempVars.showModalManufacturer.displayList.removeAll()
-                            
-                            for item in manufacturerList.manufacturers {
-                                self.tempVars.showModalManufacturer.displayList.append(displayEntry(entryText: item.name))
-                            }
-                            
-                            self.tempVars.showManufacturerPicker = true
-                        }
-                    .sheet(isPresented: self.$tempVars.showManufacturerPicker, onDismiss: { self.tempVars.showManufacturerPicker = false }) {
-                        pickerView(displayTitle: "Select Manufacturer", rememberedInt: self.$tempVars.rememberedIntManufacturer, showPicker: self.$tempVars.showManufacturerPicker, showModal: self.$tempVars.showModalManufacturer)
+                    if UIDevice.current.userInterfaceIdiom == .phone || UIDevice.current.userInterfaceIdiom == .pad {
+                        Menu(tempVars.manufacturerName()) {
+                            ForEach (manufacturerList.manufacturers, id: \.self) { item in
+                                Button(item.name) {
+                                    tempVars.setManufacturer = item
+                                    tempVars.reload.toggle()
                                 }
+                            }
+                        }
+                    } else {
+                        Picker("", selection: $tempVars.setManufacturer) {
+                            ForEach (manufacturerList.manufacturers, id: \.self) { item in
+                                Text(item.name)
+                            }
+                        }
+                    }
                     
                     if tempVars.workingItem.manufacturer != "" && tempVars.workingItem.manufacturer != "No Manufacturer" {
                         
@@ -115,22 +94,23 @@ struct toBuyEditView: View {
                           
                         TextField("Cost", text: $tempVars.workingItem.cost)
                         
-                        Text(typeStatus)
-                            .foregroundColor(.blue)
-                            .onTapGesture {
-                               self.tempVars.rememberedIntStatus = -1
-                               self.tempVars.showModalStatus.displayList.removeAll()
-                               
-                               for item in toBuyStatus {
-                                   self.tempVars.showModalStatus.displayList.append(displayEntry(entryText: item))
-                               }
-                               
-                               self.tempVars.showStatusPicker = true
-                           }
-                       .sheet(isPresented: self.$tempVars.showStatusPicker, onDismiss: { self.tempVars.showStatusPicker = false }) {
-                           pickerView(displayTitle: "Select Status", rememberedInt: self.$tempVars.rememberedIntStatus, showPicker: self.$tempVars.showStatusPicker, showModal: self.$tempVars.showModalStatus)
-                                   }
                         
+                        if UIDevice.current.userInterfaceIdiom == .phone || UIDevice.current.userInterfaceIdiom == .pad {
+                            Menu(typeStatus) {
+                                ForEach (toBuyStatus, id: \.self) { item in
+                                    Button(item) {
+                                        tempVars.setStatus = item
+                                        tempVars.reload.toggle()
+                                    }
+                                }
+                            }
+                        } else {
+                            Picker("", selection: $tempVars.setStatus) {
+                                ForEach (toBuyStatus, id: \.self) { item in
+                                    Text(item)
+                                }
+                            }
+                        }
                     }
                 }
             }

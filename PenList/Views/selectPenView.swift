@@ -9,27 +9,52 @@
 import SwiftUI
 
 class selectPenDetailsWorkingVariables: ObservableObject {
-    var showModalManufacturer = pickerComms()
-    var rememberedIntManufacturer = -1
-    @Published var showManufacturerPicker = false
+
+    @Published var reload = false
+
+    @Published var selectedManufacturer = manufacturer()
+    @Published var selectedPen = pen()
     
-    var showModalPen = pickerComms()
-    var rememberedIntPen = -1
-    @Published var showPenPicker = false
+    var setManufacturer : manufacturer {
+        get {
+            return selectedManufacturer
+        }
+        set {
+            selectedManufacturer = newValue
+            loadPotentialPens()
+            reload.toggle()
+        }
+    }
+    
+    var setPen : pen {
+        get {
+            return selectedPen
+        }
+        set {
+            selectedPen = newValue
+            reload.toggle()
+        }
+    }
+    
+    func manufacturerName() -> String {
+        if selectedManufacturer.name != "" {
+            let temp = manufacturerList.manufacturers.filter { $0.manID == selectedManufacturer.manID }
+            
+            if temp.count > 0 {
+                return temp[0].name
+            }
+        }
         
-    @Published var manID = ""
-    var manufacturerName = ""
-    @Published var penID = ""
-    var penName = ""
+        return "Select"
+    }
     
     var potentialPens: [pen] = Array()
     
     var noPenSelected = false
     
     func loadPotentialPens() {
-        potentialPens = penList.pens.filter { $0.manID == manID }
+        potentialPens = penList.pens.filter { $0.manID == selectedManufacturer.manID.uuidString }
     }
-    
 }
 
 
@@ -44,31 +69,10 @@ struct selectPenView: View {
 
         UITableView.appearance().separatorStyle = .none
         
-        if tempVars.rememberedIntManufacturer > -1 {
-            tempVars.manID = manufacturerList.manufacturers[tempVars.rememberedIntManufacturer].manID.uuidString
-            tempVars.manufacturerName = manufacturerList.manufacturers[tempVars.rememberedIntManufacturer].name
-            tempVars.rememberedIntManufacturer = -1
-            tempVars.penID = ""
-            tempVars.penName = ""
-            tempVars.loadPotentialPens()
-        }
-        
-        var manufacturerText = "Select"
-        
-        if tempVars.manufacturerName != "" {
-            manufacturerText = tempVars.manufacturerName
-        }
-        
-        if tempVars.rememberedIntPen > -1 {
-            tempVars.penID = tempVars.potentialPens[tempVars.rememberedIntPen].penID.uuidString
-            tempVars.penName = tempVars.potentialPens[tempVars.rememberedIntPen].name
-            tempVars.rememberedIntPen = -1
-        }
-        
         var penText = "Select"
         
-        if tempVars.penID != "" {
-            penText = tempVars.penName
+        if tempVars.selectedPen.name != "" {
+            penText = tempVars.selectedPen.name
         }
         
         return VStack {
@@ -88,19 +92,23 @@ struct selectPenView: View {
             HStack {
                 Text("Manufacturer")
                     .padding(.trailing, 10)
-                Button(manufacturerText) {
-                    self.tempVars.rememberedIntManufacturer = -1
-                    self.tempVars.showModalManufacturer.displayList.removeAll()
-                    
-                    for item in manufacturerList.manufacturers {
-                        self.tempVars.showModalManufacturer.displayList.append(displayEntry(entryText: item.name))
-                    }
-                    
-                    self.tempVars.showManufacturerPicker = true
-                }
-                .sheet(isPresented: self.$tempVars.showManufacturerPicker, onDismiss: { self.tempVars.showManufacturerPicker = false }) {
-                    pickerView(displayTitle: "Select Manufacturer", rememberedInt: self.$tempVars.rememberedIntManufacturer, showPicker: self.$tempVars.showManufacturerPicker, showModal: self.$tempVars.showModalManufacturer)
+                
+                if UIDevice.current.userInterfaceIdiom == .phone || UIDevice.current.userInterfaceIdiom == .pad {
+                    Menu(tempVars.manufacturerName()) {
+                        ForEach (manufacturerList.manufacturers, id: \.self) { item in
+                            Button(item.name) {
+                                tempVars.setManufacturer = item
+                                tempVars.reload.toggle()
                             }
+                        }
+                    }
+                } else {
+                    Picker("", selection: $tempVars.setManufacturer) {
+                        ForEach (manufacturerList.manufacturers, id: \.self) { item in
+                            Text(item.name)
+                        }
+                    }
+                }
             }
             .padding()
             
@@ -108,28 +116,29 @@ struct selectPenView: View {
                 HStack {
                     Text("Pen")
                     
-                    Button(penText) {
-                        self.tempVars.rememberedIntPen = -1
-                        self.tempVars.showModalPen.displayList.removeAll()
-                        
-                        for item in self.tempVars.potentialPens {
-                            self.tempVars.showModalPen.displayList.append(displayEntry(entryText: item.name))
-                        }
-                        
-                        self.tempVars.showPenPicker = true
-                    }
-                    .padding()
-                    .sheet(isPresented: self.$tempVars.showPenPicker, onDismiss: { self.tempVars.showPenPicker = false }) {
-                        pickerView(displayTitle: "Select Pen", rememberedInt: self.$tempVars.rememberedIntPen, showPicker: self.$tempVars.showPenPicker, showModal: self.$tempVars.showModalPen)
+                    if UIDevice.current.userInterfaceIdiom == .phone || UIDevice.current.userInterfaceIdiom == .pad {
+                        Menu(penText) {
+                            ForEach (self.tempVars.potentialPens, id: \.self) { item in
+                                Button(item.name) {
+                                    tempVars.setPen = item
+                                    tempVars.reload.toggle()
                                 }
+                            }
+                        }
+                    } else {
+                        Picker("", selection: $tempVars.setPen) {
+                            ForEach (self.tempVars.potentialPens, id: \.self) { item in
+                                Text(item.name)
+                            }
+                        }
+                    }
                 }
-                
             }
             
-            if tempVars.penID != "" {
+            if tempVars.selectedPen.name != "" {
                 Button("Add Pen To My Collection") {
-                    self.workingVariables.selectedMyPen.penID = self.tempVars.penID
-                    self.workingVariables.selectedMyPen.name = self.tempVars.penName
+                    self.workingVariables.selectedMyPen.penID = self.tempVars.selectedPen.penID.uuidString
+                    self.workingVariables.selectedMyPen.name = self.tempVars.selectedPen.name
                     self.workingVariables.selectedMyPen.save()
                     currentPenList.append(self.workingVariables.selectedMyPen)
                     self.showChild = false

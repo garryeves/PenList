@@ -9,9 +9,7 @@
 import SwiftUI
 
 class penDetailsWorkingVariables: ObservableObject {
-    var showModalFilling = pickerComms()
-    var rememberedIntFilingSystem = -1
-    @Published var showFilingPicker = false
+
     @Published var reload = false
 }
 
@@ -33,11 +31,11 @@ struct penDetails: View {
     var body: some View {
         UITableView.appearance().separatorStyle = .none
         
-        if tempVariables.rememberedIntFilingSystem > -1 {
-            workingVariables.selectedPen.fillingSystem = workingVariables.decodeList.decodes("filler")[tempVariables.rememberedIntFilingSystem].decodeDescription
-            tempVariables.rememberedIntFilingSystem = -1
-        }
-        
+//        if tempVariables.rememberedIntFilingSystem > -1 {
+//            workingVariables.selectedPen.fillingSystem = workingVariables.decodeList.decodes("filler")[tempVariables.rememberedIntFilingSystem].decodeDescription
+//            tempVariables.rememberedIntFilingSystem = -1
+//        }
+//
         var fillingSystemText = "Select"
         
         if workingVariables.selectedPen.fillingSystem != "" {
@@ -92,19 +90,25 @@ struct penDetails: View {
             Form {
                 TextField("Name", text: $workingVariables.selectedPen.name)
                 if workingVariables.selectedPen.name.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
-                    Button(fillingSystemText) {
-                            self.tempVariables.rememberedIntFilingSystem = -1
-                            self.tempVariables.showModalFilling.displayList.removeAll()
-                            
-                            for item in workingVariables.decodeList.decodes("filler") {
-                                self.tempVariables.showModalFilling.displayList.append(displayEntry(entryText: item.decodeDescription))
-                            }
-                            
-                            self.tempVariables.showFilingPicker = true
-                        }
-                    .sheet(isPresented: self.$tempVariables.showFilingPicker, onDismiss: { self.tempVariables.showFilingPicker = false }) {
-                        pickerView(displayTitle: "Select Filling System", rememberedInt: self.$tempVariables.rememberedIntFilingSystem, showPicker: self.$tempVariables.showFilingPicker, showModal: self.$tempVariables.showModalFilling)
+                    if UIDevice.current.userInterfaceIdiom == .phone || UIDevice.current.userInterfaceIdiom == .pad {
+                        Menu(fillingSystemText) {
+                            ForEach (workingVariables.decodeList.decodesText("filler"), id: \.self) { item in
+                                Button(item) {
+                                    workingVariables.selectedPen.fillingSystem = item
+                                    tempVariables.reload.toggle()
                                 }
+                            }
+                        }
+                        .padding(.bottom, 10)
+                    } else {
+                        Picker("Nib Size", selection: $workingVariables.selectedPen.fillingSystem) {
+                            ForEach (workingVariables.decodeList.decodesText("filler"), id: \.self) { item in
+                                Text(item)
+                            }
+                        }
+                        .padding(.bottom, 10)
+                    }
+                    
                     Text(dimensionsCap)
                         .foregroundColor(.blue)
                         .onTapGesture {

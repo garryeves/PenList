@@ -81,7 +81,7 @@ class ink: NSObject, Identifiable, ObservableObject {
     var inkID = UUID()
     var colour = ""
     var inkFamily = ""
-    var inkType = ""
+    @Published var inkType = ""
     var manID = ""
     var name = ""
     var notes = ""

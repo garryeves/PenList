@@ -26,27 +26,60 @@ class myToBuyWorkingVariables: ObservableObject {
     var tobuyList = toBuys()
     var workingItem: toBuy!
     
-    @Published var showModalDisplayType = pickerComms()
-    @Published var rememberedIntDisplayType = -1
-    @Published var showDisplayTypePicker = false
-    
-    @Published var showModalType = pickerComms()
-    @Published var rememberedIntType = -1
-    @Published var showTypePicker = false
-    
-    @Published var showModalStatus = pickerComms()
-    @Published var rememberedIntStatus = -1
-    @Published var showStatusPicker = false
-    
-    @Published var showModalManufacturer = pickerComms()
-    @Published var rememberedIntManufacturer = -1
-    @Published var showManufacturerPicker = false
-    
     @Published var reload = false
     
-    var manID = ""
+    @Published var selectedManufacturer = manufacturer()
     
-    var displayType = ""
+    @Published var status = toBuyStatusPlanned
+    @Published var type = ""
+    
+    var setType: String {
+        get {
+            return type
+        }
+        set {
+            type = newValue
+            workingItem.type = type
+            reload.toggle()
+        }
+    }
+    
+    var setStatus: String {
+        get {
+            return status
+        }
+        set {
+            status = newValue
+            workingItem.status = status
+            reload.toggle()
+        }
+    }
+    
+    
+    var setManufacturer : manufacturer {
+        get {
+            return selectedManufacturer
+        }
+        set {
+            selectedManufacturer = newValue
+            workingItem.manufacturer = selectedManufacturer.name
+            reload.toggle()
+        }
+    }
+    
+    func manufacturerName() -> String {
+        if selectedManufacturer.name != "" {
+            let temp = manufacturerList.manufacturers.filter { $0.manID == selectedManufacturer.manID }
+            
+            if temp.count > 0 {
+                return temp[0].name
+            }
+        }
+        
+        return "Select"
+    }
+    
+    @Published var displayType = ""
     
     func add() {
         let temp = toBuy()
@@ -54,8 +87,8 @@ class myToBuyWorkingVariables: ObservableObject {
     }
     
     func save() {
-        if manID != "" {
-            workingItem.manID = manID
+        if selectedManufacturer.name != "" {
+            workingItem.manID = selectedManufacturer.manID.uuidString
         }
         workingItem.save()
         
@@ -86,15 +119,6 @@ struct toBuyView: View {
         
         var typeText = "Select type"
         
-        if tempVars.rememberedIntDisplayType > -1 {
-            if tempVars.rememberedIntDisplayType == 0 {
-                tempVars.displayType = ""
-            } else {
-                tempVars.displayType = toBuyType[tempVars.rememberedIntDisplayType - 1]
-                tempVars.rememberedIntDisplayType = -1
-            }
-        }
-        
         var displayList = self.tempVars.tobuyList.toBuyGroup
         
         if tempVars.displayType != "" {
@@ -106,20 +130,22 @@ struct toBuyView: View {
             HStack {
                 Text("Filter by")
                 
-                Button(typeText) {
-                    self.tempVars.rememberedIntDisplayType = -1
-                    self.tempVars.showModalDisplayType.displayList.removeAll()
-                    self.tempVars.showModalDisplayType.displayList.append(displayEntry(entryText: ""))
-                    
-                    for item in toBuyType {
-                        self.tempVars.showModalDisplayType.displayList.append(displayEntry(entryText: item))
-                    }
-                    
-                    self.tempVars.showDisplayTypePicker = true
-                }
-                .sheet(isPresented: self.$tempVars.showDisplayTypePicker, onDismiss: { self.tempVars.showDisplayTypePicker = false }) {
-                    pickerView(displayTitle: "Select Purchase Type", rememberedInt: self.$tempVars.rememberedIntDisplayType, showPicker: self.$tempVars.showDisplayTypePicker, showModal: self.$tempVars.showModalDisplayType)
+                if UIDevice.current.userInterfaceIdiom == .phone || UIDevice.current.userInterfaceIdiom == .pad {
+                    Menu(typeText) {
+                        ForEach (toBuyType, id: \.self) { item in
+                            Button(item) {
+                                tempVars.displayType = item
+                                tempVars.reload.toggle()
                             }
+                        }
+                    }
+                } else {
+                    Picker("", selection: $tempVars.displayType) {
+                        ForEach (toBuyType, id: \.self) { item in
+                            Text(item)
+                        }
+                    }
+                }
             }
             .padding(.top, 15)
             
@@ -155,6 +181,9 @@ struct toBuyView: View {
                                                     Menu("Action to take") {
                                                         Button("Details", action: {
                                                             self.tempVars.workingItem = item
+                                                            self.tempVars.type = item.type
+                                                            self.tempVars.status = item.status
+                                                            self.tempVars.selectedManufacturer = item.manufacturerRecord!
                                                             self.showEdit = true
                                                         })
                                                         

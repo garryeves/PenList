@@ -9,14 +9,7 @@
 import SwiftUI
 
 class myPenDetailsWorkingVariables: ObservableObject {
-    var showModalNib = pickerComms()
-    var rememberedIntNib = -1
-    @Published var showNibPicker = false
 
-    @Published var showModalNibMaterial = pickerComms()
-    var rememberedIntNibMaterial = -1
-    @Published var showNibMaterialPicker = false
-    
     @Published var showManufacturer = false
     
     func triggerPenSelector() {
@@ -52,20 +45,10 @@ struct myPenView: View {
             tempVars.triggerPenSelector()
         }
         
-        if tempVars.rememberedIntNib > -1 {
-            workingVariables.selectedMyPen.nib = workingVariables.decodeList.decodes("NibSize")[tempVars.rememberedIntNib].decodeDescription
-            tempVars.rememberedIntNib = -1
-        }
-        
         var nibText = "Select Nib"
         
         if workingVariables.selectedMyPen.nib != "" {
             nibText = workingVariables.selectedMyPen.nib
-        }
-        
-        if tempVars.rememberedIntNibMaterial > -1 {
-            workingVariables.selectedMyPen.nibMaterial = workingVariables.decodeList.decodes("NibMaterial")[tempVars.rememberedIntNibMaterial].decodeDescription
-            tempVars.rememberedIntNibMaterial = -1
         }
         
         var nibMaterialText = "Select Nib Material"
@@ -114,35 +97,43 @@ struct myPenView: View {
                     
                     TextField("colour", text: $workingVariables.selectedMyPen.colour)
                     
-                    
-                    Button(nibText) {
-                        self.tempVars.rememberedIntNib = -1
-                        self.tempVars.showModalNib.displayList.removeAll()
-                        
-                        for item in workingVariables.decodeList.decodes("NibSize") {
-                            self.tempVars.showModalNib.displayList.append(displayEntry(entryText: item.decodeDescription))
-                        }
-                    
-                        self.tempVars.showNibPicker = true
-                    }
-                    .sheet(isPresented: self.$tempVars.showNibPicker, onDismiss: { self.tempVars.showNibPicker = false }) {
-                    pickerView(displayTitle: "Select Nib Size", rememberedInt: self.$tempVars.rememberedIntNib, showPicker: self.$tempVars.showNibPicker, showModal: self.$tempVars.showModalNib)
-                            }
-                    
-                    Button(nibMaterialText) {
-                        self.tempVars.rememberedIntNibMaterial = -1
-                        self.tempVars.showModalNibMaterial.displayList.removeAll()
-                        
-                        for item in workingVariables.decodeList.decodes("NibMaterial") {
-                            self.tempVars.showModalNibMaterial.displayList.append(displayEntry(entryText: item.decodeDescription))
-                        }
-                        
-                        self.tempVars.showNibMaterialPicker = true
-                    }
-                        .sheet(isPresented: self.$tempVars.showNibMaterialPicker, onDismiss: { self.tempVars.showNibMaterialPicker = false }) {
-                            pickerView(displayTitle: "Select Nib Material", rememberedInt: self.$tempVars.rememberedIntNibMaterial, showPicker: self.$tempVars.showNibMaterialPicker, showModal: self.$tempVars.showModalNibMaterial)
+                    if UIDevice.current.userInterfaceIdiom == .phone || UIDevice.current.userInterfaceIdiom == .pad {
+                        Menu(nibText) {
+                            ForEach (workingVariables.decodeList.decodesText("NibSize"), id: \.self) { item in
+                                Button(item) {
+                                    workingVariables.selectedMyPen.nib = item
+                                    tempVars.reload.toggle()
                                 }
+                            }
                         }
+                        .padding(.bottom, 10)
+                    } else {
+                        Picker("Nib Size", selection: $workingVariables.selectedMyPen.nib) {
+                            ForEach (workingVariables.decodeList.decodesText("NibSize"), id: \.self) { item in
+                                Text(item)
+                            }
+                        }
+                        .padding(.bottom, 10)
+                    }
+                    
+                    if UIDevice.current.userInterfaceIdiom == .phone || UIDevice.current.userInterfaceIdiom == .pad {
+                        Menu(nibMaterialText) {
+                            ForEach (workingVariables.decodeList.decodesText("NibMaterial"), id: \.self) { item in
+                                Button(item) {
+                                    workingVariables.selectedMyPen.nibMaterial = item
+                                }
+                            }
+                        }
+                        .padding(.bottom, 10)
+                    } else {
+                        Picker("Nib Material", selection: $workingVariables.selectedMyPen.nibMaterial) {
+                            ForEach (workingVariables.decodeList.decodesText("NibMaterial"), id: \.self) { item in
+                                Text(item)
+                            }
+                        }
+                        .padding(.bottom, 10)
+                    }
+                }
                 
                 Section(header: Text("Purchased").font(.headline)) {
                     TextField("Purchased From", text: $workingVariables.selectedMyPen.purchasedFrom)
@@ -193,15 +184,6 @@ struct myPenView: View {
             }
             .padding(.bottom, 15)
         }
-//        .onTapGesture {
-//            let keyWindow = UIApplication.shared.connectedScenes
-//                               .filter({$0.activationState == .foregroundActive})
-//                               .map({$0 as? UIWindowScene})
-//                               .compactMap({$0})
-//                               .first?.windows
-//                               .filter({$0.isKeyWindow}).first
-//            keyWindow!.endEditing(true)
-//        }
         .padding(.bottom, kbDetails.currentHeight)
     }
 }
@@ -224,22 +206,12 @@ struct myPenViewPhone: View {
             tempVars.triggerPenSelector()
         }
         
-        if tempVars.rememberedIntNib > -1 {
-            workingVariables.selectedMyPen.nib = workingVariables.decodeList.decodes("NibSize")[tempVars.rememberedIntNib].decodeDescription
-            tempVars.rememberedIntNib = -1
-        }
-        
         var nibText = "Select"
         
         if workingVariables.selectedMyPen.nib != "" {
             nibText = workingVariables.selectedMyPen.nib
         }
-        
-        if tempVars.rememberedIntNibMaterial > -1 {
-            workingVariables.selectedMyPen.nibMaterial = workingVariables.decodeList.decodes("NibMaterial")[tempVars.rememberedIntNibMaterial].decodeDescription
-            tempVars.rememberedIntNibMaterial = -1
-        }
-        
+                
         var nibMaterialText = "Select"
         
         if workingVariables.selectedMyPen.nibMaterial != "" {
@@ -285,42 +257,42 @@ struct myPenViewPhone: View {
                 .padding(.leading, 20)
                 .padding(.trailing, 20)
             
-            HStack {
-                Text("Nib")
-                    .padding(.trailing, 5)
-
-                Button(nibText) {
-                        self.tempVars.rememberedIntNib = -1
-                        self.tempVars.showModalNib.displayList.removeAll()
-                        
-                        for item in workingVariables.decodeList.decodes("NibSize") {
-                            self.tempVars.showModalNib.displayList.append(displayEntry(entryText: item.decodeDescription))
+            if UIDevice.current.userInterfaceIdiom == .phone || UIDevice.current.userInterfaceIdiom == .pad {
+                Menu(nibText) {
+                    ForEach (workingVariables.decodeList.decodesText("NibSize"), id: \.self) { item in
+                        Button(item) {
+                            workingVariables.selectedMyPen.nib = item
                         }
-                        
-                        self.tempVars.showNibPicker = true
                     }
-                    .sheet(isPresented: self.$tempVars.showNibPicker, onDismiss: { self.tempVars.showNibPicker = false }) {
-                        pickerView(displayTitle: "Select Nib Size", rememberedInt: self.$tempVars.rememberedIntNib, showPicker: self.$tempVars.showNibPicker, showModal: self.$tempVars.showModalNib)
-                            }
-                
-                 Button(nibMaterialText) {
-                         self.tempVars.rememberedIntNibMaterial = -1
-                         self.tempVars.showModalNibMaterial.displayList.removeAll()
-                         
-                         for item in workingVariables.decodeList.decodes("NibMaterial"){
-                            self.tempVars.showModalNibMaterial.displayList.append(displayEntry(entryText: item.decodeDescription))
-                         }
-                         
-                        self.tempVars.showNibMaterialPicker = true
-                     }
-                    .sheet(isPresented: self.$tempVars.showNibMaterialPicker, onDismiss: { self.tempVars.showNibMaterialPicker = false }) {
-                        pickerView(displayTitle: "Select Nib Material", rememberedInt: self.$tempVars.rememberedIntNibMaterial, showPicker: self.$tempVars.showNibMaterialPicker, showModal: self.$tempVars.showModalNibMaterial)
                 }
+                .padding(.bottom, 10)
+            } else {
+                Picker("Nib Size", selection: $workingVariables.selectedMyPen.nib) {
+                    ForEach (workingVariables.decodeList.decodesText("NibSize"), id: \.self) { item in
+                        Text(item)
+                    }
+                }
+                .padding(.bottom, 10)
             }
-            .padding(.bottom, 5)
-            .padding(.leading, 5)
-            .padding(.trailing, 5)
             
+            if UIDevice.current.userInterfaceIdiom == .phone || UIDevice.current.userInterfaceIdiom == .pad {
+                Menu(nibMaterialText) {
+                    ForEach (workingVariables.decodeList.decodesText("NibMaterial"), id: \.self) { item in
+                        Button(item) {
+                            workingVariables.selectedMyPen.nibMaterial = item
+                        }
+                    }
+                }
+                .padding(.bottom, 10)
+            } else {
+                Picker("Nib Material", selection: $workingVariables.selectedMyPen.nibMaterial) {
+                    ForEach (workingVariables.decodeList.decodesText("NibMaterial"), id: \.self) { item in
+                        Text(item)
+                    }
+                }
+                .padding(.bottom, 10)
+            }
+        
             VStack{
                 Text("Purchased")
                     .font(.headline)

@@ -46,6 +46,18 @@ class decodes: NSObject {
     func decodes(_ decodeType: String) -> [decode] {
         return myDecodeList.filter { $0.decodeType == decodeType }
     }
+    
+    func decodesText(_ decodeType: String) -> [String] {
+        var temp: [String] = Array()
+        
+        let tempList = myDecodeList.filter { $0.decodeType == decodeType }
+        
+        for item in tempList {
+            temp.append(item.decodeDescription)
+        }
+        
+        return temp
+    }
 }
 
 class decode: NSObject, Identifiable, ObservableObject {
