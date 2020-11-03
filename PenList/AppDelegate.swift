@@ -47,18 +47,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Inserted for data sync
 print("Garry debug register")
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
-            if let error = error {
-                print("D'oh: \(error.localizedDescription)")
-            } //else {
-           //     application.registerForRemoteNotifications()
-         //   }
-        }
-        
-   //     application.registerForRemoteNotifications()
-        print("Garry debug - check \(application.isRegisteredForRemoteNotifications)")
-        // Inserted for data sync - ended
-        
+//        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
+//            if let error = error {
+//                print("D'oh: \(error.localizedDescription)")
+//            } //else {
+//           //     application.registerForRemoteNotifications()
+//         //   }
+//        }
+//        
+//   //     application.registerForRemoteNotifications()
+//        print("Garry debug - check \(application.isRegisteredForRemoteNotifications)")
+//        // Inserted for data sync - ended
+//        
         return true
     }
 
