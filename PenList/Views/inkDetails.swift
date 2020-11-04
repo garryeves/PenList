@@ -41,6 +41,12 @@ struct inkDetails: View {
             borderColour = Color.white
         }
         
+        var colourText = "Select Colour"
+        
+        if workingVariables.selectedMyPen.nib != "" {
+            colourText = workingVariables.selectedInk.colour
+        }
+        
         return VStack {
             HStack {
                 Spacer()
@@ -83,7 +89,26 @@ struct inkDetails: View {
                         .padding(.bottom, 10)
                     }
                     
-                    TextField("Colour", text: $workingVariables.selectedInk.colour)
+                    if UIDevice.current.userInterfaceIdiom == .phone || UIDevice.current.userInterfaceIdiom == .pad {
+                        Menu(colourText) {
+                            ForEach (workingVariables.decodeList.decodesText("InkColour"), id: \.self) { item in
+                                Button(item) {
+                                    workingVariables.selectedInk.colour = item
+                                    tempVariables.reload.toggle()
+                                }
+                            }
+                        }
+                        .padding(.bottom, 10)
+                    } else {
+                        Picker("Colour", selection: $workingVariables.selectedInk.colour) {
+                            ForEach (workingVariables.decodeList.decodesText("InkColour"), id: \.self) { item in
+                                Text(item)
+                            }
+                        }
+                        .padding(.bottom, 10)
+                    }
+                    
+                    
                 }
             }
             .frame(height: 220)

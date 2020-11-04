@@ -12,6 +12,32 @@ class populateDatabase {
     
     func loadDecodes() {
         
+        /* Version 1.2
+        
+        let _ = decode(passeddecodeDescription: "Black", passeddecodeOrder: 1, passeddecodeType: "InkColour")
+
+        let _ = decode(passeddecodeDescription: "Blue", passeddecodeOrder: 2, passeddecodeType: "InkColour")
+
+        let _ = decode(passeddecodeDescription: "Brown", passeddecodeOrder: 3, passeddecodeType: "InkColour")
+
+        let _ = decode(passeddecodeDescription: "Gold", passeddecodeOrder: 4, passeddecodeType: "InkColour")
+
+        let _ = decode(passeddecodeDescription: "Grey", passeddecodeOrder: 5, passeddecodeType: "InkColour")
+
+        let _ = decode(passeddecodeDescription: "Green", passeddecodeOrder: 6, passeddecodeType: "InkColour")
+
+        let _ = decode(passeddecodeDescription: "Orange", passeddecodeOrder: 7, passeddecodeType: "InkColour")
+
+        let _ = decode(passeddecodeDescription: "Pink", passeddecodeOrder: 8, passeddecodeType: "InkColour")
+
+        let _ = decode(passeddecodeDescription: "Purple", passeddecodeOrder: 9, passeddecodeType: "InkColour")
+
+        let _ = decode(passeddecodeDescription: "Red", passeddecodeOrder: 10, passeddecodeType: "InkColour")
+
+        let _ = decode(passeddecodeDescription: "Yellow", passeddecodeOrder: 11, passeddecodeType: "InkColour")
+
+        */
+        
         /* Version 1.1
         let _ = decode(passeddecodeDescription: "Glass", passeddecodeOrder: 6, passeddecodeType: "NibMaterial")
         

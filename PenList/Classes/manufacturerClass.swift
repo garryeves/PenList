@@ -51,6 +51,20 @@ class manufacturers: NSObject {
             return myManufacturers
         }
     }
+    
+    var manufacturerWithInk: [manufacturer] {
+        get {
+            var temp: [manufacturer] = Array()
+            
+            for item in myManufacturers {
+                if item.activeInks.count > 0 {
+                    temp.append(item)
+                }
+            }
+            
+            return temp
+        }
+    }
 }
 
 class manufacturer: NSObject, Identifiable, ObservableObject {
@@ -72,6 +86,20 @@ class manufacturer: NSObject, Identifiable, ObservableObject {
     var inkItems: [ink] {
         get {
             return inkList.inks.filter { $0.manID == manID.uuidString}
+        }
+    }
+    
+    var activeInks: [myInk] {
+        get {
+            var temp: [myInk] = Array()
+            
+            for item in currentInkList.inks {
+                if !item.finished && item.manufacturer == name {
+                    temp.append(item)
+                }
+            }
+            
+            return temp
         }
     }
     

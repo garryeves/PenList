@@ -45,35 +45,6 @@ print("Garry - reloading showInk \(showInk) - newItem \(newItem)")
             if self.workingVariables.selectedManufacturer.name.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
                 Text("Please enter the name of the Manufacturer and then press 'Add'")
             }
-  
-            Button("garry test") {
-                var dupFound = false
-print("Ink clicked")
-                for item in inkList.inks {
-                    if item.name.lowercased() == self.newItem.lowercased() {
-                        dupFound = true
-                        break
-                    }
-                }
-
-                if !dupFound {
-                    self.workingVariables.selectedInk = ink(passedmanID: self.workingVariables.selectedManufacturer.manID.uuidString, passedname: newItem)
-                    self.showInk = true
-                } else {
-                    dupItemFound = true
-                }
-            }
-            .alert(isPresented: $dupItemFound) {
-                        Alert(title: Text("Duplicate Ink Found"), message: Text("Please Check the ink name"), dismissButton: .default(Text("OK")))
-                    }
-            .sheet(isPresented: self.$showInk, onDismiss: {
-                    inkList = inks()
-                    self.showInk = false
-                    self.newItem = ""
-            }) {
-                inkDetails(workingVariables: self.workingVariables, showChild: self.$showInk)
-                }
-            
             
             Form {
                 TextField("Manufacturer Name", text: self.$workingVariables.selectedManufacturer.name)

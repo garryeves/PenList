@@ -38,7 +38,7 @@ struct ContentView: View {
         
         // The following is used to populate the decodes table.  only uncomment for the first time to be run
         
-  //      workingVariables.loadDecodes()
+     //   workingVariables.loadDecodes()
         
 
         

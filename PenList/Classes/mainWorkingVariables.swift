@@ -29,6 +29,16 @@ class mainWorkingVariables: ObservableObject {
     
     var selectedMyNotepad = myNotepad()
     
+    @Published var inkSort = inkSortManufacturer {
+        didSet {
+            if inkSort == inkSortColour {
+                myInkList.sortArrayByColour()
+            } else {
+                myInkList.sortArrayByName()
+            }
+        }
+    }
+    
     func addPen() {
         selectedPen = pen()
         selectedPen.manID = selectedManufacturer.manID.uuidString
@@ -54,7 +64,7 @@ class mainWorkingVariables: ObservableObject {
     
     func reloadData() {
         myPenList = myPens()
-        myInkList = myInks()
+        myInkList = myInks(sortOrder: inkSort)
     }
     
     var decodeList = decodes()

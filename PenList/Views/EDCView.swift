@@ -176,10 +176,30 @@ struct EDCView: View {
                                                 Text("")
                                                 
                                                 Menu("Action to take") {
-                                                    ForEach (self.workingVariables.myInkList.inks, id: \.self) { inkItem in
-                                                        Button("Add \(inkItem.name)") {
-                                                            newInk.processRecord(selectedPen: item, selectedInk: inkItem)
-                                                            workingVariables.myPenList = myPens()
+                                                    // Build up list of colours
+                                                    ForEach (workingVariables.decodeList.decodesText("InkColour"), id: \.self) { colourItem in
+                                                        Menu(colourItem) {
+                                                            ForEach (self.workingVariables.myInkList.inksForColour(colourItem), id: \.self) { inkItem in
+                                                                Button("Add \(inkItem.name)") {
+                                                                    newInk.processRecord(selectedPen: item, selectedInk: inkItem)
+                                                                    workingVariables.myPenList = myPens()
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    
+                                                    // Build up list of Manufacturers
+                                                    
+                                                    Text(" ")
+                                                    
+                                                    ForEach (manufacturerList.manufacturerWithInk, id: \.self) { manItem in
+                                                        Menu(manItem.name) {
+                                                            ForEach (manItem.activeInks, id: \.self) { inkItem in
+                                                                Button("Add \(inkItem.name)") {
+                                                                    newInk.processRecord(selectedPen: item, selectedInk: inkItem)
+                                                                    workingVariables.myPenList = myPens()
+                                                                }
+                                                            }
                                                         }
                                                     }
                                                     
@@ -212,7 +232,7 @@ struct EDCView: View {
                     }
                 } else {
                     Spacer()
-                    Text("You must create a Manufaturer first")
+                    Text("You must create a Manufacturer first")
                         .font(.largeTitle)
                     Spacer()
                 }

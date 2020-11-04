@@ -9,8 +9,21 @@
 import Foundation
 import CloudKit
 
+let inkSortManufacturer = "Manufacturer"
+let inkSortColour = "Colour"
+
+let inkSortOptions = [inkSortManufacturer, inkSortColour]
+
+class displayMyInk: ObservableObject, Identifiable {
+    let id = UUID()
+    
+    var title = ""
+    var inkArray: [myInk] = Array()
+}
+
 class myInks: NSObject {
     fileprivate var myInkList: [myInk] = Array()
+    fileprivate var displayableArray: [displayMyInk] = Array()
     
     override init() {
         super.init()
@@ -18,7 +31,7 @@ class myInks: NSObject {
         if myCloudDB == nil {
             myCloudDB = CloudKitInteraction()
         }
-        
+
         for item in myCloudDB.getMyInk() {
             let object = myInk(passedamountPaid: item.amountPaid,
                                passedboughtFrom: item.boughtFrom,
@@ -33,11 +46,37 @@ class myInks: NSObject {
         sortArrayByName()
     }
     
+    init(sortOrder: String) {
+        super.init()
+        
+        if myCloudDB == nil {
+            myCloudDB = CloudKitInteraction()
+        }
+
+        for item in myCloudDB.getMyInk() {
+            let object = myInk(passedamountPaid: item.amountPaid,
+                               passedboughtFrom: item.boughtFrom,
+                               passeddateBought: item.dateBought,
+                               passedfinished: item.finished,
+                               passedinkID: item.inkID,
+                               passednotes: item.notes,
+                               passedmyInkID: item.myInkID)
+            myInkList.append(object)
+        }
+        
+        if sortOrder == inkSortColour {
+            sortArrayByColour()
+        } else {
+            sortArrayByName()
+        }
+    }
+    
     func append(_ newItem: myInk){
         myInkList.append(newItem)
     }
 
     func sortArrayByName() {
+
         if myInkList.count > 1 {
             myInkList.sort {
                 if $0.manufacturer == $1.manufacturer {
@@ -47,11 +86,98 @@ class myInks: NSObject {
                 }
             }
         }
+        
+        displayableArray.removeAll()
+        
+        var tempItem = ""
+        var inkArray: [myInk] = Array()
+        
+        for item in myInkList {
+            if item.manufacturer != tempItem {
+                if tempItem != "" {
+                    let temp = displayMyInk()
+                    temp.title = tempItem
+                    temp.inkArray = inkArray
+                    displayableArray.append(temp)
+                }
+                tempItem = item.manufacturer
+                inkArray.removeAll()
+                inkArray.append(item)
+            } else {
+                inkArray.append(item)
+            }
+        }
+        
+        if tempItem != "" {
+            let temp = displayMyInk()
+            temp.title = tempItem
+            temp.inkArray = inkArray
+            displayableArray.append(temp)
+        }
+    }
+    
+    func sortArrayByColour() {
+
+        if myInkList.count > 1 {
+            myInkList.sort {
+                if $0.colour == $1.colour {
+                    return $0.name < $1.name
+                } else {
+                    return $0.colour < $1.colour
+                }
+            }
+        }
+        
+        displayableArray.removeAll()
+        
+        var tempItem = ""
+        var inkArray: [myInk] = Array()
+        
+        for item in myInkList {
+            if item.colour != tempItem {
+                if tempItem != "" {
+                    let temp = displayMyInk()
+                    temp.title = tempItem
+                    temp.inkArray = inkArray
+                    displayableArray.append(temp)
+                }
+                tempItem = item.colour
+                inkArray.removeAll()
+                inkArray.append(item)
+            } else {
+                inkArray.append(item)
+            }
+        }
+        
+        if tempItem != "" {
+            let temp = displayMyInk()
+            temp.title = tempItem
+            temp.inkArray = inkArray
+            displayableArray.append(temp)
+        }
+    }
+    
+    func inksForColour(_ searchColour: String) -> [myInk] {
+        var temp: [myInk] = Array()
+         
+        let tempArray = myInkList.filter { $0.colour == searchColour }
+
+        for item in tempArray {
+            temp.append(item)
+        }
+        
+        return temp
     }
     
     var inks: [myInk] {
         get {
             return myInkList
+        }
+    }
+    
+    var displayGroupedInks: [displayMyInk] {
+        get {
+            return displayableArray
         }
     }
 }
@@ -142,6 +268,18 @@ class myInk: NSObject, Identifiable, ObservableObject {
                 photoList = myPenPhotos(penID: myInkID.uuidString)
             }
             return photoList!
+        }
+    }
+    
+    var colour: String {
+        get {
+            for item in inkList.inks {
+                if item.inkID.uuidString == inkID {
+                    return item.colour
+                }
+            }
+            
+            return ""
         }
     }
     
