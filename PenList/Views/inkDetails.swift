@@ -43,7 +43,7 @@ struct inkDetails: View {
         
         var colourText = "Select Colour"
         
-        if workingVariables.selectedMyPen.nib != "" {
+        if workingVariables.selectedInk.colour != "" {
             colourText = workingVariables.selectedInk.colour
         }
         

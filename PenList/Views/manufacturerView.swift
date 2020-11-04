@@ -28,7 +28,6 @@ struct manufacturerView: View {
         
         let manufacturersNotepads = notepadList.notepads.filter { $0.manID == workingVariables.selectedManufacturer.manID.uuidString }
  
-print("Garry - reloading showInk \(showInk) - newItem \(newItem)")
         return VStack {
             HStack {
                 Spacer()
