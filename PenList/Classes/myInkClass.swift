@@ -8,6 +8,7 @@
 
 import Foundation
 import CloudKit
+import SwiftUI
 
 let inkSortManufacturer = "Manufacturer"
 let inkSortColour = "Colour"
@@ -164,6 +165,16 @@ class myInks: NSObject {
 
         for item in tempArray {
             temp.append(item)
+        }
+        
+        if UIDevice.current.userInterfaceIdiom == .phone || UIDevice.current.userInterfaceIdiom == .pad {
+            temp.sort {
+                if $1.colour == $0.colour {
+                    return $1.name < $0.name
+                } else {
+                    return $1.colour < $0.colour
+                }
+            }
         }
         
         return temp

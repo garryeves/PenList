@@ -8,6 +8,7 @@
 
 import Foundation
 import CloudKit
+import SwiftUI
 
 class manufacturers: NSObject {
     fileprivate var myManufacturers: [manufacturer] = Array()
@@ -62,6 +63,16 @@ class manufacturers: NSObject {
                 }
             }
             
+            if UIDevice.current.userInterfaceIdiom == .phone || UIDevice.current.userInterfaceIdiom == .pad {
+                temp.sort {
+                    if $0.name == $1.name {
+                        return $1.country < $0.country
+                    } else {
+                        return $1.name < $0.name
+                    }
+                }
+            }
+            
             return temp
         }
     }
@@ -98,6 +109,17 @@ class manufacturer: NSObject, Identifiable, ObservableObject {
                     temp.append(item)
                 }
             }
+            
+            if UIDevice.current.userInterfaceIdiom == .phone || UIDevice.current.userInterfaceIdiom == .pad {
+                temp.sort {
+                    if $1.colour == $0.colour {
+                        return $1.name < $0.name
+                    } else {
+                        return $1.colour < $0.colour
+                    }
+                }
+            }
+            
             
             return temp
         }

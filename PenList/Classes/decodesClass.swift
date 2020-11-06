@@ -8,6 +8,7 @@
 
 import Foundation
 import CloudKit
+import SwiftUI
 
 class decodes: NSObject {
     fileprivate var myDecodeList: [decode] = Array()
@@ -55,7 +56,16 @@ class decodes: NSObject {
         for item in tempList {
             temp.append(item.decodeDescription)
         }
-        
+
+        if UIDevice.current.userInterfaceIdiom == .phone || UIDevice.current.userInterfaceIdiom == .pad {
+            temp.sort {
+                if $0 != $1 {
+                    return $1 < $0
+                } else {
+                    return true
+                }
+            }
+        }
         return temp
     }
 }
