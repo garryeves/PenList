@@ -112,10 +112,10 @@ class manufacturer: NSObject, Identifiable, ObservableObject {
             
             if UIDevice.current.userInterfaceIdiom == .phone || UIDevice.current.userInterfaceIdiom == .pad {
                 temp.sort {
-                    if $1.colour == $0.colour {
-                        return $1.name < $0.name
-                    } else {
+                    if $1.name == $0.name {
                         return $1.colour < $0.colour
+                    } else {
+                        return $1.name < $0.name
                     }
                 }
             }
