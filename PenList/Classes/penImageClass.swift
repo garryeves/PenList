@@ -48,7 +48,8 @@ class myPenPhoto: NSObject, Identifiable, ObservableObject {
     var myPhotoID = UUID()
     var penID = ""
     var type = ""
-    var image: UIImage?
+   // var image: UIImage?
+    var image: Image?
 
     var isNew = true
 
@@ -65,7 +66,8 @@ class myPenPhoto: NSObject, Identifiable, ObservableObject {
     }
     
     var decodedImage: Image {
-        return Image(uiImage: image!)
+        return image!
+        //return Image(uiImage: image!)
     }
     
     override init() {
@@ -74,7 +76,8 @@ class myPenPhoto: NSObject, Identifiable, ObservableObject {
     
     init(passedpenID: String,
          passedtype: String,
-         passedimage: UIImage?) {
+         passedimage: Image?) {
+  //       passedimage: UIImage?) {
         super.init()
         
         penID = passedpenID
@@ -87,7 +90,8 @@ class myPenPhoto: NSObject, Identifiable, ObservableObject {
     init(passedmyPhotoID: String,
          passedpenID: String,
          passedtype: String,
-         passedimage: UIImage?) {
+         passedimage: Image?) {
+//         passedimage: UIImage?) {
         super.init()
         
         penID = passedpenID
@@ -112,7 +116,8 @@ class myPenPhoto: NSObject, Identifiable, ObservableObject {
 struct MyPenPhoto {
     public var myPhotoID: String
     public var penID: String
-    public var photo: UIImage?
+//    public var photo: UIImage?
+    public var photo: Image?
     public var type: String
 }
 
@@ -122,12 +127,13 @@ extension CloudKitInteraction {
         
         for record in records {
             if record.object(forKey: "photo") != nil {
-                var photo: UIImage!
+              //  var photo: UIImage!
+                var photo: Image!
                 
-                if let asset = record["photo"] as? CKAsset,
-                    let data = try? Data(contentsOf: (asset.fileURL!)),
-                    let image = UIImage(data: data) {
-                        photo = image
+                if let asset = record["photo"] as? CKAsset {
+                    let data = try? Data(contentsOf: (asset.fileURL!))
+                    let tempimage = UIImage(data: data!)
+                    photo = Image(uiImage: tempimage!)
                     }
                 let tempItem = MyPenPhoto(myPhotoID: decodeString(record.object(forKey: "myPhotoID")),
                                           penID: decodeString(record.object(forKey: "penID")),
@@ -157,83 +163,121 @@ extension CloudKitInteraction {
         let sem = DispatchSemaphore(value: 0)
         let predicate = NSPredicate(format: "myPhotoID == \"\(sourceRecord.myPhotoID)\"") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "myPenPhoto", predicate: predicate)
-        privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
-            if error != nil {
-                NSLog("Error querying records: \(error!.localizedDescription)")
-            }
-            else {
-                if records!.count > 0 {
-                    let record = records!.first// as! CKRecord
-                    // Now you have grabbed your existing record from iCloud
-                    // Apply whatever changes you want
-                    record!.setValue(sourceRecord.type, forKey: "type")
-
-                    if sourceRecord.photo != nil {
-                        var imageURL: URL!
-                        let tempImageName = "photo.jpg"
-                        let documentsPathString = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first
-                        
-                        let imageData: Data = sourceRecord.photo!.jpegData(compressionQuality: 1.0)!
-                        let path = "\(documentsPathString!)/\(tempImageName)"
-                        try? sourceRecord.photo!.jpegData(compressionQuality: 1.0)!.write(to: URL(fileURLWithPath: path), options: [.atomic])
-                        imageURL = URL(fileURLWithPath: path)
-                        try? imageData.write(to: imageURL, options: [.atomic])
-
-                        let File:CKAsset? = CKAsset(fileURL: URL(fileURLWithPath: path))
-                        record!.setObject(File, forKey: "photo")
-                    }
-          
-                    // Save this record again
-                    self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
-                        if saveError != nil {
-                            NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            self.saveOK = false
-                            sem.signal()
-                        } else {
-                            if debugMessages {
-                                NSLog("Successfully updated record!")
-                            }
-                            sem.signal()
-                        }
-                    })
-                } else {  // Insert
-                    let record = CKRecord(recordType: "myPenPhoto")
-                    
-                    record.setValue(sourceRecord.myPhotoID, forKey: "myPhotoID")
-                    record.setValue(sourceRecord.penID, forKey: "penID")
-                    record.setValue(sourceRecord.type, forKey: "type")
-
-                    if sourceRecord.photo != nil {
-                        var imageURL: URL!
-                        let tempImageName = "photo.jpg"
-                        let documentsPathString = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first
-                        
-                        let imageData: Data = sourceRecord.photo!.jpegData(compressionQuality: 1.0)!
-                        let path = "\(documentsPathString!)/\(tempImageName)"
-                        try? sourceRecord.photo!.jpegData(compressionQuality: 1.0)!.write(to: URL(fileURLWithPath: path), options: [.atomic])
-                        imageURL = URL(fileURLWithPath: path)
-                        try? imageData.write(to: imageURL, options: [.atomic])
-
-                        let File:CKAsset? = CKAsset(fileURL: URL(fileURLWithPath: path))
-                        record.setObject(File, forKey: "photo")
-                    }
-                    
-                    self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
-                        if saveError != nil {
-                            NSLog("Error saving record: \(saveError!.localizedDescription)")
-                            self.saveOK = false
-                            sem.signal()
-                        } else {
-                            if debugMessages {
-                                NSLog("Successfully saved record!")
-                            }
-                            sem.signal()
-                        }
-                    })
+        
+       // let workingImage = UIImage(sourceRecord.photo!)
+        
+        if sourceRecord.photo != nil {
+            let workingImage = sourceRecord.photo!.asUIImage()
+            
+            privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
+                if error != nil {
+                    NSLog("Error querying records: \(error!.localizedDescription)")
                 }
-            }
-        })
-        sem.wait()
+                else {
+                    if records!.count > 0 {
+                        let record = records!.first// as! CKRecord
+                        // Now you have grabbed your existing record from iCloud
+                        // Apply whatever changes you want
+                        record!.setValue(sourceRecord.type, forKey: "type")
+
+                //        if workingImage != nil {
+                            var imageURL: URL!
+                            let tempImageName = "photo.jpg"
+                            let documentsPathString = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first
+                            
+                            let imageData: Data = workingImage.jpegData(compressionQuality: 1.0)!
+                            let path = "\(documentsPathString!)/\(tempImageName)"
+                            try? workingImage.jpegData(compressionQuality: 1.0)!.write(to: URL(fileURLWithPath: path), options: [.atomic])
+                            imageURL = URL(fileURLWithPath: path)
+                            try? imageData.write(to: imageURL, options: [.atomic])
+
+                            let File:CKAsset? = CKAsset(fileURL: URL(fileURLWithPath: path))
+                            record!.setObject(File, forKey: "photo")
+                  //      }
+              
+                        // Save this record again
+                        self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                                self.saveOK = false
+                                sem.signal()
+                            } else {
+                                if debugMessages {
+                                    NSLog("Successfully updated record!")
+                                }
+                                sem.signal()
+                            }
+                        })
+                    } else {  // Insert
+                        let record = CKRecord(recordType: "myPenPhoto")
+                        
+                        record.setValue(sourceRecord.myPhotoID, forKey: "myPhotoID")
+                        record.setValue(sourceRecord.penID, forKey: "penID")
+                        record.setValue(sourceRecord.type, forKey: "type")
+
+                 //       if workingImage != nil {
+                            var imageURL: URL!
+                            let tempImageName = "photo.jpg"
+                            let documentsPathString = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first
+                            
+                            let imageData: Data = workingImage.jpegData(compressionQuality: 1.0)!
+                            let path = "\(documentsPathString!)/\(tempImageName)"
+                            try? workingImage.jpegData(compressionQuality: 1.0)!.write(to: URL(fileURLWithPath: path), options: [.atomic])
+                            imageURL = URL(fileURLWithPath: path)
+                            try? imageData.write(to: imageURL, options: [.atomic])
+
+                            let File:CKAsset? = CKAsset(fileURL: URL(fileURLWithPath: path))
+                            record.setObject(File, forKey: "photo")
+           //             }
+                        
+                        self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
+                            if saveError != nil {
+                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+                                self.saveOK = false
+                                sem.signal()
+                            } else {
+                                if debugMessages {
+                                    NSLog("Successfully saved record!")
+                                }
+                                sem.signal()
+                            }
+                        })
+                    }
+                }
+            })
+            sem.wait()
+        }
     }
 }
 
+
+
+extension View {
+// This function changes our View to UIView, then calls another function
+// to convert the newly-made UIView to a UIImage.
+    public func asUIImage() -> UIImage {
+        let controller = UIHostingController(rootView: self)
+        
+        controller.view.frame = CGRect(x: 0, y: CGFloat(Int.max), width: 1, height: 1)
+        UIApplication.shared.windows.first!.rootViewController?.view.addSubview(controller.view)
+        
+        let size = controller.sizeThatFits(in: UIScreen.main.bounds.size)
+        controller.view.bounds = CGRect(origin: .zero, size: size)
+        controller.view.sizeToFit()
+        
+// here is the call to the function that converts UIView to UIImage: `.asImage()`
+        let image = controller.view.asUIImage()
+        controller.view.removeFromSuperview()
+        return image
+    }
+}
+
+extension UIView {
+// This is the function to convert UIView to UIImage
+    public func asUIImage() -> UIImage {
+        let renderer = UIGraphicsImageRenderer(bounds: bounds)
+        return renderer.image { rendererContext in
+            layer.render(in: rendererContext.cgContext)
+        }
+    }
+}

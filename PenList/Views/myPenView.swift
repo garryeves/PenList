@@ -45,6 +45,10 @@ struct myPenView: View {
             tempVars.triggerPenSelector()
         }
         
+        DispatchQueue.global(qos: .background).async {
+            workingVariables.selectedMyPen.loadImages()
+        }
+        
         var nibText = "Select Nib"
         
         if workingVariables.selectedMyPen.nib != "" {

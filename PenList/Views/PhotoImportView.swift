@@ -16,7 +16,7 @@ class selectedImageClass: ObservableObject {
 struct CaptureImageView {
     @Binding var isShown: Bool
     @Binding var image: UIImage?
-  //  @Binding var image: Image?
+//    @Binding var image: Image?
   
   func makeCoordinator() -> Coordinator {
     return Coordinator(isShown: $isShown, image: $image)

@@ -7,9 +7,15 @@
 //
 
 import Foundation
+import SwiftUI
 import CloudKit
 
 let defaultAddInkMessage = "Select Ink"
+
+struct tempImages: Identifiable {
+    var id = UUID()
+    var image: Image
+}
 
 class myPens: NSObject {
     fileprivate var myPenList: [myPen] = Array()
@@ -131,6 +137,7 @@ class myPen: NSObject, Identifiable, ObservableObject {
     var status = ""
     var yearOfManufacture = ""
     var photoList: myPenPhotos?
+    var loadedImages: [tempImages] = Array()
     
     var addInkMessage = defaultAddInkMessage
     
@@ -305,6 +312,24 @@ class myPen: NSObject, Identifiable, ObservableObject {
                          myPenID: myPenID.uuidString)
             
         myCloudDB.saveMyPen(temp)
+    }
+    
+    func loadImages() {
+        if images.photos.count > 0 {
+            if loadedImages.count == 0 {
+                for item in images.photos {
+                    let temp = tempImages(id: item.myPhotoID, image: item.decodedImage)
+                    loadedImages.append(temp)
+                }
+            }
+        }
+    }
+    
+    func addPhoto(_ photoID: Image) {
+        let tempPhoto = myPenPhoto(passedpenID: myPenID.uuidString, passedtype: "Pen", passedimage: photoID)
+        images.append(tempPhoto)
+        let temp = tempImages(id: tempPhoto.myPhotoID, image: photoID)
+        loadedImages.append(temp)
     }
 }
 

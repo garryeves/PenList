@@ -41,7 +41,15 @@ struct myInkView: View {
         if workingVariables.selectedMyInk.inkID == "" && !tempVars.showManufacturer {
             tempVars.triggerInkSelector()
         }
-             
+              
+        if !workingVariables.selectedMyInk.photosLoaded {
+            workingVariables.selectedMyInk.photosLoaded = true
+
+            DispatchQueue.global(qos: .background).async {
+                    workingVariables.selectedMyInk.loadImages()
+            }
+        }
+        
         var borderColour = Color.black
         
         if colorScheme == .dark {

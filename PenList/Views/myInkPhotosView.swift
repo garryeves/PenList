@@ -13,24 +13,17 @@ struct myInkPhotosView: View {
     @ObservedObject var workingVariables: mainWorkingVariables
     
     @State var showCaptureImageView: Bool = true
-    @State var tempPhoto: UIImage?
+//    @State var tempPhoto: UIImage?
+    @State var passedPhoto: UIImage?
     @State var reload = false
 
     var body: some View {
         var displayImage: Image?
-        var images: [tempImages] = Array()
         
-        if tempPhoto != nil {
-            displayImage = Image(uiImage: tempPhoto!)
+        if passedPhoto != nil {
+            displayImage = Image(uiImage: passedPhoto!)
         }
         
-        if workingVariables.selectedMyInk.images.photos.count > 0 {
-            for item in workingVariables.selectedMyInk.images.photos {
-                let temp = tempImages(id: item.myPhotoID, image: item.decodedImage)
-                images.append(temp)
-            }
-        }
-
         return VStack {
             HStack {
                 Spacer()
@@ -47,11 +40,11 @@ struct myInkPhotosView: View {
             .padding(.trailing, 20)
             .padding(.top, 15)
          
-            if images.count > 0 {
+            if workingVariables.selectedMyInk.loadedImages.count > 0 {
                 List {
                     ScrollView(.horizontal, content: {
                         HStack(spacing: 10) {
-                            ForEach(images) { item in
+                            ForEach(workingVariables.selectedMyInk.loadedImages) { item in
                                 item.image.resizable()
                                 .frame(width: 125, height: 125)
                             }
@@ -69,10 +62,9 @@ struct myInkPhotosView: View {
                             .frame(width: 250, height: 250)
                             .shadow(radius: 10)
                         Button("Save") {
-                            let temp = myPenPhoto(passedpenID: self.workingVariables.selectedMyInk.myInkID.uuidString, passedtype: "Ink", passedimage: self.tempPhoto)
-                          //  self.showChild = false
-                            
-                            self.workingVariables.selectedMyInk.images.append(temp)
+
+                            workingVariables.selectedMyInk.addPhoto(displayImage!)
+
                             self.reload.toggle()
                         }
                         .padding()
@@ -80,7 +72,7 @@ struct myInkPhotosView: View {
                 }
                 
                 if (showCaptureImageView) {
-                    CaptureImageView(isShown: $showCaptureImageView, image: $tempPhoto)
+                    CaptureImageView(isShown: $showCaptureImageView, image: $passedPhoto)
                 }
             }
             

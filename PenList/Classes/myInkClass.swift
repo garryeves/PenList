@@ -203,7 +203,9 @@ class myInk: NSObject, Identifiable, ObservableObject {
     var notes = ""
     var isNew = true
     var photoList: myPenPhotos?
-
+    var loadedImages: [tempImages] = Array()
+    var photosLoaded = false
+    
     var cost: String {
         get {
             return amountPaid.formatCurrency
@@ -338,6 +340,24 @@ class myInk: NSObject, Identifiable, ObservableObject {
                          myInkID: myInkID.uuidString)
             
         myCloudDB.saveMyInk(temp)
+    }
+    
+    func loadImages() {
+        if images.photos.count > 0 {
+            if loadedImages.count == 0 {
+                for item in images.photos {
+                    let temp = tempImages(id: item.myPhotoID, image: item.decodedImage)
+                    loadedImages.append(temp)
+                }
+            }
+        }
+    }
+    
+    func addPhoto(_ photoID: Image) {
+        let tempPhoto = myPenPhoto(passedpenID: myInkID.uuidString, passedtype: "Ink", passedimage: photoID)
+        images.append(tempPhoto)
+        let temp = tempImages(id: tempPhoto.myPhotoID, image: photoID)
+        loadedImages.append(temp)
     }
 }
 
