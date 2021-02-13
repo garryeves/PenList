@@ -21,6 +21,14 @@ class myInkDetailsWorkingVariables: ObservableObject {
     }
     
     @Published var reload = false
+    
+    @Published var imagesLoaded = false
+    
+    func showPhotoButton() {
+        DispatchQueue.main.async {
+            self.imagesLoaded = true
+        }
+    }
 }
 
 struct myInkView: View {
@@ -45,8 +53,10 @@ struct myInkView: View {
         if !workingVariables.selectedMyInk.photosLoaded {
             workingVariables.selectedMyInk.photosLoaded = true
 
-            DispatchQueue.global(qos: .background).async {
-                    workingVariables.selectedMyInk.loadImages()
+            if !tempVars.imagesLoaded {
+                DispatchQueue.global(qos: .background).async {
+                        workingVariables.selectedMyInk.loadImages(tempVars: tempVars)
+                }
             }
         }
         
@@ -109,13 +119,18 @@ struct myInkView: View {
                 
                 Spacer()
                 
-                Button("Photos") {
-                    self.showPhotoPicker = true
-                }
-                    .padding(.trailing, 20)
-                    .sheet(isPresented: self.$showPhotoPicker, onDismiss: { self.showPhotoPicker = false }) {
-                        myInkPhotosView(showChild: self.$showPhotoPicker, workingVariables: self.workingVariables)
+                if tempVars.imagesLoaded {
+                    Button("Photos") {
+                        self.showPhotoPicker = true
                     }
+                        .padding(.trailing, 20)
+                        .sheet(isPresented: self.$showPhotoPicker, onDismiss: { self.showPhotoPicker = false
+                                self.tempVars.imagesLoaded = false
+                                workingVariables.selectedMyInk.photosLoaded = false
+                        }) {
+                            myInkPhotosView(showChild: self.$showPhotoPicker, workingVariables: self.workingVariables)
+                        }
+                }
             }
             .padding(.bottom, 5)
             

@@ -133,6 +133,8 @@ struct toBuyEditView: View {
                 Button("Save") {
                     self.tempVars.save()
                     self.tempVars.tobuyList = toBuys()
+                    self.tempVars.type = ""
+                    self.tempVars.resetManufacturer()
                 }
                 .padding(.bottom, 10)
             }

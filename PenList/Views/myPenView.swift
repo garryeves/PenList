@@ -24,6 +24,14 @@ class myPenDetailsWorkingVariables: ObservableObject {
     @Published var image: Image? = nil
     
     @Published var reload = false
+    
+    @Published var imagesLoaded = false
+    
+    func showPhotoButton() {
+        DispatchQueue.main.async {
+            self.imagesLoaded = true
+        }
+    }
 }
 
 struct myPenView: View {
@@ -45,10 +53,11 @@ struct myPenView: View {
             tempVars.triggerPenSelector()
         }
         
-        DispatchQueue.global(qos: .background).async {
-            workingVariables.selectedMyPen.loadImages()
+        if !tempVars.imagesLoaded {
+            DispatchQueue.global(qos: .background).async {
+                workingVariables.selectedMyPen.loadImages(tempVars: tempVars)
+            }
         }
-        
         var nibText = "Select Nib"
         
         if workingVariables.selectedMyPen.nib != "" {
@@ -162,13 +171,17 @@ struct myPenView: View {
                 
                 Spacer()
                 
-                Button("Photos") {
-                    self.showPhotoPicker = true
-                }
-                    .padding(.trailing, 20)
-                    .sheet(isPresented: self.$showPhotoPicker, onDismiss: { self.showPhotoPicker = false }) {
-                        myPenImagesView(showChild: self.$showPhotoPicker, workingVariables: self.workingVariables)
+                if tempVars.imagesLoaded {
+                    Button("Photos") {
+                        self.showPhotoPicker = true
                     }
+                        .padding(.trailing, 20)
+                        .sheet(isPresented: self.$showPhotoPicker, onDismiss: { self.showPhotoPicker = false
+                            self.tempVars.imagesLoaded = false
+                        }) {
+                            myPenImagesView(showChild: self.$showPhotoPicker, workingVariables: self.workingVariables)
+                        }
+                }
             }
                 .padding(.bottom, 5)
 
@@ -328,13 +341,16 @@ struct myPenViewPhone: View {
                 
                 Spacer()
                 
-                Button("Photos") {
-                    self.showPhotoPicker = true
-                }
-                    .padding(.trailing, 20)
-                    .sheet(isPresented: self.$showPhotoPicker, onDismiss: { self.showPhotoPicker = false }) {
-                        myPenImagesView(showChild: self.$showPhotoPicker, workingVariables: self.workingVariables)
+                if tempVars.imagesLoaded {
+                    Button("Photos") {
+                        self.showPhotoPicker = true
                     }
+                        .padding(.trailing, 20)
+                        .sheet(isPresented: self.$showPhotoPicker, onDismiss: { self.showPhotoPicker = false
+                                self.tempVars.imagesLoaded = false }) {
+                            myPenImagesView(showChild: self.$showPhotoPicker, workingVariables: self.workingVariables)
+                        }
+                }
             }
                 .padding(.bottom, 5)
 

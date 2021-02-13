@@ -1,19 +1,18 @@
 //
-//  myPenImagesView.swift
+//  EDCReviewPhotoView.swift
 //  PenList
 //
-//  Created by Garry Eves on 12/4/20.
-//  Copyright © 2020 Garry Eves. All rights reserved.
+//  Created by Garry Eves on 13/2/21.
+//  Copyright © 2021 Garry Eves. All rights reserved.
 //
 
 import SwiftUI
 
-struct myPenImagesView: View {
+struct EDCPhotosView: View {
     @Binding var showChild: Bool
-    @ObservedObject var workingVariables: mainWorkingVariables
+    @ObservedObject var workingVariables: currentUse
     
     @State var showCaptureImageView: Bool = true
-//    @State var tempPhoto: UIImage?
     @State var passedPhoto: UIImage?
     @State var reload = false
 
@@ -23,7 +22,7 @@ struct myPenImagesView: View {
         if passedPhoto != nil {
             displayImage = Image(uiImage: passedPhoto!)
         }
-
+        
         return VStack {
             HStack {
                 Spacer()
@@ -40,14 +39,13 @@ struct myPenImagesView: View {
             .padding(.trailing, 20)
             .padding(.top, 15)
          
-            if workingVariables.selectedMyPen.loadedImages.count > 0 {
+            if workingVariables.loadedImages.count > 0 {
                 List {
                     ScrollView(.horizontal, content: {
                         HStack(spacing: 10) {
-                            ForEach(workingVariables.selectedMyPen.loadedImages) { item in
+                            ForEach(workingVariables.loadedImages) { item in
                                 item.image.resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .frame(height: 125)
+                                .frame(width: 125, height: 125)
                             }
                         }
                         .padding(.leading, 10)
@@ -60,13 +58,12 @@ struct myPenImagesView: View {
                 if displayImage != nil {
                     VStack {
                         displayImage?.resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(height: 250)
+                            .frame(width: 250, height: 250)
                             .shadow(radius: 10)
                         Button("Save") {
-                       
-                            workingVariables.selectedMyPen.addPhoto(displayImage!)
-                            
+
+                            workingVariables.addPhoto(displayImage!)
+
                             self.reload.toggle()
                         }
                         .padding()
@@ -82,3 +79,5 @@ struct myPenImagesView: View {
         }
     }
 }
+
+

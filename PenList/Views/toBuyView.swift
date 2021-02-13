@@ -81,6 +81,11 @@ class myToBuyWorkingVariables: ObservableObject {
     
     @Published var displayType = ""
     
+    func resetManufacturer() {
+        selectedManufacturer = manufacturer()
+        workingItem.manufacturer = ""
+    }
+    
     func add() {
         let temp = toBuy()
         workingItem = temp

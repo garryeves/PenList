@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -12,6 +12,8 @@
 		3410E15C2505E25B00FC1ED5 /* notepadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3410E15B2505E25B00FC1ED5 /* notepadView.swift */; };
 		3410E15E25072F2400FC1ED5 /* populateDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3410E15D25072F2400FC1ED5 /* populateDatabase.swift */; };
 		3410E16025072F4A00FC1ED5 /* decodesClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3410E15F25072F4900FC1ED5 /* decodesClass.swift */; };
+		341B71D325D678AF00633560 /* Reachability in Frameworks */ = {isa = PBXBuildFile; productRef = 341B71D225D678AF00633560 /* Reachability */; };
+		341B71D725D76B7100633560 /* EDCReviewPhotoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341B71D625D76B7100633560 /* EDCReviewPhotoView.swift */; };
 		3440FF2A24551C2900528D32 /* ManufacturersListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440FF2924551C2900528D32 /* ManufacturersListView.swift */; };
 		3463D21D242ED07E005B5D45 /* selectInkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3463D21C242ED07E005B5D45 /* selectInkView.swift */; };
 		346E12792424A8CF0077B04A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346E12782424A8CF0077B04A /* AppDelegate.swift */; };
@@ -67,6 +69,7 @@
 		3410E15B2505E25B00FC1ED5 /* notepadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = notepadView.swift; sourceTree = "<group>"; };
 		3410E15D25072F2400FC1ED5 /* populateDatabase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = populateDatabase.swift; sourceTree = "<group>"; };
 		3410E15F25072F4900FC1ED5 /* decodesClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = decodesClass.swift; sourceTree = "<group>"; };
+		341B71D625D76B7100633560 /* EDCReviewPhotoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EDCReviewPhotoView.swift; sourceTree = "<group>"; };
 		3440FF2924551C2900528D32 /* ManufacturersListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManufacturersListView.swift; sourceTree = "<group>"; };
 		3463D21C242ED07E005B5D45 /* selectInkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = selectInkView.swift; sourceTree = "<group>"; };
 		346E12752424A8CE0077B04A /* PenList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PenList.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -125,6 +128,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				34872BD22424ADBD004270DD /* CloudKit.framework in Frameworks */,
+				341B71D325D678AF00633560 /* Reachability in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -198,6 +202,7 @@
 			children = (
 				34A47FBF2424B562008D5C98 /* ActivityViewController.swift */,
 				34A47FCA242594B3008D5C98 /* currentUseClass.swift */,
+				3410E15F25072F4900FC1ED5 /* decodesClass.swift */,
 				34A47FBB2424B51C008D5C98 /* EvesCRMSharedFiles.swift */,
 				34A47FBC2424B51C008D5C98 /* extensions.swift */,
 				34A47FCC242594CC008D5C98 /* inkClass.swift */,
@@ -212,7 +217,6 @@
 				34A47FDC24261CCD008D5C98 /* PenListShared.swift */,
 				34A47FD824259535008D5C98 /* toBuyClass.swift */,
 				34EDAEB02441487900234C64 /* KeyboardHeightPublisher.swift */,
-				3410E15F25072F4900FC1ED5 /* decodesClass.swift */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -222,6 +226,7 @@
 			children = (
 				34B1374824D65C26005AF7CF /* aboutScreenView.swift */,
 				3405FBEE2505DEF4002472E7 /* EDCView.swift */,
+				341B71D625D76B7100633560 /* EDCReviewPhotoView.swift */,
 				34EDAEA82441344100234C64 /* EDCReviewView.swift */,
 				34A47FE02426FBE1008D5C98 /* inkDetails.swift */,
 				3405FBF02505DF42002472E7 /* inkView.swift */,
@@ -264,6 +269,9 @@
 			dependencies = (
 			);
 			name = PenList;
+			packageProductDependencies = (
+				341B71D225D678AF00633560 /* Reachability */,
+			);
 			productName = PenList;
 			productReference = 346E12752424A8CE0077B04A /* PenList.app */;
 			productType = "com.apple.product-type.application";
@@ -292,6 +300,9 @@
 				Base,
 			);
 			mainGroup = 346E126C2424A8CE0077B04A;
+			packageReferences = (
+				341B71D125D678AF00633560 /* XCRemoteSwiftPackageReference "Reachability" */,
+			);
 			productRefGroup = 346E12762424A8CE0077B04A /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -343,6 +354,7 @@
 				34D00F8224BAA06400D93F42 /* notepadDetailsView.swift in Sources */,
 				34D00F8624BAA8E700D93F42 /* selectNotepadView.swift in Sources */,
 				34A47FD924259535008D5C98 /* toBuyClass.swift in Sources */,
+				341B71D725D76B7100633560 /* EDCReviewPhotoView.swift in Sources */,
 				3482AB90244BEA7D00815EAE /* toBuyEditView.swift in Sources */,
 				3440FF2A24551C2900528D32 /* ManufacturersListView.swift in Sources */,
 				34B1374924D65C26005AF7CF /* aboutScreenView.swift in Sources */,
@@ -506,7 +518,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = PenList/PenList.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 38;
+				CURRENT_PROJECT_VERSION = 42;
 				DEVELOPMENT_ASSET_PATHS = "\"PenList/Preview Content\"";
 				DEVELOPMENT_TEAM = 76YDDNPU7W;
 				ENABLE_PREVIEWS = YES;
@@ -516,7 +528,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2020.3;
+				MARKETING_VERSION = 2021.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.garryeves.PenList;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
@@ -531,7 +543,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = PenList/PenList.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 38;
+				CURRENT_PROJECT_VERSION = 42;
 				DEVELOPMENT_ASSET_PATHS = "\"PenList/Preview Content\"";
 				DEVELOPMENT_TEAM = 76YDDNPU7W;
 				ENABLE_PREVIEWS = YES;
@@ -541,7 +553,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2020.3;
+				MARKETING_VERSION = 2021.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.garryeves.PenList;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
@@ -572,6 +584,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		341B71D125D678AF00633560 /* XCRemoteSwiftPackageReference "Reachability" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ashleymills/Reachability.swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		341B71D225D678AF00633560 /* Reachability */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 341B71D125D678AF00633560 /* XCRemoteSwiftPackageReference "Reachability" */;
+			productName = Reachability;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		346E127C2424A8CF0077B04A /* PenList.xcdatamodeld */ = {

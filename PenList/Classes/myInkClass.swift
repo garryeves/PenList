@@ -10,8 +10,8 @@ import Foundation
 import CloudKit
 import SwiftUI
 
-let inkSortManufacturer = "Manufacturer"
 let inkSortColour = "Colour"
+let inkSortManufacturer = "Manufacturer"
 
 let inkSortOptions = [inkSortManufacturer, inkSortColour]
 
@@ -65,10 +65,15 @@ class myInks: NSObject {
             myInkList.append(object)
         }
         
-        if sortOrder == inkSortColour {
-            sortArrayByColour()
-        } else {
-            sortArrayByName()
+        switch sortOrder {
+            case inkSortManufacturer:
+                sortArrayByName()
+                
+            case inkSortColour:
+                sortArrayByColour()
+                
+            default:
+                sortArrayByName()
         }
     }
     
@@ -222,16 +227,6 @@ class myInk: NSObject, Identifiable, ObservableObject {
         }
     }
     
-//    var manufacturer: String {
-//        get {
-//            for item in inkList.inks {
-//                if item.inkID.uuidString == inkID {
-//                    return item.manufacturer
-//                }
-//            }
-//            return "Unknown"
-//        }
-//    }
     var manufacturer: String {
         get {
             for item in inkList.inks {
@@ -278,7 +273,7 @@ class myInk: NSObject, Identifiable, ObservableObject {
     var images: myPenPhotos {
         get {
             if photoList == nil {
-                photoList = myPenPhotos(penID: myInkID.uuidString)
+                photoList = myPenPhotos(penID: inkID)
             }
             return photoList!
         }
@@ -342,19 +337,24 @@ class myInk: NSObject, Identifiable, ObservableObject {
         myCloudDB.saveMyInk(temp)
     }
     
-    func loadImages() {
+    func loadImages(tempVars: myInkDetailsWorkingVariables) {
         if images.photos.count > 0 {
             if loadedImages.count == 0 {
                 for item in images.photos {
                     let temp = tempImages(id: item.myPhotoID, image: item.decodedImage)
                     loadedImages.append(temp)
                 }
+                tempVars.showPhotoButton()
+            } else {
+                tempVars.showPhotoButton()
             }
+        } else {
+            tempVars.showPhotoButton()
         }
     }
     
     func addPhoto(_ photoID: Image) {
-        let tempPhoto = myPenPhoto(passedpenID: myInkID.uuidString, passedtype: "Ink", passedimage: photoID)
+        let tempPhoto = myPenPhoto(passedpenID: "", passedinkID: myInkID.uuidString, passedtype: "Ink", passedimage: photoID)
         images.append(tempPhoto)
         let temp = tempImages(id: tempPhoto.myPhotoID, image: photoID)
         loadedImages.append(temp)

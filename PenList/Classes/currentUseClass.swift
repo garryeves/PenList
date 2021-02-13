@@ -8,6 +8,7 @@
 
 import Foundation
 import CloudKit
+import SwiftUI
 
 class currentUses: NSObject {
     fileprivate var myCurrentUse: [currentUse] = Array()
@@ -114,7 +115,10 @@ class currentUse: NSObject, Identifiable, ObservableObject {
     var notes = ""
     var penID = ""
     var rating: Int64 = 0
-
+    var photoList: myPenPhotos?
+    var loadedImages: [tempImages] = Array()
+    var photosLoaded = false
+    
     var penName: String {
         get {
             for item in currentPenList.pens {
@@ -183,6 +187,15 @@ class currentUse: NSObject, Identifiable, ObservableObject {
         }
     }
     
+    var images: myPenPhotos {
+        get {
+            if photoList == nil {
+                photoList = myPenPhotos(penID: useID.uuidString)
+            }
+            return photoList!
+        }
+    }
+    
     override init() {
         super.init()
     }
@@ -218,6 +231,29 @@ class currentUse: NSObject, Identifiable, ObservableObject {
         let temp = CurrentUse(dateEnded: dateEnded, dateStarted: dateStarted, inkID: inkID, notes: notes, penID: penID, rating: rating, useID: useID.uuidString)
             
         myCloudDB.saveCurrentUse(temp)
+    }
+    
+    func loadImages(tempVars: contentViewWorkingVariables) {
+        if images.photos.count > 0 {
+            if loadedImages.count == 0 {
+                for item in images.photos {
+                    let temp = tempImages(id: item.myPhotoID, image: item.decodedImage)
+                    loadedImages.append(temp)
+                }
+                tempVars.showPhotoButton()
+            } else {
+                tempVars.showPhotoButton()
+            }
+        } else {
+            tempVars.showPhotoButton()
+        }
+    }
+    
+    func addPhoto(_ photoID: Image) {
+        let tempPhoto = myPenPhoto(passedpenID: penID, passedinkID: inkID, passedtype: "Use", passedimage: photoID)
+        images.append(tempPhoto)
+        let temp = tempImages(id: tempPhoto.myPhotoID, image: photoID)
+        loadedImages.append(temp)
     }
 }
 

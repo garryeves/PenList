@@ -8,6 +8,11 @@
 
 import Foundation
 
+enum edcViewType {
+    case Inked
+    case UnInked
+}
+
 class mainWorkingVariables: ObservableObject {
     var selectedManufacturer = manufacturer()
     
@@ -76,4 +81,6 @@ class mainWorkingVariables: ObservableObject {
         sleep(2)
         decodeList = decodes()
     }
+    
+    @Published var edcView: edcViewType = .Inked
 }

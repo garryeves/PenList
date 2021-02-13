@@ -17,7 +17,7 @@ var currentInkList = myInks()
 var currentNotepadList = myNotepads()
 var currentUseList = currentUses()
 
-let currentPenStatusActive = "Active"
-let currentPenStatusFinished = "Finished"
-
-let currentPenStatusTypes = [currentPenStatusActive, currentPenStatusFinished]
+enum penStatus {
+    case Active
+    case Finished
+}

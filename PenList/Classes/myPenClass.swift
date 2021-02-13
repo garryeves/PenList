@@ -76,8 +76,12 @@ class myPens: NSObject {
             var temp: [myPen] = Array()
             
             for item in myPenList {
-                if item.status == currentPenStatusActive {
-                    temp.append(item)
+                switch item.status {
+                    case .Active :
+                        temp.append(item)
+                        
+                    case .Finished :
+                        let _ = 1
                 }
             }
             
@@ -134,7 +138,7 @@ class myPen: NSObject, Identifiable, ObservableObject {
     var review = ""
     var sellingPrice = 0.0
     var soldTo = ""
-    var status = ""
+    var status = penStatus.Active
     var yearOfManufacture = ""
     var photoList: myPenPhotos?
     var loadedImages: [tempImages] = Array()
@@ -266,7 +270,12 @@ class myPen: NSObject, Identifiable, ObservableObject {
         review = passedreview
         sellingPrice = passedsellingPrice
         soldTo = passedsoldTo
-        status = passedstatus
+        switch passedstatus {
+            case "Active" :
+                status = .Active
+            default :
+                status = .Finished
+        }
         yearOfManufacture = passedyearOfManufacture
         myPenID = UUID(uuidString: passedmyPenID)!
         
@@ -290,6 +299,16 @@ class myPen: NSObject, Identifiable, ObservableObject {
 
     func save()
     {
+        var tempStatus = ""
+        
+        switch status {
+            case .Active:
+                tempStatus = "Active"
+                
+            case .Finished:
+                tempStatus = "Finished"
+        }
+        
         let temp = MyPen(colour: colour,
                          datePurchased: datePurchased,
                          dateSold: dateSold,
@@ -307,26 +326,31 @@ class myPen: NSObject, Identifiable, ObservableObject {
                          review:review,
                          sellingPrice: sellingPrice,
                          soldTo: soldTo,
-                         status: status,
+                         status: tempStatus,
                          yearOfManufacture: yearOfManufacture,
                          myPenID: myPenID.uuidString)
             
         myCloudDB.saveMyPen(temp)
     }
     
-    func loadImages() {
+    func loadImages(tempVars: myPenDetailsWorkingVariables) {
         if images.photos.count > 0 {
             if loadedImages.count == 0 {
                 for item in images.photos {
                     let temp = tempImages(id: item.myPhotoID, image: item.decodedImage)
                     loadedImages.append(temp)
                 }
+                tempVars.showPhotoButton()
+            } else {
+                tempVars.showPhotoButton()
             }
+        } else {
+            tempVars.showPhotoButton()
         }
     }
     
     func addPhoto(_ photoID: Image) {
-        let tempPhoto = myPenPhoto(passedpenID: myPenID.uuidString, passedtype: "Pen", passedimage: photoID)
+        let tempPhoto = myPenPhoto(passedpenID: myPenID.uuidString, passedinkID: "", passedtype: "Pen", passedimage: photoID)
         images.append(tempPhoto)
         let temp = tempImages(id: tempPhoto.myPhotoID, image: photoID)
         loadedImages.append(temp)

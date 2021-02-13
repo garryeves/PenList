@@ -23,9 +23,20 @@ class myPenPhotos: NSObject {
         if myCloudDB == nil {
             myCloudDB = CloudKitInteraction()
         }
-        for item in myCloudDB.getPenPhoto(penID) {
+        for item in myCloudDB.getPenPhoto(penID: penID) {
             let object = myPenPhoto(passedmyPhotoID: item.myPhotoID,
                                     passedpenID: item.penID,
+                                    passedinkID: item.inkID,
+                                    passedtype: item.type,
+                                    passedimage: item.photo)
+
+            myPenList.append(object)
+        }
+        
+        for item in myCloudDB.getPenPhoto(inkID: penID) {
+            let object = myPenPhoto(passedmyPhotoID: item.myPhotoID,
+                                    passedpenID: item.penID,
+                                    passedinkID: item.inkID,
                                     passedtype: item.type,
                                     passedimage: item.photo)
 
@@ -47,6 +58,7 @@ class myPenPhotos: NSObject {
 class myPenPhoto: NSObject, Identifiable, ObservableObject {
     var myPhotoID = UUID()
     var penID = ""
+    var inkID = ""
     var type = ""
    // var image: UIImage?
     var image: Image?
@@ -75,12 +87,13 @@ class myPenPhoto: NSObject, Identifiable, ObservableObject {
     }
     
     init(passedpenID: String,
+         passedinkID: String,
          passedtype: String,
          passedimage: Image?) {
-  //       passedimage: UIImage?) {
         super.init()
         
         penID = passedpenID
+        inkID = passedinkID
         type = passedtype
         image = passedimage
 
@@ -89,12 +102,14 @@ class myPenPhoto: NSObject, Identifiable, ObservableObject {
     
     init(passedmyPhotoID: String,
          passedpenID: String,
+         passedinkID: String,
          passedtype: String,
          passedimage: Image?) {
 //         passedimage: UIImage?) {
         super.init()
         
         penID = passedpenID
+        inkID = passedinkID
         type = passedtype
         image = passedimage
         myPhotoID = UUID(uuidString: passedmyPhotoID)!
@@ -106,6 +121,7 @@ class myPenPhoto: NSObject, Identifiable, ObservableObject {
     {
         let temp = MyPenPhoto(myPhotoID: myPhotoID.uuidString,
                               penID: penID,
+                              inkID: inkID,
                               photo: image,
                               type: type)
             
@@ -116,7 +132,7 @@ class myPenPhoto: NSObject, Identifiable, ObservableObject {
 struct MyPenPhoto {
     public var myPhotoID: String
     public var penID: String
-//    public var photo: UIImage?
+    public var inkID: String
     public var photo: Image?
     public var type: String
 }
@@ -137,6 +153,7 @@ extension CloudKitInteraction {
                     }
                 let tempItem = MyPenPhoto(myPhotoID: decodeString(record.object(forKey: "myPhotoID")),
                                           penID: decodeString(record.object(forKey: "penID")),
+                                          inkID: decodeString(record.object(forKey: "inkID")),
                                           photo: photo,
                                           type: decodeString(record.object(forKey: "type")))
                 
@@ -147,8 +164,21 @@ extension CloudKitInteraction {
         return tempArray
     }
     
-    func getPenPhoto(_ penID: String)->[MyPenPhoto] {
+    func getPenPhoto(penID: String)->[MyPenPhoto] {
         let predicate = NSPredicate(format: "penID == \"\(penID)\"")
+
+        let query = CKQuery(recordType: "myPenPhoto", predicate: predicate)
+        let sem = DispatchSemaphore(value: 0)
+        fetchPrivateServices(query: query, sem: sem, completion: nil)
+        
+        sem.wait()
+
+        return populateMyPenPhoto(returnArray)
+    }
+    
+    func getPenPhoto(inkID: String)->[MyPenPhoto] {
+//        let predicate = NSPredicate(format: "(penID == \"\(inkID)\") || (inkID == \"\(inkID)\")")
+        let predicate = NSPredicate(format: "(inkID == \"\(inkID)\")")
 
         let query = CKQuery(recordType: "myPenPhoto", predicate: predicate)
         let sem = DispatchSemaphore(value: 0)
@@ -213,6 +243,7 @@ extension CloudKitInteraction {
                         
                         record.setValue(sourceRecord.myPhotoID, forKey: "myPhotoID")
                         record.setValue(sourceRecord.penID, forKey: "penID")
+                        record.setValue(sourceRecord.inkID, forKey: "inkID")
                         record.setValue(sourceRecord.type, forKey: "type")
 
                  //       if workingImage != nil {

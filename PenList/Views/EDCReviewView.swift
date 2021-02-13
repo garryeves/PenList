@@ -9,9 +9,12 @@
 import SwiftUI
 
 struct EDCReviewView: View {
+    @ObservedObject var workingVariables: mainWorkingVariables
     @ObservedObject var tempVars: contentViewWorkingVariables
     @ObservedObject var kbDetails = KeyboardResponder()
     @Binding var showChild: Bool
+    
+    @State var showPhotoPicker = false
     
     @Environment(\.colorScheme) var colorScheme
     
@@ -20,6 +23,12 @@ struct EDCReviewView: View {
         
         if colorScheme == .dark {
             borderColour = Color.white
+        }
+        
+        if !tempVars.imagesLoaded {
+            DispatchQueue.global(qos: .background).async {
+                tempVars.EDCItem.loadImages(tempVars: tempVars)
+            }
         }
         
         return VStack {
@@ -50,11 +59,27 @@ struct EDCReviewView: View {
                 .padding(.leading, 20)
                 .padding(.trailing, 20)
             
+            HStack {
             Text("Notes")
                 .font(.headline)
                 .padding(.bottom, 10)
                 .padding(.leading, 20)
                 .padding(.trailing, 20)
+            
+            Spacer()
+                
+            if tempVars.imagesLoaded {
+                Button("Photos") {
+                    self.showPhotoPicker = true
+                }
+                    .padding(.trailing, 20)
+                    .sheet(isPresented: self.$showPhotoPicker, onDismiss: { self.showPhotoPicker = false
+                            self.tempVars.imagesLoaded = false }) {
+                        EDCPhotosView(showChild: self.$showPhotoPicker, workingVariables: self.tempVars.EDCItem)
+                    }
+                }
+            }
+            .padding()
             
             GeometryReader { geometry in
                 TextEditor(text: $tempVars.EDCItem.notes)
@@ -71,15 +96,6 @@ struct EDCReviewView: View {
             
             Spacer()
         }
-//        .onTapGesture {
-//            let keyWindow = UIApplication.shared.connectedScenes
-//                               .filter({$0.activationState == .foregroundActive})
-//                               .map({$0 as? UIWindowScene})
-//                               .compactMap({$0})
-//                               .first?.windows
-//                               .filter({$0.isKeyWindow}).first
-//            keyWindow!.endEditing(true)
-//        }
         .padding(.bottom, kbDetails.currentHeight)
     }
 }
