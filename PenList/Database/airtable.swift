@@ -82,10 +82,17 @@ class airTableCommon: ObservableObject {
 
         var queryItems: [URLQueryItem] = Array()
         
-        for item in processArray {
-            queryItems.append(URLQueryItem(name: "records", value: item))
+        if processArray.count  == 1 {
+            queryItems.append(URLQueryItem(name: "records", value: processArray[0]))
+        } else {
+            for item in processArray {
+                queryItems.append(URLQueryItem(name: "records", value: item))
+            }
         }
 
+
+print("String = \(urlString)")
+print("queryItems = \(queryItems)")
         let tempurl = URL(string: "\(urlString)")
             
         var components = URLComponents(url: tempurl!, resolvingAgainstBaseURL: false)

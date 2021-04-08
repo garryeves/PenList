@@ -37,9 +37,10 @@ struct EDCView: View {
     var body: some View {
 //        print("Ignore this debug line - for some reason fails without it - \(usagePassedEntry.penID)")
         
-    //    print("Device = \(UIDevice.current.identifierForVendor)")
+  //      print("Device = \(UIDevice.current.identifierForVendor)")
         workingVariables.edcView = openState
         return  VStack {
+//            Text("\(UIDevice.current.identifierForVendor!)")
             switch workingVariables.edcView {
                 case .Inked :
                     HStack {
@@ -99,7 +100,8 @@ struct EDCView: View {
                     }
             }
         
-            if UIDevice.current.identifierForVendor?.uuidString == "2E0C8BB8-4795-4FE9-9AD3-A8EEA4B93333" || UIDevice.current.identifierForVendor?.uuidString == "600AE059-7C8C-5CB6-BF25-8914225E43E9" {
+         
+            if UIDevice.current.identifierForVendor?.uuidString == "2E0C8BB8-4795-4FE9-9AD3-A8EEA4B93333" || UIDevice.current.identifierForVendor?.uuidString == "600AE059-7C8C-5CB6-BF25-8914225E43E9" || UIDevice.current.identifierForVendor?.uuidString == "C2174B0A-1FAE-4932-BC92-3E37683DDD3C" {
                 Button("Refresh Airtable") {
                     processAirtable()
                 }
