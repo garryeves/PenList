@@ -40,7 +40,8 @@ class myInks: NSObject {
                                passedfinished: item.finished,
                                passedinkID: item.inkID,
                                passednotes: item.notes,
-                               passedmyInkID: item.myInkID)
+                               passedmyInkID: item.myInkID,
+                               passedinkType: item.inkType)
             myInkList.append(object)
         }
         
@@ -61,7 +62,8 @@ class myInks: NSObject {
                                passedfinished: item.finished,
                                passedinkID: item.inkID,
                                passednotes: item.notes,
-                               passedmyInkID: item.myInkID)
+                               passedmyInkID: item.myInkID,
+                               passedinkType: item.inkType)
             myInkList.append(object)
         }
         
@@ -210,6 +212,7 @@ class myInk: NSObject, Identifiable, ObservableObject {
     var photoList: myPenPhotos?
     var loadedImages: [tempImages] = Array()
     var photosLoaded = false
+    @Published var inkType = ""
     
     var cost: String {
         get {
@@ -301,7 +304,8 @@ class myInk: NSObject, Identifiable, ObservableObject {
          passedfinished: Bool,
          passedinkID: String,
          passednotes: String,
-         passedmyInkID: String) {
+         passedmyInkID: String,
+         passedinkType: String) {
         super.init()
         amountPaid = passedamountPaid
         boughtFrom = passedboughtFrom
@@ -311,6 +315,7 @@ class myInk: NSObject, Identifiable, ObservableObject {
         notes = passednotes
         isNew = false
         myInkID = UUID(uuidString: passedmyInkID)!
+        inkType = passedinkType
     }
     
     init(passedinkID: String,
@@ -332,7 +337,8 @@ class myInk: NSObject, Identifiable, ObservableObject {
                          finished: finished,
                          inkID: inkID,
                          notes: notes,
-                         myInkID: myInkID.uuidString)
+                         myInkID: myInkID.uuidString,
+                         inkType: inkType)
             
         myCloudDB.saveMyInk(temp)
     }
@@ -369,6 +375,7 @@ struct MyInk {
     public var inkID: String
     public var notes: String
     public var myInkID: String
+    public var inkType: String
 }
 
 extension CloudKitInteraction {
@@ -382,7 +389,8 @@ extension CloudKitInteraction {
                                  finished: decodeBool(record.object(forKey: "finished"), defaultReturn: false),
                                  inkID: decodeString(record.object(forKey: "inkID")),
                                  notes: decodeString(record.object(forKey: "notes")),
-                                 myInkID: decodeString(record.object(forKey: "myInkID"))
+                                 myInkID: decodeString(record.object(forKey: "myInkID")),
+                                 inkType: decodeString(record.object(forKey: "inkType"))
             )
             
             tempArray.append(tempItem)
@@ -422,7 +430,8 @@ extension CloudKitInteraction {
                     record!.setValue(sourceRecord.dateBought, forKey: "dateBought")
                     record!.setValue(finishedFlag, forKey: "finished")
                     record!.setValue(sourceRecord.notes, forKey: "notes")
-
+                    record!.setValue(sourceRecord.inkType, forKey: "inkType")
+                    
                     // Save this record again
                     self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil {
@@ -446,6 +455,7 @@ extension CloudKitInteraction {
                     record.setValue(sourceRecord.inkID, forKey: "inkID")
                     record.setValue(sourceRecord.notes, forKey: "notes")
                     record.setValue(sourceRecord.myInkID, forKey: "myInkID")
+                    record.setValue(sourceRecord.inkType, forKey: "inkType")
                     
                     self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil {

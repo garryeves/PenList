@@ -16,6 +16,7 @@
 		341B71D725D76B7100633560 /* EDCReviewPhotoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 341B71D625D76B7100633560 /* EDCReviewPhotoView.swift */; };
 		3440FF2A24551C2900528D32 /* ManufacturersListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3440FF2924551C2900528D32 /* ManufacturersListView.swift */; };
 		3463D21D242ED07E005B5D45 /* selectInkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3463D21C242ED07E005B5D45 /* selectInkView.swift */; };
+		346B3B41260C3FEC0062B790 /* airtable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346B3B40260C3FEC0062B790 /* airtable.swift */; };
 		346E12792424A8CF0077B04A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346E12782424A8CF0077B04A /* AppDelegate.swift */; };
 		346E127B2424A8CF0077B04A /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346E127A2424A8CF0077B04A /* SceneDelegate.swift */; };
 		346E127E2424A8CF0077B04A /* PenList.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 346E127C2424A8CF0077B04A /* PenList.xcdatamodeld */; };
@@ -54,6 +55,7 @@
 		34D00F8224BAA06400D93F42 /* notepadDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34D00F8124BAA06400D93F42 /* notepadDetailsView.swift */; };
 		34D00F8424BAA1FC00D93F42 /* myNotepadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34D00F8324BAA1FC00D93F42 /* myNotepadView.swift */; };
 		34D00F8624BAA8E700D93F42 /* selectNotepadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34D00F8524BAA8E700D93F42 /* selectNotepadView.swift */; };
+		34DF302C260C599700CF8187 /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34DF302B260C599600CF8187 /* SwiftyJSON.swift */; };
 		34EDAEA92441344100234C64 /* EDCReviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34EDAEA82441344100234C64 /* EDCReviewView.swift */; };
 		34EDAEAB244137CF00234C64 /* RatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34EDAEAA244137CF00234C64 /* RatingView.swift */; };
 		34EDAEB12441487900234C64 /* KeyboardHeightPublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34EDAEB02441487900234C64 /* KeyboardHeightPublisher.swift */; };
@@ -72,6 +74,7 @@
 		341B71D625D76B7100633560 /* EDCReviewPhotoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EDCReviewPhotoView.swift; sourceTree = "<group>"; };
 		3440FF2924551C2900528D32 /* ManufacturersListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManufacturersListView.swift; sourceTree = "<group>"; };
 		3463D21C242ED07E005B5D45 /* selectInkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = selectInkView.swift; sourceTree = "<group>"; };
+		346B3B40260C3FEC0062B790 /* airtable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = airtable.swift; sourceTree = "<group>"; };
 		346E12752424A8CE0077B04A /* PenList.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PenList.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		346E12782424A8CF0077B04A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		346E127A2424A8CF0077B04A /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -113,6 +116,7 @@
 		34D00F8124BAA06400D93F42 /* notepadDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = notepadDetailsView.swift; sourceTree = "<group>"; };
 		34D00F8324BAA1FC00D93F42 /* myNotepadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = myNotepadView.swift; sourceTree = "<group>"; };
 		34D00F8524BAA8E700D93F42 /* selectNotepadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = selectNotepadView.swift; sourceTree = "<group>"; };
+		34DF302B260C599600CF8187 /* SwiftyJSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftyJSON.swift; sourceTree = "<group>"; };
 		34EDAEA82441344100234C64 /* EDCReviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EDCReviewView.swift; sourceTree = "<group>"; };
 		34EDAEAA244137CF00234C64 /* RatingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingView.swift; sourceTree = "<group>"; };
 		34EDAEB02441487900234C64 /* KeyboardHeightPublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardHeightPublisher.swift; sourceTree = "<group>"; };
@@ -193,6 +197,8 @@
 				34A47FB82424B486008D5C98 /* UserInfo.swift */,
 				34A47FB52424B40B008D5C98 /* CloudKitInteraction.swift */,
 				3410E15D25072F2400FC1ED5 /* populateDatabase.swift */,
+				346B3B40260C3FEC0062B790 /* airtable.swift */,
+				34DF302B260C599600CF8187 /* SwiftyJSON.swift */,
 			);
 			path = Database;
 			sourceTree = "<group>";
@@ -361,6 +367,7 @@
 				34A47FC02424B562008D5C98 /* ActivityViewController.swift in Sources */,
 				346E127B2424A8CF0077B04A /* SceneDelegate.swift in Sources */,
 				346E12802424A8CF0077B04A /* ContentView.swift in Sources */,
+				346B3B41260C3FEC0062B790 /* airtable.swift in Sources */,
 				34A47FD3242594FE008D5C98 /* myPenClass.swift in Sources */,
 				34D00F7E24B959D800D93F42 /* notepadClass.swift in Sources */,
 				34A47FEB242722BD008D5C98 /* myInkView.swift in Sources */,
@@ -377,6 +384,7 @@
 				34D00F8424BAA1FC00D93F42 /* myNotepadView.swift in Sources */,
 				34A47FCD242594CC008D5C98 /* inkClass.swift in Sources */,
 				3473BB89253546C600EFC6C2 /* usageHistoryView.swift in Sources */,
+				34DF302C260C599700CF8187 /* SwiftyJSON.swift in Sources */,
 				34EDAEB32442A03B00234C64 /* PhotoImportView.swift in Sources */,
 				346E127E2424A8CF0077B04A /* PenList.xcdatamodeld in Sources */,
 			);
@@ -518,7 +526,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = PenList/PenList.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 42;
+				CURRENT_PROJECT_VERSION = 47;
 				DEVELOPMENT_ASSET_PATHS = "\"PenList/Preview Content\"";
 				DEVELOPMENT_TEAM = 76YDDNPU7W;
 				ENABLE_PREVIEWS = YES;
@@ -528,7 +536,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2021.1;
+				MARKETING_VERSION = 2021.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.garryeves.PenList;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;
@@ -543,7 +551,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = PenList/PenList.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 42;
+				CURRENT_PROJECT_VERSION = 47;
 				DEVELOPMENT_ASSET_PATHS = "\"PenList/Preview Content\"";
 				DEVELOPMENT_TEAM = 76YDDNPU7W;
 				ENABLE_PREVIEWS = YES;
@@ -553,7 +561,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 2021.1;
+				MARKETING_VERSION = 2021.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.garryeves.PenList;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = YES;

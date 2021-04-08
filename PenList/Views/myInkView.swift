@@ -65,6 +65,12 @@ struct myInkView: View {
         if colorScheme == .dark {
             borderColour = Color.white
         }
+        
+        var inkTypeText = "Select"
+        
+        if workingVariables.selectedMyInk.inkType != "" {
+            inkTypeText = workingVariables.selectedMyInk.inkType
+        }
 
         return VStack {
             HStack {
@@ -104,6 +110,26 @@ struct myInkView: View {
                     DatePicker(selection: $workingVariables.selectedMyInk.dateBought, displayedComponents: .date) {
                         Text("Purchase Date")
                     }
+                    
+                    if UIDevice.current.userInterfaceIdiom == .phone || UIDevice.current.userInterfaceIdiom == .pad {
+                        Menu(inkTypeText) {
+                            ForEach (workingVariables.decodeList.decodesText("inkType"), id: \.self) { item in
+                                Button(item) {
+                                    workingVariables.selectedMyInk.inkType = item
+                                    tempVars.reload.toggle()
+                                }
+                            }
+                        }
+                        .padding(.bottom, 10)
+                    } else {
+                        Picker("Ink Type", selection: $workingVariables.selectedMyInk.inkType) {
+                            ForEach (workingVariables.decodeList.decodesText("inkType"), id: \.self) { item in
+                                Text(item)
+                            }
+                        }
+                        .padding(.bottom, 10)
+                    }
+
                 }
             }
             .frame(height: 200)

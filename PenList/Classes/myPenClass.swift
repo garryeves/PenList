@@ -47,7 +47,8 @@ class myPens: NSObject {
                                passedsoldTo: item.soldTo,
                                passedstatus: item.status,
                                passedyearOfManufacture: item.yearOfManufacture,
-                               passedmyPenID: item.myPenID)
+                               passedmyPenID: item.myPenID,
+                               passedSerialNo: item.serialNo)
             
             myPenList.append(object)
         }
@@ -142,6 +143,7 @@ class myPen: NSObject, Identifiable, ObservableObject {
     var yearOfManufacture = ""
     var photoList: myPenPhotos?
     var loadedImages: [tempImages] = Array()
+    var serialNo = ""
     
     var addInkMessage = defaultAddInkMessage
     
@@ -183,6 +185,22 @@ class myPen: NSObject, Identifiable, ObservableObject {
         }
     }
     
+    var soldFor: String {
+        get {
+            return sellingPrice.formatCurrency
+        }
+        set {
+            if newValue.isDouble() {
+                sellingPrice = Double(newValue)!
+            } else {
+                let working = newValue.formatCurrencyNoSign
+                if working != -1.0 {
+                    sellingPrice = working
+                }
+            }
+        }
+    }
+    
     var manufacturer: String {
         get {
             for item in penList.pens {
@@ -218,6 +236,17 @@ class myPen: NSObject, Identifiable, ObservableObject {
         }
     }
     
+    var model: String {
+        get {
+            for item in penList.pens {
+                if item.penID.uuidString == penID {
+                    return item.name
+                }
+            }
+            
+            return ""
+        }
+    }
     var images: myPenPhotos {
         get {
             if photoList == nil {
@@ -250,7 +279,8 @@ class myPen: NSObject, Identifiable, ObservableObject {
          passedsoldTo: String,
          passedstatus: String,
          passedyearOfManufacture: String,
-         passedmyPenID: String) {
+         passedmyPenID: String,
+         passedSerialNo: String) {
         super.init()
         
         penID = passedpenID
@@ -278,6 +308,7 @@ class myPen: NSObject, Identifiable, ObservableObject {
         }
         yearOfManufacture = passedyearOfManufacture
         myPenID = UUID(uuidString: passedmyPenID)!
+        serialNo = passedSerialNo
         
         isNew = false
     }
@@ -328,7 +359,8 @@ class myPen: NSObject, Identifiable, ObservableObject {
                          soldTo: soldTo,
                          status: tempStatus,
                          yearOfManufacture: yearOfManufacture,
-                         myPenID: myPenID.uuidString)
+                         myPenID: myPenID.uuidString,
+                         serialNo: serialNo)
             
         myCloudDB.saveMyPen(temp)
     }
@@ -378,6 +410,7 @@ struct MyPen {
     public var status: String
     public var yearOfManufacture: String
     public var myPenID: String
+    public var serialNo: String
 }
 
 extension CloudKitInteraction {
@@ -404,7 +437,8 @@ extension CloudKitInteraction {
                                  soldTo: decodeString(record.object(forKey: "soldTo")),
                                  status: decodeString(record.object(forKey: "status")),
                                  yearOfManufacture: decodeString(record.object(forKey: "yearOfManufacture")),
-                                 myPenID: decodeString(record.object(forKey: "myPenID"))
+                                 myPenID: decodeString(record.object(forKey: "myPenID")),
+                                 serialNo: decodeString(record.object(forKey: "serialNo"))
                                  )
             
             tempArray.append(tempItem)
@@ -414,7 +448,8 @@ extension CloudKitInteraction {
     }
     
     func getMyPen()->[MyPen] {
-        let predicate = NSPredicate(format: "TRUEPREDICATE")
+     //   let predicate = NSPredicate(format: "TRUEPREDICATE")
+        let predicate = NSPredicate(format: "dateSold == %@", getDefaultDate() as CVarArg)
 
         let query = CKQuery(recordType: "myPen", predicate: predicate)
         let sem = DispatchSemaphore(value: 0)
@@ -456,7 +491,8 @@ extension CloudKitInteraction {
                     record!.setValue(sourceRecord.soldTo, forKey: "soldTo")
                     record!.setValue(sourceRecord.status, forKey: "status")
                     record!.setValue(sourceRecord.yearOfManufacture, forKey: "yearOfManufacture")
-          
+                    record!.setValue(sourceRecord.serialNo, forKey: "serialNo")
+                    
                     // Save this record again
                     self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil {
@@ -492,6 +528,7 @@ extension CloudKitInteraction {
                     record.setValue(sourceRecord.status, forKey: "status")
                     record.setValue(sourceRecord.yearOfManufacture, forKey: "yearOfManufacture")
                     record.setValue(sourceRecord.myPenID, forKey: "myPenID")
+                    record.setValue(sourceRecord.serialNo, forKey: "serialNo")
                     
                     self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
                         if saveError != nil {

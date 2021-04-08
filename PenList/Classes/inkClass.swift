@@ -23,7 +23,7 @@ class inks: NSObject {
             let object = ink(passedinkID: item.inkID,
                              passedcolour: item.colour,
                              passedinkFamily: item.inkFamily,
-                             passedinkType: item.inkType,
+             //                passedinkType: item.inkType,
                              passedmanID: item.manID,
                              passedname: item.name,
                              passednotes: item.notes)
@@ -44,7 +44,7 @@ class inks: NSObject {
             let object = ink(passedinkID: item.inkID,
                              passedcolour: item.colour,
                              passedinkFamily: item.inkFamily,
-                             passedinkType: item.inkType,
+           //                  passedinkType: item.inkType,
                              passedmanID: item.manID,
                              passedname: item.name,
                              passednotes: item.notes)
@@ -81,7 +81,7 @@ class ink: NSObject, Identifiable, ObservableObject {
     var inkID = UUID()
     var colour = ""
     var inkFamily = ""
-    @Published var inkType = ""
+ //   @Published var inkType = ""
     var manID = ""
     var name = ""
     var notes = ""
@@ -112,7 +112,7 @@ class ink: NSObject, Identifiable, ObservableObject {
     init(passedinkID: String,
          passedcolour: String,
          passedinkFamily: String,
-         passedinkType: String,
+       //  passedinkType: String,
          passedmanID: String,
          passedname: String,
          passednotes: String)
@@ -121,7 +121,7 @@ class ink: NSObject, Identifiable, ObservableObject {
         inkID = UUID(uuidString: passedinkID)!
         colour = passedcolour
         inkFamily = passedinkFamily
-        inkType = passedinkType
+     //   inkType = passedinkType
         manID = passedmanID
         name = passedname
         notes = passednotes
@@ -159,7 +159,7 @@ class ink: NSObject, Identifiable, ObservableObject {
         let temp = Ink(colour: colour,
                        inkFamily: inkFamily,
                        inkID: inkID.uuidString,
-                       inkType: inkType,
+                    //   inkType: inkType,
                        manID: manID,
                        name: name,
                        notes: notes)
@@ -172,7 +172,7 @@ struct Ink {
     public var colour: String
     public var inkFamily: String
     public var inkID: String
-    public var inkType: String
+  //  public var inkType: String
     public var manID: String
     public var name: String
     public var notes: String
@@ -186,7 +186,7 @@ extension CloudKitInteraction {
             let tempItem = Ink(colour: decodeString(record.object(forKey: "colour")),
                                inkFamily: decodeString(record.object(forKey: "inkFamily")),
                                inkID: decodeString(record.object(forKey: "inkID")),
-                               inkType: decodeString(record.object(forKey: "inkType")),
+                         //      inkType: decodeString(record.object(forKey: "inkType")),
                                manID: decodeString(record.object(forKey: "manID")),
                                name: decodeString(record.object(forKey: "name")),
                                notes: decodeString(record.object(forKey: "notes")))
@@ -235,7 +235,7 @@ extension CloudKitInteraction {
                     // Now you have grabbed your existing record from iCloud
                     // Apply whatever changes you want
                     record!.setValue(sourceRecord.colour, forKey: "colour")
-                    record!.setValue(sourceRecord.inkType, forKey: "inkType")
+              //      record!.setValue(sourceRecord.inkType, forKey: "inkType")
                     record!.setValue(sourceRecord.manID, forKey: "manID")
                     record!.setValue(sourceRecord.name, forKey: "name")
                     record!.setValue(sourceRecord.inkFamily, forKey: "inkFamily")
@@ -258,7 +258,7 @@ extension CloudKitInteraction {
                     let record = CKRecord(recordType: "ink")
                     record.setValue(sourceRecord.colour, forKey: "colour")
                     record.setValue(sourceRecord.inkID, forKey: "inkID")
-                    record.setValue(sourceRecord.inkType, forKey: "inkType")
+               //     record.setValue(sourceRecord.inkType, forKey: "inkType")
                     record.setValue(sourceRecord.manID, forKey: "manID")
                     record.setValue(sourceRecord.name, forKey: "name")
                     record.setValue(sourceRecord.inkFamily, forKey: "inkFamily")

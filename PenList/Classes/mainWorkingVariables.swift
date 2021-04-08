@@ -82,5 +82,6 @@ class mainWorkingVariables: ObservableObject {
         decodeList = decodes()
     }
     
-    @Published var edcView: edcViewType = .Inked
+  //  @Published var edcView: edcViewType = .Inked
+    var edcView: edcViewType = .Inked
 }

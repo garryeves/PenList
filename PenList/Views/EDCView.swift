@@ -30,11 +30,15 @@ class newPenWorkingVariables: ObservableObject {
 struct EDCView: View {
     @ObservedObject var workingVariables: mainWorkingVariables
     @ObservedObject var tempVars: contentViewWorkingVariables
+    var openState : edcViewType
     
     @State var showAbout = false
    
     var body: some View {
 //        print("Ignore this debug line - for some reason fails without it - \(usagePassedEntry.penID)")
+        
+    //    print("Device = \(UIDevice.current.identifierForVendor)")
+        workingVariables.edcView = openState
         return  VStack {
             switch workingVariables.edcView {
                 case .Inked :
@@ -49,9 +53,9 @@ struct EDCView: View {
                                 aboutScreenView(showChild: self.$showAbout)
                             }
                         Spacer()
-                        Button("View My UnInked Pens") {
-                            workingVariables.edcView = .UnInked
-                        }
+//                        Button("View My UnInked Pens") {
+//                            workingVariables.edcView = .UnInked
+//                        }
                     }
                     .padding()
                     if manufacturerList.manufacturers.count > 0 {
@@ -77,9 +81,9 @@ struct EDCView: View {
                                 aboutScreenView(showChild: self.$showAbout)
                             }
                         Spacer()
-                        Button("View My Inked Pens") {
-                            workingVariables.edcView = .Inked
-                        }
+//                        Button("View My Inked Pens") {
+//                            workingVariables.edcView = .Inked
+//                        }
                     }
                     .padding()
                     
@@ -94,7 +98,93 @@ struct EDCView: View {
                         }
                     }
             }
+        
+            if UIDevice.current.identifierForVendor?.uuidString == "2E0C8BB8-4795-4FE9-9AD3-A8EEA4B93333" || UIDevice.current.identifierForVendor?.uuidString == "600AE059-7C8C-5CB6-BF25-8914225E43E9" {
+                Button("Refresh Airtable") {
+                    processAirtable()
+                }
+                .padding()
+            }
         }
+    }
+    
+    func processAirtable() {
+        let temp = myPens()
+        
+        // delete existing entries
+        
+        // Process Pens
+        
+        var manufacturerList: [String] = Array()
+        
+        // Delete existing Manufacturers
+        
+        let _ = airtablePenManufacturer(action: "DELETE")
+        let _ = airtablePen(action: "DELETE")
+        let _ = airtableInkManufacturer(action: "DELETE")
+        let _ = airtableInk(action: "DELETE")
+
+        
+        for item in temp.pens {
+            
+            // Build Manufacturer list
+            
+            if manufacturerList.count == 0 {
+                manufacturerList.append(item.manufacturer)
+                let _ = airtablePenManufacturer(newmanufacturer: item.manufacturer)
+            } else {
+                var itemFound = false
+                for check in manufacturerList {
+                    if check == item.manufacturer {
+                        itemFound = true
+                    }
+                }
+                
+                if !itemFound {
+                    manufacturerList.append(item.manufacturer)
+                    let _ = airtablePenManufacturer(newmanufacturer: item.manufacturer)
+                }
+            }
+            
+            // Process pen
+            
+            let _ = airtablePen(newname: item.penName, newmanufacturer: item.manufacturer, newmodel: item.model)
+        }
+        
+        // Process inks
+        
+        manufacturerList.removeAll()
+        
+        // Build Manufacturer list
+        let temp2 = myInks()
+        
+        for item in temp2.inks {
+            
+            // Build Manufacturer list
+            
+            if manufacturerList.count == 0 {
+                manufacturerList.append(item.manufacturer)
+                let _ = airtableInkManufacturer(newmanufacturer: item.manufacturer)
+            } else {
+                var itemFound = false
+                for check in manufacturerList {
+                    if check == item.manufacturer {
+                        itemFound = true
+                    }
+                }
+                
+                if !itemFound {
+                    manufacturerList.append(item.manufacturer)
+                    let _ = airtableInkManufacturer(newmanufacturer: item.manufacturer)
+                }
+            }
+            
+            // Process Ink
+            
+            let _ = airtableInk(newname: item.name, newmanufacturer: item.manufacturer)
+        }
+        
+        // process ink
     }
 }
 
@@ -115,12 +205,16 @@ struct InkedView: View {
         
         HStack {
             Text(" ")
-                .sheet(isPresented: self.$showMyPenPhone, onDismiss: { self.showMyPenPhone = false }) {
+                .sheet(isPresented: self.$showMyPenPhone, onDismiss: { self.showMyPenPhone = false
+                                                            self.workingVariables.reload.toggle()
+                }) {
                     myPenViewPhone(workingVariables: self.workingVariables, showChild: self.$showMyPenPhone)
                     }
             
             Text(" ")
-                .sheet(isPresented: self.$showMyPen, onDismiss: { self.showMyPen = false }) {
+                .sheet(isPresented: self.$showMyPen, onDismiss: { self.showMyPen = false
+                                                        self.workingVariables.reload.toggle()
+                }) {
                         myPenView(workingVariables: self.workingVariables, showChild: self.$showMyPen)
                 }
             
@@ -228,14 +322,20 @@ struct UnInkedView: View {
     var body: some View {
         //        print("Ignore this debug line - for some reason fails without it - \(usagePassedEntry.penID)")
         
+      // print("reload UnInkedView")
+        
         HStack {
             Text(" ")
-                .sheet(isPresented: self.$showMyPenPhone, onDismiss: { self.showMyPenPhone = false }) {
+                .sheet(isPresented: self.$showMyPenPhone, onDismiss: { self.showMyPenPhone = false
+                                                                self.workingVariables.reload.toggle()
+                }) {
                     myPenViewPhone(workingVariables: self.workingVariables, showChild: self.$showMyPenPhone)
                     }
             
             Text(" ")
-                .sheet(isPresented: self.$showMyPen, onDismiss: { self.showMyPen = false }) {
+                .sheet(isPresented: self.$showMyPen, onDismiss: { self.showMyPen = false
+                                                                self.workingVariables.reload.toggle()
+                }) {
                         myPenView(workingVariables: self.workingVariables, showChild: self.$showMyPen)
                 }
             

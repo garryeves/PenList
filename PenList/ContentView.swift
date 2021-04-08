@@ -121,11 +121,16 @@ struct myTabView: View {
         
      //   workingVariables.loadDecodes()
         return TabView {
-            
-            EDCView(workingVariables: workingVariables, tempVars: tempVars)
+            EDCView(workingVariables: workingVariables, tempVars: tempVars, openState: edcViewType.Inked)
                 .tabItem {
                     Image(systemName: "pencil.tip")
-                    Text("Pens")
+                    Text("Inked Pens")
+                }
+            
+            EDCView(workingVariables: workingVariables, tempVars: tempVars, openState: edcViewType.UnInked)
+                .tabItem {
+                    Image(systemName: "pencil.tip")
+                    Text("UnInked Pens")
                 }
         
             inkView(workingVariables: workingVariables, tempVars: tempVars)

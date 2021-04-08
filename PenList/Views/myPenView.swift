@@ -156,9 +156,26 @@ struct myPenView: View {
                     DatePicker(selection: $workingVariables.selectedMyPen.datePurchased, displayedComponents: .date) {
                         Text("Purchase Date")
                     }
+                    
+                    TextField("Serial No", text: $workingVariables.selectedMyPen.serialNo)
+                }
+                Section(header: Text("Sold").font(.headline)) {
+                    if workingVariables.selectedMyPen.dateSold == getDefaultDate() {
+                        TextField("Sold For", text: $workingVariables.selectedMyPen.soldFor)
+                        Button("Mark as sold/disposed of") {
+                            workingVariables.selectedMyPen.dateSold = Date()
+                            workingVariables.selectedMyPen.save()
+                            sleep(2)
+                            self.workingVariables.myPenList = myPens()
+                            self.showChild = false
+                        }
+                    } else {
+                        Text("Sold For \(workingVariables.selectedMyPen.soldFor))")
+                        Text("Sold/disposed of on \(workingVariables.selectedMyPen.dateSold.formatDateToString)")
+                    }
                 }
             }
-            .frame(height: 400)
+         //   .frame(height: 430)
             .padding(.bottom, 10)
             .padding(.leading, 20)
             .padding(.trailing, 20)
@@ -188,9 +205,11 @@ struct myPenView: View {
             GeometryReader { geometry in
                 TextEditor(text: $workingVariables.selectedMyPen.notes)
                     .border(borderColour, width: /*@START_MENU_TOKEN@*/1/*@END_MENU_TOKEN@*/)
-                    .frame(width: geometry.size.width - 40, alignment: .center)
-                    .padding()
+               //     .frame(width: geometry.size.width - 40, alignment: .center)
+                    .padding(.leading, 20)
+                    .padding(.trailing, 20)
             }
+            .frame(height: 100)
             
             Button("Save") {
                 self.workingVariables.selectedMyPen.save()

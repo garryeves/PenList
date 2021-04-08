@@ -29,11 +29,11 @@ struct inkDetails: View {
         
         UITableView.appearance().separatorStyle = .none
         
-        var inkTypeText = "Select"
-        
-        if workingVariables.selectedInk.inkType != "" {
-            inkTypeText = workingVariables.selectedInk.inkType
-        }
+//        var inkTypeText = "Select"
+//        
+//        if workingVariables.selectedInk.inkType != "" {
+//            inkTypeText = workingVariables.selectedInk.inkType
+//        }
         
         var borderColour = Color.black
         
@@ -70,24 +70,24 @@ struct inkDetails: View {
                 if workingVariables.selectedInk.name.trimmingCharacters(in: .whitespacesAndNewlines) != "" {
                     TextField("Ink Family", text: $workingVariables.selectedInk.inkFamily)
                     
-                    if UIDevice.current.userInterfaceIdiom == .phone || UIDevice.current.userInterfaceIdiom == .pad {
-                        Menu(inkTypeText) {
-                            ForEach (workingVariables.decodeList.decodesText("inkType"), id: \.self) { item in
-                                Button(item) {
-                                    workingVariables.selectedInk.inkType = item
-                                    tempVariables.reload.toggle()
-                                }
-                            }
-                        }
-                        .padding(.bottom, 10)
-                    } else {
-                        Picker("Ink Type", selection: $workingVariables.selectedInk.inkType) {
-                            ForEach (workingVariables.decodeList.decodesText("inkType"), id: \.self) { item in
-                                Text(item)
-                            }
-                        }
-                        .padding(.bottom, 10)
-                    }
+//                    if UIDevice.current.userInterfaceIdiom == .phone || UIDevice.current.userInterfaceIdiom == .pad {
+//                        Menu(inkTypeText) {
+//                            ForEach (workingVariables.decodeList.decodesText("inkType"), id: \.self) { item in
+//                                Button(item) {
+//                                    workingVariables.selectedInk.inkType = item
+//                                    tempVariables.reload.toggle()
+//                                }
+//                            }
+//                        }
+//                        .padding(.bottom, 10)
+//                    } else {
+//                        Picker("Ink Type", selection: $workingVariables.selectedInk.inkType) {
+//                            ForEach (workingVariables.decodeList.decodesText("inkType"), id: \.self) { item in
+//                                Text(item)
+//                            }
+//                        }
+//                        .padding(.bottom, 10)
+//                    }
                     
                     if UIDevice.current.userInterfaceIdiom == .phone || UIDevice.current.userInterfaceIdiom == .pad {
                         Menu(colourText) {
