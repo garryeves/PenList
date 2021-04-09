@@ -139,16 +139,16 @@ struct myTabView: View {
                     Text("Ink")
                 }
             
-            notepadView(workingVariables: workingVariables, tempVars: tempVars)
-                .tabItem {
-                    Image(systemName: "book")
-                    Text("Notepads")
-                }
-            
             ManufacturersListView(workingVariables: self.workingVariables)
                 .tabItem {
                     Image(systemName: "bag")
                     Text("Manufacturers")
+                }
+            
+            notepadView(workingVariables: workingVariables, tempVars: tempVars)
+                .tabItem {
+                    Image(systemName: "book")
+                    Text("Notepads")
                 }
             
             toBuyView()

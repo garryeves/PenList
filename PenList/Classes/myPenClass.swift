@@ -382,7 +382,7 @@ class myPen: NSObject, Identifiable, ObservableObject {
     }
     
     func addPhoto(_ photoID: Image) {
-        let tempPhoto = myPenPhoto(passedpenID: myPenID.uuidString, passedinkID: "", passedtype: "Pen", passedimage: photoID)
+        let tempPhoto = myPenPhoto(passedpenID: myPenID.uuidString, passedinkID: "", passedtype: "Pen", passedimage: photoID, passeduseID: "")
         images.append(tempPhoto)
         let temp = tempImages(id: tempPhoto.myPhotoID, image: photoID)
         loadedImages.append(temp)

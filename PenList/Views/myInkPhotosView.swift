@@ -13,9 +13,9 @@ struct myInkPhotosView: View {
     @ObservedObject var workingVariables: mainWorkingVariables
     
     @State var showCaptureImageView: Bool = true
-//    @State var tempPhoto: UIImage?
     @State var passedPhoto: UIImage?
     @State var reload = false
+    @State var viewPhoto: UIImage?
 
     var body: some View {
         var displayImage: Image?
@@ -23,6 +23,7 @@ struct myInkPhotosView: View {
         if passedPhoto != nil {
             displayImage = Image(uiImage: passedPhoto!)
         }
+        
         
         return VStack {
             HStack {
@@ -46,35 +47,70 @@ struct myInkPhotosView: View {
                         HStack(spacing: 10) {
                             ForEach(workingVariables.selectedMyInk.loadedImages) { item in
                                 item.image.resizable()
-                                .frame(width: 125, height: 125)
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(height: 125)
+                                    .onTapGesture {
+                                        viewPhoto = item.image.asUIImage()
+                                    }
                             }
                         }
                         .padding(.leading, 10)
                     })
                 }
-                .frame(height: 190)
+                .frame(height: 140)
+                .padding(.leading, 20)
+                .padding(.trailing, 20)
             }
             
             ZStack {
-                if displayImage != nil {
+                if viewPhoto != nil {
                     VStack {
-                        displayImage?.resizable()
-                            .frame(width: 250, height: 250)
-                            .shadow(radius: 10)
-                        Button("Save") {
-
-                            workingVariables.selectedMyInk.addPhoto(displayImage!)
-
-                            self.reload.toggle()
+                        Image(uiImage: viewPhoto!)
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                        
+                        Button("Show Photo picker") {
+                            viewPhoto = nil
                         }
-                        .padding()
+                    }
+                } else {
+                    if displayImage != nil {
+                        VStack {
+                            displayImage?.resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(height: 250)
+                                .shadow(radius: 10)
+                            
+                            HStack {
+                                Spacer()
+                                
+                                Button("Save") {
+
+                                    workingVariables.selectedMyInk.addPhoto(displayImage!)
+
+                                    self.reload.toggle()
+                                }
+                                
+                                Spacer()
+
+                                Button("Pick Again") {
+
+                                    passedPhoto = nil
+
+                                    self.reload.toggle()
+                                }
+                                Spacer()
+                            }
+                        }
+                    }
+                    
+                    if (showCaptureImageView) {
+                        CaptureImageView(isShown: $showCaptureImageView, image: $passedPhoto)
                     }
                 }
-                
-                if (showCaptureImageView) {
-                    CaptureImageView(isShown: $showCaptureImageView, image: $passedPhoto)
-                }
             }
+            .padding(.leading, 20)
+            .padding(.trailing, 20)
             
             Spacer()
         }

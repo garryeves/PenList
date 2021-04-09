@@ -13,9 +13,9 @@ struct myPenImagesView: View {
     @ObservedObject var workingVariables: mainWorkingVariables
     
     @State var showCaptureImageView: Bool = true
-//    @State var tempPhoto: UIImage?
     @State var passedPhoto: UIImage?
     @State var reload = false
+    @State var viewPhoto: UIImage?
 
     var body: some View {
         var displayImage: Image?
@@ -48,35 +48,64 @@ struct myPenImagesView: View {
                                 item.image.resizable()
                                     .aspectRatio(contentMode: .fit)
                                     .frame(height: 125)
+                                    .onTapGesture {
+                                        viewPhoto = item.image.asUIImage()
+                                    }
                             }
                         }
                         .padding(.leading, 10)
                     })
                 }
-                .frame(height: 190)
+                .frame(height: 140)
+                .padding(.leading, 20)
+                .padding(.trailing, 20)
             }
             
             ZStack {
-                if displayImage != nil {
+                if viewPhoto != nil {
                     VStack {
-                        displayImage?.resizable()
+                        Image(uiImage: viewPhoto!)
+                            .resizable()
                             .aspectRatio(contentMode: .fit)
-                            .frame(height: 250)
-                            .shadow(radius: 10)
-                        Button("Save") {
-                       
-                            workingVariables.selectedMyPen.addPhoto(displayImage!)
-                            
-                            self.reload.toggle()
+                        
+                        Button("Show Photo picker") {
+                            viewPhoto = nil
                         }
-                        .padding()
+                    }
+                } else {
+                    if displayImage != nil {
+                        VStack {
+                            displayImage?.resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .frame(height: 250)
+                                .shadow(radius: 10)
+                            HStack {
+                                Spacer()
+                                Button("Save") {
+
+                                    workingVariables.selectedMyPen.addPhoto(displayImage!)
+
+                                    self.reload.toggle()
+                                }
+
+                                Spacer()
+
+                                Button("Pick Again") {
+
+                                    passedPhoto = nil
+
+                                    self.reload.toggle()
+                                }
+                                Spacer()
+                            }
+                        }
+                    } else {
+                        CaptureImageView(isShown: $showCaptureImageView, image: $passedPhoto)
                     }
                 }
-                
-                if (showCaptureImageView) {
-                    CaptureImageView(isShown: $showCaptureImageView, image: $passedPhoto)
-                }
             }
+            .padding(.leading, 20)
+            .padding(.trailing, 20)
             
             Spacer()
         }

@@ -276,7 +276,7 @@ class myInk: NSObject, Identifiable, ObservableObject {
     var images: myPenPhotos {
         get {
             if photoList == nil {
-                photoList = myPenPhotos(penID: inkID)
+                photoList = myPenPhotos(penID: myInkID.uuidString)
             }
             return photoList!
         }
@@ -360,7 +360,7 @@ class myInk: NSObject, Identifiable, ObservableObject {
     }
     
     func addPhoto(_ photoID: Image) {
-        let tempPhoto = myPenPhoto(passedpenID: "", passedinkID: myInkID.uuidString, passedtype: "Ink", passedimage: photoID)
+        let tempPhoto = myPenPhoto(passedpenID: "", passedinkID: myInkID.uuidString, passedtype: "Ink", passedimage: photoID, passeduseID: "")
         images.append(tempPhoto)
         let temp = tempImages(id: tempPhoto.myPhotoID, image: photoID)
         loadedImages.append(temp)

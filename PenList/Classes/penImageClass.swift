@@ -28,7 +28,8 @@ class myPenPhotos: NSObject {
                                     passedpenID: item.penID,
                                     passedinkID: item.inkID,
                                     passedtype: item.type,
-                                    passedimage: item.photo)
+                                    passedimage: item.photo,
+                                    passeduseID: item.useID)
 
             myPenList.append(object)
         }
@@ -38,7 +39,19 @@ class myPenPhotos: NSObject {
                                     passedpenID: item.penID,
                                     passedinkID: item.inkID,
                                     passedtype: item.type,
-                                    passedimage: item.photo)
+                                    passedimage: item.photo,
+                                    passeduseID: item.useID)
+
+            myPenList.append(object)
+        }
+        
+        for item in myCloudDB.getPenPhoto(useID: penID) {
+            let object = myPenPhoto(passedmyPhotoID: item.myPhotoID,
+                                    passedpenID: item.penID,
+                                    passedinkID: item.inkID,
+                                    passedtype: item.type,
+                                    passedimage: item.photo,
+                                    passeduseID: item.useID)
 
             myPenList.append(object)
         }
@@ -59,8 +72,8 @@ class myPenPhoto: NSObject, Identifiable, ObservableObject {
     var myPhotoID = UUID()
     var penID = ""
     var inkID = ""
+    var useID = ""
     var type = ""
-   // var image: UIImage?
     var image: Image?
 
     var isNew = true
@@ -89,11 +102,13 @@ class myPenPhoto: NSObject, Identifiable, ObservableObject {
     init(passedpenID: String,
          passedinkID: String,
          passedtype: String,
-         passedimage: Image?) {
+         passedimage: Image?,
+         passeduseID: String) {
         super.init()
         
         penID = passedpenID
         inkID = passedinkID
+        useID = passeduseID
         type = passedtype
         image = passedimage
 
@@ -104,12 +119,13 @@ class myPenPhoto: NSObject, Identifiable, ObservableObject {
          passedpenID: String,
          passedinkID: String,
          passedtype: String,
-         passedimage: Image?) {
-//         passedimage: UIImage?) {
+         passedimage: Image?,
+         passeduseID: String) {
         super.init()
         
         penID = passedpenID
         inkID = passedinkID
+        useID = passeduseID
         type = passedtype
         image = passedimage
         myPhotoID = UUID(uuidString: passedmyPhotoID)!
@@ -122,6 +138,7 @@ class myPenPhoto: NSObject, Identifiable, ObservableObject {
         let temp = MyPenPhoto(myPhotoID: myPhotoID.uuidString,
                               penID: penID,
                               inkID: inkID,
+                              useID: useID,
                               photo: image,
                               type: type)
             
@@ -133,6 +150,7 @@ struct MyPenPhoto {
     public var myPhotoID: String
     public var penID: String
     public var inkID: String
+    public var useID: String
     public var photo: Image?
     public var type: String
 }
@@ -154,6 +172,7 @@ extension CloudKitInteraction {
                 let tempItem = MyPenPhoto(myPhotoID: decodeString(record.object(forKey: "myPhotoID")),
                                           penID: decodeString(record.object(forKey: "penID")),
                                           inkID: decodeString(record.object(forKey: "inkID")),
+                                          useID: decodeString(record.object(forKey: "useID")),
                                           photo: photo,
                                           type: decodeString(record.object(forKey: "type")))
                 
@@ -177,8 +196,19 @@ extension CloudKitInteraction {
     }
     
     func getPenPhoto(inkID: String)->[MyPenPhoto] {
-//        let predicate = NSPredicate(format: "(penID == \"\(inkID)\") || (inkID == \"\(inkID)\")")
         let predicate = NSPredicate(format: "(inkID == \"\(inkID)\")")
+
+        let query = CKQuery(recordType: "myPenPhoto", predicate: predicate)
+        let sem = DispatchSemaphore(value: 0)
+        fetchPrivateServices(query: query, sem: sem, completion: nil)
+        
+        sem.wait()
+
+        return populateMyPenPhoto(returnArray)
+    }
+    
+    func getPenPhoto(useID: String)->[MyPenPhoto] {
+        let predicate = NSPredicate(format: "(useID == \"\(useID)\")")
 
         let query = CKQuery(recordType: "myPenPhoto", predicate: predicate)
         let sem = DispatchSemaphore(value: 0)
@@ -190,11 +220,8 @@ extension CloudKitInteraction {
     }
 
     func saveMyPen(_ sourceRecord: MyPenPhoto) {
-        let sem = DispatchSemaphore(value: 0)
         let predicate = NSPredicate(format: "myPhotoID == \"\(sourceRecord.myPhotoID)\"") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "myPenPhoto", predicate: predicate)
-        
-       // let workingImage = UIImage(sourceRecord.photo!)
         
         if sourceRecord.photo != nil {
             let workingImage = sourceRecord.photo!.asUIImage()
@@ -210,32 +237,28 @@ extension CloudKitInteraction {
                         // Apply whatever changes you want
                         record!.setValue(sourceRecord.type, forKey: "type")
 
-                //        if workingImage != nil {
-                            var imageURL: URL!
-                            let tempImageName = "photo.jpg"
-                            let documentsPathString = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first
-                            
-                            let imageData: Data = workingImage.jpegData(compressionQuality: 1.0)!
-                            let path = "\(documentsPathString!)/\(tempImageName)"
-                            try? workingImage.jpegData(compressionQuality: 1.0)!.write(to: URL(fileURLWithPath: path), options: [.atomic])
-                            imageURL = URL(fileURLWithPath: path)
-                            try? imageData.write(to: imageURL, options: [.atomic])
+                        var imageURL: URL!
+                        let tempImageName = "photo.jpg"
+                        let documentsPathString = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first
+                        
+                        let imageData: Data = workingImage.jpegData(compressionQuality: 1.0)!
+                        let path = "\(documentsPathString!)/\(tempImageName)"
+                        try? workingImage.jpegData(compressionQuality: 1.0)!.write(to: URL(fileURLWithPath: path), options: [.atomic])
+                        imageURL = URL(fileURLWithPath: path)
+                        try? imageData.write(to: imageURL, options: [.atomic])
 
-                            let File:CKAsset? = CKAsset(fileURL: URL(fileURLWithPath: path))
-                            record!.setObject(File, forKey: "photo")
-                  //      }
+                        let File:CKAsset? = CKAsset(fileURL: URL(fileURLWithPath: path))
+                        record!.setObject(File, forKey: "photo")
               
                         // Save this record again
                         self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
                                 self.saveOK = false
-                                sem.signal()
                             } else {
                                 if debugMessages {
                                     NSLog("Successfully updated record!")
                                 }
-                                sem.signal()
                             }
                         })
                     } else {  // Insert
@@ -244,39 +267,35 @@ extension CloudKitInteraction {
                         record.setValue(sourceRecord.myPhotoID, forKey: "myPhotoID")
                         record.setValue(sourceRecord.penID, forKey: "penID")
                         record.setValue(sourceRecord.inkID, forKey: "inkID")
+                        record.setValue(sourceRecord.useID, forKey: "useID")
                         record.setValue(sourceRecord.type, forKey: "type")
 
-                 //       if workingImage != nil {
-                            var imageURL: URL!
-                            let tempImageName = "photo.jpg"
-                            let documentsPathString = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first
-                            
-                            let imageData: Data = workingImage.jpegData(compressionQuality: 1.0)!
-                            let path = "\(documentsPathString!)/\(tempImageName)"
-                            try? workingImage.jpegData(compressionQuality: 1.0)!.write(to: URL(fileURLWithPath: path), options: [.atomic])
-                            imageURL = URL(fileURLWithPath: path)
-                            try? imageData.write(to: imageURL, options: [.atomic])
+                        var imageURL: URL!
+                        let tempImageName = "photo.jpg"
+                        let documentsPathString = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first
+                        
+                        let imageData: Data = workingImage.jpegData(compressionQuality: 1.0)!
+                        let path = "\(documentsPathString!)/\(tempImageName)"
+                        try? workingImage.jpegData(compressionQuality: 1.0)!.write(to: URL(fileURLWithPath: path), options: [.atomic])
+                        imageURL = URL(fileURLWithPath: path)
+                        try? imageData.write(to: imageURL, options: [.atomic])
 
-                            let File:CKAsset? = CKAsset(fileURL: URL(fileURLWithPath: path))
-                            record.setObject(File, forKey: "photo")
-           //             }
+                        let File:CKAsset? = CKAsset(fileURL: URL(fileURLWithPath: path))
+                        record.setObject(File, forKey: "photo")
                         
                         self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
                                 self.saveOK = false
-                                sem.signal()
                             } else {
                                 if debugMessages {
                                     NSLog("Successfully saved record!")
                                 }
-                                sem.signal()
                             }
                         })
                     }
                 }
             })
-            sem.wait()
         }
     }
 }
