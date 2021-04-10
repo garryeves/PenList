@@ -787,6 +787,11 @@ func getDocumentsDirectory() -> URL {
     return documentsDirectory
 }
 
+func getDownloadsDirectory() -> URL {
+    let paths = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask)
+    return paths[0]
+}
+
 var currencyFormatter: NumberFormatter = {
     let f = NumberFormatter()
     // allow no currency symbol, extra digits, etc

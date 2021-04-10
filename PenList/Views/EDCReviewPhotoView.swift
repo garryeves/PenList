@@ -68,8 +68,29 @@ struct EDCPhotosView: View {
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                         
-                        Button("Show Photo picker") {
-                            viewPhoto = nil
+                        HStack {
+                            Spacer()
+                            
+                            Button("Show Photo picker") {
+                                viewPhoto = nil
+                            }
+                            
+                            Spacer()
+                            
+                            if UIDevice.current.userInterfaceIdiom == .phone || UIDevice.current.userInterfaceIdiom == .pad {
+                                Button("Save to Photos") {
+                                    let imageSaver = ImageSaver()
+                                    imageSaver.writeToPhotoAlbum(image: viewPhoto!)
+                                }
+                            } else {
+                                Button("Save to Photos") {
+                                    let imageSaver = ImageSaver()
+                                    
+                                    imageSaver.insertImageMac(image: viewPhoto!, albumName: "PenList")
+                                }
+                            }
+                            
+                            Spacer()
                         }
                     }
                 } else {
