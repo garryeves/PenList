@@ -74,7 +74,9 @@ class myPenPhoto: NSObject, Identifiable, ObservableObject {
     var inkID = ""
     var useID = ""
     var type = ""
-    var image: Image?
+//    var image: Image?
+    var image: UIImage?
+
 
     var isNew = true
 
@@ -90,7 +92,16 @@ class myPenPhoto: NSObject, Identifiable, ObservableObject {
         }
     }
     
-    var decodedImage: Image {
+//    var compressedImage : Image? {
+//        if image != nil {
+//            return image!
+//        } else {
+//            return nil
+//        }
+//    }
+    
+//    var decodedImage: Image {
+    var decodedImage: UIImage {
         return image!
         //return Image(uiImage: image!)
     }
@@ -102,7 +113,8 @@ class myPenPhoto: NSObject, Identifiable, ObservableObject {
     init(passedpenID: String,
          passedinkID: String,
          passedtype: String,
-         passedimage: Image?,
+  //       passedimage: Image?,
+         passedimage: UIImage?,
          passeduseID: String) {
         super.init()
         
@@ -119,7 +131,8 @@ class myPenPhoto: NSObject, Identifiable, ObservableObject {
          passedpenID: String,
          passedinkID: String,
          passedtype: String,
-         passedimage: Image?,
+//         passedimage: Image?,
+         passedimage: UIImage?,
          passeduseID: String) {
         super.init()
         
@@ -151,7 +164,8 @@ struct MyPenPhoto {
     public var penID: String
     public var inkID: String
     public var useID: String
-    public var photo: Image?
+//    public var photo: Image?
+    public var photo: UIImage?
     public var type: String
 }
 
@@ -161,19 +175,20 @@ extension CloudKitInteraction {
         
         for record in records {
             if record.object(forKey: "photo") != nil {
-              //  var photo: UIImage!
-                var photo: Image!
+                var tempimage: UIImage!
+    //            var photo: Image!
                 
                 if let asset = record["photo"] as? CKAsset {
                     let data = try? Data(contentsOf: (asset.fileURL!))
-                    let tempimage = UIImage(data: data!)
-                    photo = Image(uiImage: tempimage!)
+                    tempimage = UIImage(data: data!)
+ //                   photo = Image(uiImage: tempimage!)
                     }
                 let tempItem = MyPenPhoto(myPhotoID: decodeString(record.object(forKey: "myPhotoID")),
                                           penID: decodeString(record.object(forKey: "penID")),
                                           inkID: decodeString(record.object(forKey: "inkID")),
                                           useID: decodeString(record.object(forKey: "useID")),
-                                          photo: photo,
+                                          photo: tempimage,
+//                                          photo: photo,
                                           type: decodeString(record.object(forKey: "type")))
                 
                 tempArray.append(tempItem)
@@ -224,7 +239,7 @@ extension CloudKitInteraction {
         let query = CKQuery(recordType: "myPenPhoto", predicate: predicate)
         
         if sourceRecord.photo != nil {
-            let workingImage = sourceRecord.photo!.asUIImage()
+//            let workingImage = sourceRecord.photo!.asUIImage()
             
             privateDB.perform(query, inZoneWith: nil, completionHandler: { (records, error) in
                 if error != nil {
@@ -241,9 +256,10 @@ extension CloudKitInteraction {
                         let tempImageName = "photo.jpg"
                         let documentsPathString = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first
                         
-                        let imageData: Data = workingImage.jpegData(compressionQuality: 1.0)!
+//                        let imageData: Data = workingImage.jpegData(compressionQuality: 1.0)!
+                        let imageData: Data = sourceRecord.photo!.jpegData(compressionQuality: 1.0)!
                         let path = "\(documentsPathString!)/\(tempImageName)"
-                        try? workingImage.jpegData(compressionQuality: 1.0)!.write(to: URL(fileURLWithPath: path), options: [.atomic])
+                        try? sourceRecord.photo!.jpegData(compressionQuality: 1.0)!.write(to: URL(fileURLWithPath: path), options: [.atomic])
                         imageURL = URL(fileURLWithPath: path)
                         try? imageData.write(to: imageURL, options: [.atomic])
 
@@ -273,10 +289,14 @@ extension CloudKitInteraction {
                         var imageURL: URL!
                         let tempImageName = "photo.jpg"
                         let documentsPathString = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first
+       
                         
-                        let imageData: Data = workingImage.jpegData(compressionQuality: 1.0)!
+                        
+                        
+//                        let imageData: Data = workingImage.jpegData(compressionQuality: 1.0)!
+                        let imageData: Data = sourceRecord.photo!.jpegData(compressionQuality: 1.0)!
                         let path = "\(documentsPathString!)/\(tempImageName)"
-                        try? workingImage.jpegData(compressionQuality: 1.0)!.write(to: URL(fileURLWithPath: path), options: [.atomic])
+                        try? sourceRecord.photo!.jpegData(compressionQuality: 1.0)!.write(to: URL(fileURLWithPath: path), options: [.atomic])
                         imageURL = URL(fileURLWithPath: path)
                         try? imageData.write(to: imageURL, options: [.atomic])
 
@@ -286,8 +306,10 @@ extension CloudKitInteraction {
                         self.privateDB.save(record, completionHandler: { (savedRecord, saveError) in
                             if saveError != nil {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
+        print("Garry - save error")
                                 self.saveOK = false
                             } else {
+        print("Garry - save was good")
                                 if debugMessages {
                                     NSLog("Successfully saved record!")
                                 }

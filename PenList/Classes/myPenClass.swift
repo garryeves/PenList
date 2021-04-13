@@ -14,8 +14,12 @@ let defaultAddInkMessage = "Select Ink"
 
 struct tempImages: Identifiable {
     var id = UUID()
-    var image: Image
+//    var image: Image
+    var image: UIImage
+    var compressedImage: UIImage
 }
+
+let compressionFactor: CGFloat = 0.2
 
 class myPens: NSObject {
     fileprivate var myPenList: [myPen] = Array()
@@ -369,7 +373,11 @@ class myPen: NSObject, Identifiable, ObservableObject {
         if images.photos.count > 0 {
             if loadedImages.count == 0 {
                 for item in images.photos {
-                    let temp = tempImages(id: item.myPhotoID, image: item.decodedImage)
+                    // compress the image for display
+                    
+                    let squashedImage = UIImage(data: item.decodedImage.jpegData(compressionQuality: compressionFactor)!)
+                    
+                    let temp = tempImages(id: item.myPhotoID, image: item.decodedImage, compressedImage: squashedImage!)
                     loadedImages.append(temp)
                 }
                 tempVars.showPhotoButton()
@@ -380,11 +388,14 @@ class myPen: NSObject, Identifiable, ObservableObject {
             tempVars.showPhotoButton()
         }
     }
-    
-    func addPhoto(_ photoID: Image) {
+
+//    func addPhoto(_ photoID: Image) {
+    func addPhoto(_ photoID: UIImage) {
         let tempPhoto = myPenPhoto(passedpenID: myPenID.uuidString, passedinkID: "", passedtype: "Pen", passedimage: photoID, passeduseID: "")
         images.append(tempPhoto)
-        let temp = tempImages(id: tempPhoto.myPhotoID, image: photoID)
+        
+        let squashedImage = UIImage(data: photoID.jpegData(compressionQuality: compressionFactor)!)
+        let temp = tempImages(id: tempPhoto.myPhotoID, image: photoID, compressedImage: squashedImage!)
         loadedImages.append(temp)
     }
 }

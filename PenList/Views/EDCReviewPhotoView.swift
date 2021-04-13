@@ -15,7 +15,8 @@ struct EDCPhotosView: View {
     @State var showCaptureImageView: Bool = true
     @State var passedPhoto: UIImage?
     @State var reload = false
-    @State var viewPhoto: UIImage?
+  //  @State var viewPhoto: UIImage?
+    @State var selectedPhoto: tempImages?
     
     var body: some View {
         var displayImage: Image?
@@ -45,11 +46,15 @@ struct EDCPhotosView: View {
                     ScrollView(.horizontal, content: {
                         HStack(spacing: 10) {
                             ForEach(workingVariables.loadedImages) { item in
-                                item.image.resizable()
+                             //   item.image.resizable()
+          //                      item.resizable()
+                                Image(uiImage: item.image)
+                                    .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(height: 125)
                                 .onTapGesture {
-                                    viewPhoto = item.image.asUIImage()
+//                                    viewPhoto = item.image.asUIImage()
+                                    selectedPhoto = item
                                 }
                             }
                         }
@@ -62,9 +67,9 @@ struct EDCPhotosView: View {
             }
             
             ZStack {
-                if viewPhoto != nil {
+                if selectedPhoto != nil {
                     VStack {
-                        Image(uiImage: viewPhoto!)
+                        Image(uiImage: selectedPhoto!.compressedImage)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                         
@@ -72,7 +77,7 @@ struct EDCPhotosView: View {
                             Spacer()
                             
                             Button("Show Photo picker") {
-                                viewPhoto = nil
+                                selectedPhoto = nil
                             }
                             
                             Spacer()
@@ -80,13 +85,13 @@ struct EDCPhotosView: View {
                             if UIDevice.current.userInterfaceIdiom == .phone || UIDevice.current.userInterfaceIdiom == .pad {
                                 Button("Save to Photos") {
                                     let imageSaver = ImageSaver()
-                                    imageSaver.writeToPhotoAlbum(image: viewPhoto!)
+                                    imageSaver.writeToPhotoAlbum(image: selectedPhoto!.image)
                                 }
                             } else {
                                 Button("Save to Photos") {
                                     let imageSaver = ImageSaver()
                                     
-                                    imageSaver.insertImageMac(image: viewPhoto!, albumName: "PenList")
+                                    imageSaver.insertImageMac(image: selectedPhoto!.image, albumName: "PenList")
                                 }
                             }
                             
@@ -103,8 +108,8 @@ struct EDCPhotosView: View {
                             HStack {
                                 Spacer()
                                 Button("Save") {
-
-                                    workingVariables.addPhoto(displayImage!)
+                                   // workingVariables.addPhoto(displayImage!)
+                                    workingVariables.addPhoto(displayImage!.asUIImage())
 
                                     self.reload.toggle()
                                 }

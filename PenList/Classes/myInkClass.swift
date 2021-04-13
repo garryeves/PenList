@@ -347,7 +347,10 @@ class myInk: NSObject, Identifiable, ObservableObject {
         if images.photos.count > 0 {
             if loadedImages.count == 0 {
                 for item in images.photos {
-                    let temp = tempImages(id: item.myPhotoID, image: item.decodedImage)
+                    
+                    let squashedImage = UIImage(data: item.decodedImage.jpegData(compressionQuality: compressionFactor)!)
+                    
+                    let temp = tempImages(id: item.myPhotoID, image: item.decodedImage, compressedImage: squashedImage!)
                     loadedImages.append(temp)
                 }
                 tempVars.showPhotoButton()
@@ -359,10 +362,12 @@ class myInk: NSObject, Identifiable, ObservableObject {
         }
     }
     
-    func addPhoto(_ photoID: Image) {
+    //func addPhoto(_ photoID: Image) {
+    func addPhoto(_ photoID: UIImage) {
         let tempPhoto = myPenPhoto(passedpenID: "", passedinkID: myInkID.uuidString, passedtype: "Ink", passedimage: photoID, passeduseID: "")
         images.append(tempPhoto)
-        let temp = tempImages(id: tempPhoto.myPhotoID, image: photoID)
+        let squashedImage = UIImage(data: photoID.jpegData(compressionQuality: compressionFactor)!)
+        let temp = tempImages(id: tempPhoto.myPhotoID, image: photoID, compressedImage: squashedImage!)
         loadedImages.append(temp)
     }
 }

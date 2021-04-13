@@ -15,7 +15,8 @@ struct myPenImagesView: View {
     @State var showCaptureImageView: Bool = true
     @State var passedPhoto: UIImage?
     @State var reload = false
-    @State var viewPhoto: UIImage?
+ //   @State var viewPhoto: UIImage?
+    @State var selectedPhoto: tempImages?
 
     var body: some View {
         var displayImage: Image?
@@ -23,7 +24,7 @@ struct myPenImagesView: View {
         if passedPhoto != nil {
             displayImage = Image(uiImage: passedPhoto!)
         }
-
+        
         return VStack {
             HStack {
                 Spacer()
@@ -45,11 +46,13 @@ struct myPenImagesView: View {
                     ScrollView(.horizontal, content: {
                         HStack(spacing: 10) {
                             ForEach(workingVariables.selectedMyPen.loadedImages) { item in
-                                item.image.resizable()
+                            //    item.image.resizable()
+                                Image(uiImage: item.compressedImage)
+                                    .resizable()
                                     .aspectRatio(contentMode: .fit)
                                     .frame(height: 125)
                                     .onTapGesture {
-                                        viewPhoto = item.image.asUIImage()
+                                        selectedPhoto = item
                                     }
                             }
                         }
@@ -62,30 +65,31 @@ struct myPenImagesView: View {
             }
             
             ZStack {
-                if viewPhoto != nil {
+                if selectedPhoto != nil {
                     VStack {
-                        Image(uiImage: viewPhoto!)
+                        Image(uiImage: selectedPhoto!.compressedImage)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                         HStack {
                             Spacer()
                             
                             Button("Show Photo picker") {
-                                viewPhoto = nil
+                                selectedPhoto = nil
                             }
                             
                             Spacer()
                             
+                            
                             if UIDevice.current.userInterfaceIdiom == .phone || UIDevice.current.userInterfaceIdiom == .pad {
                                 Button("Save to Photos") {
                                     let imageSaver = ImageSaver()
-                                    imageSaver.writeToPhotoAlbum(image: viewPhoto!)
+                                    imageSaver.writeToPhotoAlbum(image: selectedPhoto!.image)
                                 }
                             } else {
                                 Button("Save to Photos") {
                                     let imageSaver = ImageSaver()
                                     
-                                    imageSaver.insertImageMac(image: viewPhoto!, albumName: "PenList")
+                                    imageSaver.insertImageMac(image: selectedPhoto!.image, albumName: "PenList")
                                 }
                             }
                             
@@ -103,7 +107,8 @@ struct myPenImagesView: View {
                                 Spacer()
                                 Button("Save") {
 
-                                    workingVariables.selectedMyPen.addPhoto(displayImage!)
+//                                    workingVariables.selectedMyPen.addPhoto(displayImage!)
+                                    workingVariables.selectedMyPen.addPhoto(displayImage!.asUIImage())
 
                                     self.reload.toggle()
                                 }
