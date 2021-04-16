@@ -196,7 +196,8 @@ struct myPenView: View {
                         .sheet(isPresented: self.$showPhotoPicker, onDismiss: { self.showPhotoPicker = false
                             self.tempVars.imagesLoaded = false
                         }) {
-                            myPenImagesView(showChild: self.$showPhotoPicker, workingVariables: self.workingVariables)
+                        //    myPenImagesView(showChild: self.$showPhotoPicker, workingVariables: self.workingVariables)
+                            myPenImagesView(showChild: self.$showPhotoPicker, selectedMyPen: self.$workingVariables.selectedMyPen)
                         }
                 }
             }
@@ -367,7 +368,8 @@ struct myPenViewPhone: View {
                         .padding(.trailing, 20)
                         .sheet(isPresented: self.$showPhotoPicker, onDismiss: { self.showPhotoPicker = false
                                 self.tempVars.imagesLoaded = false }) {
-                            myPenImagesView(showChild: self.$showPhotoPicker, workingVariables: self.workingVariables)
+                       //     myPenImagesView(showChild: self.$showPhotoPicker, workingVariables: self.workingVariables)
+                            myPenImagesView(showChild: self.$showPhotoPicker, selectedMyPen: self.$workingVariables.selectedMyPen)
                         }
                 }
             }

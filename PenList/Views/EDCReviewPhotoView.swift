@@ -48,9 +48,10 @@ struct EDCPhotosView: View {
                             ForEach(workingVariables.loadedImages) { item in
                              //   item.image.resizable()
           //                      item.resizable()
-                                Image(uiImage: item.image)
-                                    .resizable()
-                                .aspectRatio(contentMode: .fit)
+                                ListImageView(selectedImageFile: item)
+//                                Image(uiImage: item.image!)
+//                                    .resizable()
+//                                .aspectRatio(contentMode: .fit)
                                 .frame(height: 125)
                                 .onTapGesture {
 //                                    viewPhoto = item.image.asUIImage()
@@ -69,7 +70,7 @@ struct EDCPhotosView: View {
             ZStack {
                 if selectedPhoto != nil {
                     VStack {
-                        Image(uiImage: selectedPhoto!.compressedImage)
+                        Image(uiImage: selectedPhoto!.image!)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                         
@@ -85,13 +86,13 @@ struct EDCPhotosView: View {
                             if UIDevice.current.userInterfaceIdiom == .phone || UIDevice.current.userInterfaceIdiom == .pad {
                                 Button("Save to Photos") {
                                     let imageSaver = ImageSaver()
-                                    imageSaver.writeToPhotoAlbum(image: selectedPhoto!.image)
+                                    imageSaver.writeToPhotoAlbum(image: selectedPhoto!.image!)
                                 }
                             } else {
                                 Button("Save to Photos") {
                                     let imageSaver = ImageSaver()
                                     
-                                    imageSaver.insertImageMac(image: selectedPhoto!.image, albumName: "PenList")
+                                    imageSaver.insertImageMac(image: selectedPhoto!.image!, albumName: "PenList")
                                 }
                             }
                             

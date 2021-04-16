@@ -12,15 +12,6 @@ import CloudKit
 
 let defaultAddInkMessage = "Select Ink"
 
-struct tempImages: Identifiable {
-    var id = UUID()
-//    var image: Image
-    var image: UIImage
-    var compressedImage: UIImage
-}
-
-let compressionFactor: CGFloat = 0.2
-
 class myPens: NSObject {
     fileprivate var myPenList: [myPen] = Array()
     
@@ -373,11 +364,9 @@ class myPen: NSObject, Identifiable, ObservableObject {
         if images.photos.count > 0 {
             if loadedImages.count == 0 {
                 for item in images.photos {
-                    // compress the image for display
                     
-                    let squashedImage = UIImage(data: item.decodedImage.jpegData(compressionQuality: compressionFactor)!)
+                    let temp = tempImages(passedId: item.myPhotoID, image: item.decodedImage)
                     
-                    let temp = tempImages(id: item.myPhotoID, image: item.decodedImage, compressedImage: squashedImage!)
                     loadedImages.append(temp)
                 }
                 tempVars.showPhotoButton()
@@ -394,8 +383,8 @@ class myPen: NSObject, Identifiable, ObservableObject {
         let tempPhoto = myPenPhoto(passedpenID: myPenID.uuidString, passedinkID: "", passedtype: "Pen", passedimage: photoID, passeduseID: "")
         images.append(tempPhoto)
         
-        let squashedImage = UIImage(data: photoID.jpegData(compressionQuality: compressionFactor)!)
-        let temp = tempImages(id: tempPhoto.myPhotoID, image: photoID, compressedImage: squashedImage!)
+   //     let temp = tempImages(passedId: tempPhoto.myPhotoID, image: photoID)
+        let temp = tempImages(passedId: tempPhoto.myPhotoID, image: tempPhoto.decodedImage)
         loadedImages.append(temp)
     }
 }

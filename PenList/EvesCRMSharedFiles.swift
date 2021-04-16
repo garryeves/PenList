@@ -319,6 +319,38 @@ print("File = \(filename)")
     }
 }
 
+func compressImage(_ sourceImage: UIImage) -> Data {
+    var sizematched = false
+    
+    var compressionamount: CGFloat = 1.0
+    
+    var imageData: Data?
+    
+    while !sizematched {
+        
+        let squashedImageData: Data = sourceImage.jpegData(compressionQuality: compressionamount)!
+        
+        let squashedImageSize: Int = squashedImageData.count
+        
+//                            print("Compressions ratio = \(compressionamount)")
+//                            print("compressed size of image in KB: %f ", Double(squashedImageSize) / 1000.0)
+        
+        if squashedImageSize < 501 {
+            imageData = squashedImageData
+            sizematched = true
+        }
+        
+        if compressionamount <= 0.11 {
+            imageData = squashedImageData
+            sizematched = true
+        }
+        
+        compressionamount -= 0.1
+    }
+    
+    return imageData!
+}
+
 class ImageSaver: NSObject {
     func writeToPhotoAlbum(image: UIImage) {
         UIImageWriteToSavedPhotosAlbum(image, self, #selector(saveError), nil)

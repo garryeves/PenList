@@ -75,8 +75,9 @@ class myPenPhoto: NSObject, Identifiable, ObservableObject {
     var useID = ""
     var type = ""
 //    var image: Image?
-    var image: UIImage?
-
+//    var image: UIImage?
+    var image: Data?
+    var saveCalled = false
 
     var isNew = true
 
@@ -101,7 +102,9 @@ class myPenPhoto: NSObject, Identifiable, ObservableObject {
 //    }
     
 //    var decodedImage: Image {
-    var decodedImage: UIImage {
+ //   var decodedImage: UIImage {
+    var decodedImage: Data {
+       // return UIImage(data: image!)!
         return image!
         //return Image(uiImage: image!)
     }
@@ -110,11 +113,30 @@ class myPenPhoto: NSObject, Identifiable, ObservableObject {
         super.init()
     }
     
+//    init(passedpenID: String,
+//         passedinkID: String,
+//         passedtype: String,
+//  //       passedimage: Image?,
+//  //       passedimage: UIImage?,
+//         passedimage: Data?,
+//         passeduseID: String) {
+//        super.init()
+//
+//        penID = passedpenID
+//        inkID = passedinkID
+//        useID = passeduseID
+//        type = passedtype
+//        image = passedimage
+//
+//        save()
+//    }
+    
     init(passedpenID: String,
          passedinkID: String,
          passedtype: String,
   //       passedimage: Image?,
          passedimage: UIImage?,
+  //       passedimage: Data?,
          passeduseID: String) {
         super.init()
         
@@ -122,7 +144,7 @@ class myPenPhoto: NSObject, Identifiable, ObservableObject {
         inkID = passedinkID
         useID = passeduseID
         type = passedtype
-        image = passedimage
+        image = compressImage(passedimage!)
 
         save()
     }
@@ -132,7 +154,8 @@ class myPenPhoto: NSObject, Identifiable, ObservableObject {
          passedinkID: String,
          passedtype: String,
 //         passedimage: Image?,
-         passedimage: UIImage?,
+ //        passedimage: UIImage?,
+         passedimage: Data?,
          passeduseID: String) {
         super.init()
         
@@ -142,7 +165,7 @@ class myPenPhoto: NSObject, Identifiable, ObservableObject {
         type = passedtype
         image = passedimage
         myPhotoID = UUID(uuidString: passedmyPhotoID)!
-        
+        saveCalled = true
         isNew = false
     }
 
@@ -156,6 +179,8 @@ class myPenPhoto: NSObject, Identifiable, ObservableObject {
                               type: type)
             
         myCloudDB.saveMyPen(temp)
+        
+        saveCalled = true
     }
 }
 
@@ -165,7 +190,8 @@ struct MyPenPhoto {
     public var inkID: String
     public var useID: String
 //    public var photo: Image?
-    public var photo: UIImage?
+//    public var photo: UIImage?
+    public var photo: Data?
     public var type: String
 }
 
@@ -175,19 +201,28 @@ extension CloudKitInteraction {
         
         for record in records {
             if record.object(forKey: "photo") != nil {
-                var tempimage: UIImage!
+    //            var tempimage: UIImage!
+                var imageData: Data = Data()
     //            var photo: Image!
                 
                 if let asset = record["photo"] as? CKAsset {
-                    let data = try? Data(contentsOf: (asset.fileURL!))
-                    tempimage = UIImage(data: data!)
+                    imageData = try! Data(contentsOf: (asset.fileURL!))
+                    
+                    let imgData = NSData(data: imageData)
+                    let imageSize: Int = imgData.count
+                    print("retrieved actual size of image in KB: %f ", Double(imageSize) / 1000.0)
+                    
+                    
+                    
+              //      tempimage = UIImage(data: data!)
  //                   photo = Image(uiImage: tempimage!)
                     }
                 let tempItem = MyPenPhoto(myPhotoID: decodeString(record.object(forKey: "myPhotoID")),
                                           penID: decodeString(record.object(forKey: "penID")),
                                           inkID: decodeString(record.object(forKey: "inkID")),
                                           useID: decodeString(record.object(forKey: "useID")),
-                                          photo: tempimage,
+                                          photo: imageData,
+                                    //      photo: tempimage,
 //                                          photo: photo,
                                           type: decodeString(record.object(forKey: "type")))
                 
@@ -235,6 +270,7 @@ extension CloudKitInteraction {
     }
 
     func saveMyPen(_ sourceRecord: MyPenPhoto) {
+        let sem = DispatchSemaphore(value: 0)
         let predicate = NSPredicate(format: "myPhotoID == \"\(sourceRecord.myPhotoID)\"") // better be accurate to get only the record you need
         let query = CKQuery(recordType: "myPenPhoto", predicate: predicate)
         
@@ -247,36 +283,38 @@ extension CloudKitInteraction {
                 }
                 else {
                     if records!.count > 0 {
-                        let record = records!.first// as! CKRecord
-                        // Now you have grabbed your existing record from iCloud
-                        // Apply whatever changes you want
-                        record!.setValue(sourceRecord.type, forKey: "type")
-
-                        var imageURL: URL!
-                        let tempImageName = "photo.jpg"
-                        let documentsPathString = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first
-                        
-//                        let imageData: Data = workingImage.jpegData(compressionQuality: 1.0)!
-                        let imageData: Data = sourceRecord.photo!.jpegData(compressionQuality: 1.0)!
-                        let path = "\(documentsPathString!)/\(tempImageName)"
-                        try? sourceRecord.photo!.jpegData(compressionQuality: 1.0)!.write(to: URL(fileURLWithPath: path), options: [.atomic])
-                        imageURL = URL(fileURLWithPath: path)
-                        try? imageData.write(to: imageURL, options: [.atomic])
-
-                        let File:CKAsset? = CKAsset(fileURL: URL(fileURLWithPath: path))
-                        record!.setObject(File, forKey: "photo")
-              
-                        // Save this record again
-                        self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
-                            if saveError != nil {
-                                NSLog("Error saving record: \(saveError!.localizedDescription)")
-                                self.saveOK = false
-                            } else {
-                                if debugMessages {
-                                    NSLog("Successfully updated record!")
-                                }
-                            }
-                        })
+//                        let record = records!.first// as! CKRecord
+//                        // Now you have grabbed your existing record from iCloud
+//                        // Apply whatever changes you want
+//                        record!.setValue(sourceRecord.type, forKey: "type")
+//
+//                        var imageURL: URL!
+//                        let tempImageName = "photo.jpg"
+//                        let documentsPathString = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first
+//
+////                        let imageData: Data = workingImage.jpegData(compressionQuality: 1.0)!
+//                        let imageData: Data = sourceRecord.photo!.jpegData(compressionQuality: 1.0)!
+//                        let path = "\(documentsPathString!)/\(tempImageName)"
+//                        try? sourceRecord.photo!.jpegData(compressionQuality: 1.0)!.write(to: URL(fileURLWithPath: path), options: [.atomic])
+//                        imageURL = URL(fileURLWithPath: path)
+//                        try? imageData.write(to: imageURL, options: [.atomic])
+//
+//                        let File:CKAsset? = CKAsset(fileURL: URL(fileURLWithPath: path))
+//                        record!.setObject(File, forKey: "photo")
+//
+//                        // Save this record again
+//                        self.privateDB.save(record!, completionHandler: { (savedRecord, saveError) in
+//                            if saveError != nil {
+//                                NSLog("Error saving record: \(saveError!.localizedDescription)")
+//                                self.saveOK = false
+//                                sem.signal()
+//                            } else {
+//                                if debugMessages {
+//                                    NSLog("Successfully updated record!")
+//                                }
+//                                sem.signal()
+//                            }
+//                        })
                     } else {  // Insert
                         let record = CKRecord(recordType: "myPenPhoto")
                         
@@ -290,15 +328,43 @@ extension CloudKitInteraction {
                         let tempImageName = "photo.jpg"
                         let documentsPathString = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first
        
+                        let imageData = sourceRecord.photo
                         
+//                        var sizematched = false
+//
+//                        var compressionamount: CGFloat = 1.0
+//
+//                        var imageData: Data?
+//
+//                        while !sizematched {
+//
+//                            let squashedImageData: Data = sourceRecord.photo!.jpegData(compressionQuality: compressionamount)!
+//
+//                            let squashedImageSize: Int = squashedImageData.count
+//
+////                            print("Compressions ratio = \(compressionamount)")
+////                            print("compressed size of image in KB: %f ", Double(squashedImageSize) / 1000.0)
+//
+//                            if squashedImageSize < 501 {
+//                                imageData = squashedImageData
+//                                sizematched = true
+//                            }
+//
+//                            if compressionamount <= 0.11 {
+//                                imageData = squashedImageData
+//                                sizematched = true
+//                            }
+//
+//                            compressionamount -= 0.1
+//                        }
                         
+                        let imageSize: Int = imageData!.count
+                        print("save size of image in KB: %f ", Double(imageSize) / 1000.0)
                         
-//                        let imageData: Data = workingImage.jpegData(compressionQuality: 1.0)!
-                        let imageData: Data = sourceRecord.photo!.jpegData(compressionQuality: 1.0)!
                         let path = "\(documentsPathString!)/\(tempImageName)"
-                        try? sourceRecord.photo!.jpegData(compressionQuality: 1.0)!.write(to: URL(fileURLWithPath: path), options: [.atomic])
+//                        try? sourceRecord.photo!.jpegData(compressionQuality: 1.0)!.write(to: URL(fileURLWithPath: path), options: [.atomic])
                         imageURL = URL(fileURLWithPath: path)
-                        try? imageData.write(to: imageURL, options: [.atomic])
+                        try? imageData?.write(to: imageURL, options: [.atomic])
 
                         let File:CKAsset? = CKAsset(fileURL: URL(fileURLWithPath: path))
                         record.setObject(File, forKey: "photo")
@@ -308,16 +374,19 @@ extension CloudKitInteraction {
                                 NSLog("Error saving record: \(saveError!.localizedDescription)")
         print("Garry - save error")
                                 self.saveOK = false
+                                sem.signal()
                             } else {
         print("Garry - save was good")
                                 if debugMessages {
                                     NSLog("Successfully saved record!")
                                 }
+                                sem.signal()
                             }
                         })
                     }
                 }
             })
+            sem.wait()
         }
     }
 }
